@@ -1,0 +1,22 @@
+/*
+ * 시안 전용 — 가짜 "카메라 화면"(교실: 밝은 창문, 칠판, 책장, 가운데 아이). 실제 게임에는 넣지 않는다.
+ * 카드·설명·커서가 밝은 곳/어두운 곳 위에서 모두 읽히는지 보려고 일부러 명암 차가 큰 장면을 그렸다.
+ * 지금 화면과 새 디자인 모두 같은 장면 위에서 찍었다(카메라 모드처럼 #camera-dim을 그 위에 덮음).
+ */
+#mock-cam {
+  position: fixed; inset: -12px; z-index: 0; pointer-events: none;
+  filter: blur(3px);
+  background:
+    /* 아이(머리·몸) */
+    radial-gradient(ellipse 7% 10% at 52% 40%, #e9b48f 0 98%, transparent 100%),
+    radial-gradient(ellipse 8% 4% at 52% 31%, #2a1d16 0 98%, transparent 100%),
+    radial-gradient(ellipse 17% 30% at 52% 82%, #d23b3b 0 98%, transparent 100%),
+    /* 밝은 창문(왼쪽 위) */
+    linear-gradient(#f7fbff, #dfeaf2) 4% 6% / 30% 46% no-repeat,
+    /* 칠판(오른쪽) */
+    linear-gradient(#24443a, #1c372f) 92% 18% / 34% 30% no-repeat,
+    /* 책장(오른쪽 아래, 어두움) */
+    repeating-linear-gradient(90deg, #6b3f22 0 14px, #c9a227 14px 22px, #2f5d8a 22px 34px, #8b2f2f 34px 42px) 98% 92% / 30% 32% no-repeat,
+    /* 바닥·벽 */
+    linear-gradient(180deg, #e6dccb 0 62%, #b99c7a 62% 100%);
+}

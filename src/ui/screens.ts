@@ -18,6 +18,13 @@ export interface StartHandlers {
   onTouch: () => void;
 }
 
+/** 제목의 마지막 낱말(`Word!`)을 span.accent로 감싼다. 글자는 하나도 바뀌지 않는다. */
+function titleParts(title: string): (string | HTMLElement)[] {
+  const i = title.lastIndexOf(' ');
+  if (i < 0) return [title];
+  return [title.slice(0, i + 1), h('span', { class: 'accent' }, title.slice(i + 1))];
+}
+
 export class Screens {
   readonly root: HTMLElement;
   constructor(root: HTMLElement) {
@@ -111,7 +118,8 @@ export class Screens {
       );
     this.set(
       'start',
-      h('h1', { class: 'title', lang: 'en' }, S.title),
+      // v6(spec 17.5-1): 강조 낱말만 빨강 — textContent는 S.title 그대로(E1)
+      h('h1', { class: 'title', lang: 'en' }, ...titleParts(S.title)),
       h('p', { class: 'subtitle' }, keepWords(S.subtitle)),
       h(
         'div',

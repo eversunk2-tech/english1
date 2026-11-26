@@ -8,6 +8,12 @@ export const CLUE_LINE_HEIGHT = 1.2;
 export const POP_RISE_PX = 60;
 const POP_GAP_PX = 6;
 const CLUE_MIN_PX = 14;
+/** 점수 스티커 팝 시간(styles.css .score.bump와 같게) */
+const BUMP_MS = 240;
+
+function prefersReducedMotion(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 /** 설명 글자 크기: 가로 화면 clamp(22px, 3.2vw, 40px) */
 export function clueBaseFont(W: number): number {
@@ -28,6 +34,8 @@ export class Hud {
   private readonly pops: HTMLElement;
   private feedbackTimer = 0;
   private comboTimer = 0;
+  private bumpTimer = 0;
+  private lastScore: number | null = null;
   private W = 0;
   private H = 0;
 
@@ -99,6 +107,18 @@ export class Hud {
   setProgress(n: number, total: number, score: number): void {
     this.qno.textContent = S.questionNo(n, total);
     this.score.replaceChildren(h('span', { lang: 'en' }, S.score), ' ', h('b', {}, String(score)));
+    // v6(spec 17.5-4): 점수가 바뀌면 스티커가 240ms 팝(움직임 줄이기면 안 붙임)
+    if (this.lastScore !== null && score !== this.lastScore) this.bump();
+    this.lastScore = score;
+  }
+
+  private bump(): void {
+    if (prefersReducedMotion()) return;
+    this.score.classList.remove('bump');
+    void this.score.offsetWidth; // 애니메이션을 처음부터 다시
+    this.score.classList.add('bump');
+    window.clearTimeout(this.bumpTimer);
+    this.bumpTimer = window.setTimeout(() => this.score.classList.remove('bump'), BUMP_MS);
   }
 
   /** 설명 띠의 난이도 배지(spec 6.2 v2) */
@@ -159,6 +179,9 @@ export class Hud {
   }
 
   clearTransient(): void {
+    this.lastScore = null;
+    window.clearTimeout(this.bumpTimer);
+    this.score.classList.remove('bump');
     this.feedback.className = 'feedback';
     this.combo.className = 'combo';
     this.hideReveal();
