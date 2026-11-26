@@ -65,12 +65,16 @@ export interface DifficultyConfig {
   scoreMultiplier: number;
   /** 오답 한 번의 감점(배율을 곱하지 않는 고정 값) */
   wrongPenalty: number;
+  /** v9: 한 판 10문제 중 "한 단계 위" 문항 수(spec 5.3.2·5.6.1 ①-2) */
+  upCount: number;
+  /** v9: 한 단계 위 문항이 나올 수 있는 첫 문제 번호(1부터, 그 번호~10번 중). upCount가 0이면 null */
+  upFrom: number | null;
 }
 
 /** 게임 규칙 (spec 5.2~5.7) */
 export const GAME = deepFreeze({
   QUESTIONS_PER_GAME: 10,
-  /** 난이도별 단계 표 (spec 5.3.2, v4 값: E/N/H 단계마다 0.5초 빠르게 + Very Hard 새로) */
+  /** 난이도별 단계 표 (spec 5.3.2, v9 값: Easy 그대로, Normal·Hard·Very Hard 단계마다 0.5초 빠르게 + 같은 주제 오답 한 장 더 + 한 단계 위 문항) */
   DIFFICULTIES: {
     easy: {
       stages: [
@@ -80,44 +84,61 @@ export const GAME = deepFreeze({
       ],
       scoreMultiplier: 1.0,
       wrongPenalty: 10,
+      upCount: 0,
+      upFrom: null,
     },
     normal: {
       stages: [
-        { fromQuestion: 1, cards: 3, fallMs: 7000, sameTopicDistractors: 1 },
-        { fromQuestion: 4, cards: 4, fallMs: 6000, sameTopicDistractors: 1 },
-        { fromQuestion: 7, cards: 4, fallMs: 5000, sameTopicDistractors: 2 },
+        { fromQuestion: 1, cards: 3, fallMs: 6500, sameTopicDistractors: 1 },
+        { fromQuestion: 4, cards: 4, fallMs: 5500, sameTopicDistractors: 2 },
+        { fromQuestion: 7, cards: 4, fallMs: 4500, sameTopicDistractors: 2 },
       ],
       scoreMultiplier: 1.2,
       wrongPenalty: 20,
+      upCount: 2,
+      upFrom: 7,
     },
     hard: {
       stages: [
-        { fromQuestion: 1, cards: 4, fallMs: 5500, sameTopicDistractors: 1 },
-        { fromQuestion: 4, cards: 4, fallMs: 4500, sameTopicDistractors: 2 },
-        { fromQuestion: 7, cards: 4, fallMs: 4000, sameTopicDistractors: 2 },
+        { fromQuestion: 1, cards: 4, fallMs: 5000, sameTopicDistractors: 2 },
+        { fromQuestion: 4, cards: 4, fallMs: 4000, sameTopicDistractors: 2 },
+        { fromQuestion: 7, cards: 4, fallMs: 3500, sameTopicDistractors: 3 },
       ],
       scoreMultiplier: 1.5,
       wrongPenalty: 30,
+      upCount: 4,
+      upFrom: 4,
     },
-    /** v4: 학년과 상관없이 Very Hard 전용 풀(부록 D)에서만 정답·오답(spec 5.3.1·5.6) */
+    /** v4: 학년과 상관없이 Very Hard 전용 풀(부록 D)에서만 정답·오답(spec 5.3.1·5.6). v9: 중학 6 + 심화 4(4~10번 중) */
     veryhard: {
       stages: [
-        { fromQuestion: 1, cards: 4, fallMs: 5000, sameTopicDistractors: 2 },
-        { fromQuestion: 4, cards: 4, fallMs: 4000, sameTopicDistractors: 3 },
-        { fromQuestion: 7, cards: 4, fallMs: 3500, sameTopicDistractors: 3 },
+        { fromQuestion: 1, cards: 4, fallMs: 4500, sameTopicDistractors: 3 },
+        { fromQuestion: 4, cards: 4, fallMs: 3500, sameTopicDistractors: 3 },
+        { fromQuestion: 7, cards: 4, fallMs: 3000, sameTopicDistractors: 3 },
       ],
       scoreMultiplier: 2.0,
       wrongPenalty: 40,
+      upCount: 4,
+      upFrom: 4,
     },
   } as Record<Difficulty, DifficultyConfig>,
-  /** 공정성 바닥 (spec 5.3.3): T_need = BASE + n×WORD + MOVE + GRAB, 바닥 = ceil(T_need×100/85/10)×10 */
+  /** 공정성 바닥 (spec 5.3.3): T_need = BASE + n×WORD[d][band] + MOVE + GRAB, 바닥 = ceil(T_need×100/85/10)×10 */
   FALL_FLOOR: {
     BASE_MS: 300,
-    /** 낱말당 읽기(v4): 문항 band로 고른다 — Very Hard 문항은 'vh' */
-    WORD_MS: { '3-4': 350, '5-6': 300, vh: 250 },
+    /** 낱말당 읽기(v9): 난이도 × 문항 band — 나오지 않는 칸은 Hard와 같은 값(spec 5.3.3 표) */
+    WORD_MS: {
+      easy: { '3-4': 350, '5-6': 300, vh: 250 },
+      normal: { '3-4': 350, '5-6': 300, vh: 250 },
+      hard: { '3-4': 300, '5-6': 250, vh: 200 },
+      veryhard: { '3-4': 300, '5-6': 250, vh: 200 },
+    } as Record<Difficulty, Record<'3-4' | '5-6' | 'vh', number>>,
     MOVE_MS: 1000,
     GRAB_MS: 400,
     COMFORT_P: 0.85,
+    /** v9 물리적 하한(spec 5.3.4): (COMFORT_P − P_VISIBLE) × 떨어지는 시간 ≥ 1850ms (알아채기 0.3 + 손 옮기기 1.0 + 쥐기·인식 0.55) */
+    PHYS_MIN_MS: 1850,
+    /** 카드가 띠 아래로 나와 잡히기 시작하는 진행도(테스트용, spec 5.3.3) */
+    P_VISIBLE: 0.06,
   },
   DEFAULT_DIFFICULTY: 'normal' as Difficulty,
   START_DELAYS_MS: [0, 600, 1200, 1800] as readonly number[],
@@ -192,10 +213,14 @@ export const ASSETS = deepFreeze({
 /** localStorage 키 (spec 5.5, 5.6, 5.9) */
 export const STORAGE_KEYS = deepFreeze({
   bestPrefix: 'catchword.best.',
-  /** v4: Very Hard 최고 점수(학년과 상관없이 한 칸) */
+  /** v4: Very Hard 최고 점수(학년과 상관없이 한 칸) — v9부터 읽지도 쓰지도 않는다(옛 기록) */
   bestVeryHard: 'catchword.best.veryhard',
-  /** v8: 섞은 카드 더미 catchword.bag.<3-4|5-6|veryhard> (spec 5.6.1 ②) */
+  /** v9: Normal·Hard·Very Hard 최고 점수 새 칸 catchword.best.v9.<band>.<normal|hard>, catchword.best.v9.veryhard (spec 5.5) */
+  bestV9Prefix: 'catchword.best.v9.',
+  /** v8: 섞은 카드 더미 catchword.bag.<3-4|5-6|vh-mid|vh-adv> (spec 5.6.1 ②, v9) */
   bagPrefix: 'catchword.bag.',
+  /** v8의 Very Hard 더미 키 — v9에서 vh-mid·vh-adv로 나눠 옮기고 지운다(spec 5.6.1 ⑦-2). 옮기기에만 쓴다. */
+  legacyBagVeryHard: 'catchword.bag.veryhard',
   /** v4 최근 정답 키 — v8에서 더미로 한 번 옮기고 지운다(spec 5.6.1 ⑦). 옮기기에만 쓴다. */
   legacyRecent: 'catchword.recent',
   legacyRecentVeryHard: 'catchword.recent.veryhard',

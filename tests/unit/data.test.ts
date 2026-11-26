@@ -43,8 +43,8 @@ function withQuestion(mut: (q: Question) => void, idx = 0): string[] {
 }
 
 describe('data (spec 7)', () => {
-  it('validate.ts V1~V9 위반 0', () => {
-    const r = validateQuestions(data, vocab, extra);
+  it('validate.ts V1~V9 위반 0 (v9: 부록 D를 함께 넘겨 Normal·Hard 한 단계 위까지 판 구성 흉내)', () => {
+    const r = validateQuestions(data, vocab, extra, vhData);
     expect(r.errors).toEqual([]);
     // v3(spec 7.6): 230문항 = 3~4학년군 143 + 5~6학년군 87, 5~6의 ** 정답 16/87 = 18.4%
     expect(r.stats.total).toBe(230);
@@ -95,10 +95,18 @@ describe('data (spec 7)', () => {
     // v4(spec 16.4): ribbit, 언어명·지명 6개, veryhardAdvanced
     expect(extra.interjection).toEqual(['meow', 'woof', 'oink', 'quack', 'ribbit']);
     expect(extra.proper).toEqual(['monday', 'tuesday', 'saturday', 'sunday', 'christmas', 'mars', 'italian', 'english', 'korean', 'chinese', 'pacific', 'asia', 'africa']);
-    expect(extra.veryhardAdvanced).toEqual([
+    // v4(spec 16.1) 심화 23개 + v9(spec 18.5) 새 심화 25개 = 48개(순서는 부록 D 표 순서 — 아래 부록 D 테스트가 확인)
+    const v4Advanced = [
       'insect', 'goat', 'ingredient', 'thumb', 'athlete', 'passenger', 'professor', 'vocabulary', 'ladder', 'continent', 'harbor', 'tunnel',
       'gallery', 'passport', 'submarine', 'orchestra', 'rhythm', 'anniversary', 'generous', 'grateful', 'celebrate', 'explore', 'translate',
-    ]);
+    ];
+    const v9Advanced = [
+      'chin', 'heel', 'beard', 'corn', 'wheat', 'author', 'mayor', 'nephew', 'geography', 'biology', 'soap', 'stove', 'costume',
+      'cave', 'breeze', 'horizon', 'statue', 'fountain', 'ferry', 'choir', 'microphone', 'decade', 'loyal', 'clap', 'nod',
+    ];
+    expect(v9Advanced.length).toBe(25);
+    expect([...(extra.veryhardAdvanced ?? [])].sort()).toEqual([...v4Advanced, ...v9Advanced].sort());
+    expect(extra.veryhardAdvanced!.length).toBe(48);
     expect(extra.answerSecondary).toEqual([
       'giraffe', 'dolphin', 'whale', 'medicine', 'fever', 'dentist', 'calendar', 'island', 'desert', 'planet', 'airport', 'museum', 'village', 'hungry', 'angry', 'invent',
     ]);
@@ -265,10 +273,10 @@ describe('data (spec 7)', () => {
     };
     const has = (errs: string[], code: string): boolean => errs.some((e) => e.startsWith(code));
 
-    it('부록 D 표와 veryhard.json이 모든 칸에서 같다(94문항), 심화 낱말 = veryhardAdvanced', () => {
+    it('부록 D 표와 veryhard.json이 모든 칸에서 같다(119문항, v9), 심화 낱말 48개 = veryhardAdvanced', () => {
       const rows = vhRows();
-      expect(rows.length).toBe(94);
-      expect(vhData.questions.length).toBe(94);
+      expect(rows.length).toBe(119);
+      expect(vhData.questions.length).toBe(119);
       // v4b(spec 15절): 고친 세 문항
       const byWord = (w: string) => vhData.questions.find((q) => q.word === w)!.clue;
       expect(byWord('ingredient')).toBe('Eggs, milk, and sugar for a cake are these.');
@@ -292,6 +300,17 @@ describe('data (spec 7)', () => {
         if (level === '심화') advanced.push(word!);
       });
       expect(advanced).toEqual(extra.veryhardAdvanced);
+      expect(advanced.length).toBe(48);
+      // v9(spec 18.5): 헷갈리는 새 짝 avoid(양방향) — 부록 D 3행(oven, tunnel, orchestra)이 바뀜
+      const avoidOf = (w: string) => vhData.questions.find((q) => q.word === w)!.avoid;
+      expect(avoidOf('oven')).toEqual(['stove']);
+      expect(avoidOf('stove')).toEqual(['oven']);
+      expect(avoidOf('tunnel')).toEqual(['cave']);
+      expect(avoidOf('cave')).toEqual(['tunnel']);
+      expect(avoidOf('orchestra')).toEqual(['choir']);
+      expect(avoidOf('choir')).toEqual(['orchestra']);
+      expect(avoidOf('corn')).toEqual(['wheat']);
+      expect(avoidOf('wheat')).toEqual(['corn']);
     });
 
     it('부록 E(중학 ** 1,215개 형태)가 secondary-2022.txt와 같다', () => {
@@ -301,14 +320,22 @@ describe('data (spec 7)', () => {
       expect(secondaryVocab.filter((l) => l.length > 0)).toEqual(words);
     });
 
-    it('VH-V1~V10 위반 0, 심화 23/94 = 24.5%, 설명당 중학 낱말 최대 3개', () => {
+    it('VH-V1~V10 위반 0(v9 VH-V10), 중학 71 · 심화 48 = 40.3%, 설명당 중학 낱말 최대 3개, 주제별 문항 수', () => {
       const r = validateVeryHard(vhData, data, vocab, secondaryVocab, extra);
       expect(r.errors).toEqual([]);
-      expect(r.stats.total).toBe(94);
-      expect(r.stats.advancedCount).toBe(23);
-      expect(Number((r.stats.advancedRatio * 100).toFixed(1))).toBe(24.5);
+      expect(r.stats.total).toBe(119);
+      expect(r.stats.advancedCount).toBe(48);
+      expect(r.stats.midCount).toBe(71);
+      expect(Number((r.stats.advancedRatio * 100).toFixed(1))).toBe(40.3);
       expect(r.stats.maxSecondaryInClue).toBeLessThanOrEqual(3);
-      expect(Object.keys(r.stats.topics).length).toBe(14);
+      // spec 18.5: 설명 낱말 초등 92.6%, 중학 6.5%, 허용 0.9%
+      expect(Number((r.stats.elementaryRatio * 100).toFixed(1))).toBe(92.6);
+      expect(Number((r.stats.secondaryRatio * 100).toFixed(1))).toBe(6.5);
+      expect(Number((r.stats.allowedRatio * 100).toFixed(1))).toBe(0.9);
+      expect(r.stats.topics).toEqual({
+        animal: 6, food: 9, body: 11, people: 12, school: 9, home: 10, clothes: 5,
+        nature: 11, place: 10, transport: 6, music: 5, time: 4, feeling: 10, action: 11,
+      });
       expect(r.stats.topics.sports ?? 0).toBe(0);
     });
 
@@ -350,12 +377,17 @@ describe('data (spec 7)', () => {
       expect(has(vrun((d) => (d.questions[0]!.word = 'xylophone')), 'VH-V7')).toBe(true);
       expect(has(vrun((d) => (d.questions[0]!.avoid = ['cat'])), 'VH-V8')).toBe(true);
       expect(has(vrun((d) => (d.questions = d.questions.slice(0, 80))), 'VH-V9')).toBe(true);
-      // 심화 비율 30% 넘김 → VH-V10
-      const many = vrun(
-        () => undefined,
-        { ...extra, veryhardAdvanced: [...(extra.veryhardAdvanced ?? []), ...vhData.questions.filter((q) => !(extra.veryhardAdvanced ?? []).includes(q.word)).slice(0, 6).map((q) => q.word)] },
-      );
-      expect(many.some((e) => e.startsWith('VH-V10') && e.includes('30%'))).toBe(true);
+      // v9 VH-V10: 심화 39개(목록에서 9개를 빼 중학으로) → 심화 < 40
+      const adv = extra.veryhardAdvanced ?? [];
+      const few = vrun(() => undefined, { ...extra, veryhardAdvanced: adv.slice(0, 39) });
+      expect(few.some((e) => e.startsWith('VH-V10') && e.includes('심화 문항 39 < 40'))).toBe(true);
+      // 심화 50%(중학 12개를 심화로: 60/119 = 50.4%) → 비율 > 45%, 중학 59 < 60
+      const mids = vhData.questions.filter((q) => !adv.includes(q.word)).map((q) => q.word);
+      const half = vrun(() => undefined, { ...extra, veryhardAdvanced: [...adv, ...mids.slice(0, 12)] });
+      expect(half.some((e) => e.startsWith('VH-V10') && e.includes('60/119') && e.includes('45%'))).toBe(true);
+      expect(half.some((e) => e.startsWith('VH-V10') && e.includes('중학 문항 59 < 60'))).toBe(true);
+      // 지금 데이터(48/119 = 40.3%)는 통과 — 옛 v4 기준(30%)이었다면 걸렸을 값
+      expect(vrun(() => undefined).filter((e) => e.startsWith('VH-V10'))).toEqual([]);
       expect(has(vrun(() => undefined, { ...extra, veryhardAdvanced: [...(extra.veryhardAdvanced ?? []), 'volcano'] }), 'VH-V10')).toBe(true);
     });
   });

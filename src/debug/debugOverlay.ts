@@ -5,14 +5,20 @@ import { drawSkeleton, trackColor } from '../render/canvasRenderer.ts';
 import { VOICE_QUALITY_HINT } from '../ui/strings.ts';
 import type { BagName } from '../game/bag.ts';
 
-/** v8 디버그 더미 줄(spec 5.6.1 ⑨): `문제 더미: 5-6 57/87 남음`, "모두"는 ` · `로 이어 붙임, seed 모드면 ` · 저장 안 함` */
+/** v9 디버그 더미 이름 표시(spec 5.6.1 ⑨): 3-4, 5-6, 중학(vh-mid), 심화(vh-adv) */
+const BAG_LABEL: Record<BagName, string> = { '3-4': '3-4', '5-6': '5-6', 'vh-mid': '중학', 'vh-adv': '심화' };
+
+/**
+ * 디버그 더미 줄(spec 5.6.1 ⑨): `문제 더미: 5-6 57/87 남음`, 여러 더미(모두, v9 base·up)는 ` · `로 이어 붙임,
+ * 예: `문제 더미: 5-6 57/87 · 중학 40/71 남음`. seed 모드면 끝에 ` · 저장 안 함`.
+ */
 export function bagDebugLine(info: {
   names: readonly BagName[];
   remaining: Readonly<Record<BagName, number>>;
   sizes: Readonly<Record<BagName, number>>;
   persist: boolean;
 }): string {
-  const parts = info.names.map((n) => `${n} ${info.remaining[n]}/${info.sizes[n]}`).join(' · ');
+  const parts = info.names.map((n) => `${BAG_LABEL[n]} ${info.remaining[n]}/${info.sizes[n]}`).join(' · ');
   return `문제 더미: ${parts} 남음${info.persist ? '' : ' · 저장 안 함'}`;
 }
 

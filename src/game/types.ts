@@ -42,6 +42,9 @@ export interface QuestionsFile {
   questions: Question[];
 }
 
+/** v9: 문제의 단어 수준 — 학년군의 기본 풀('base') / 한 단계 위('up', spec 5.3.1·5.6.1 ①-2) */
+export type QuestionLevel = 'base' | 'up';
+
 /** 한 문제의 계획: 정답 + 카드로 나올 단어들(정답 포함) + 단계 + 카드별 출발 지연 */
 export interface QuestionPlan {
   answer: Question;
@@ -50,6 +53,8 @@ export interface QuestionPlan {
   delaysMs: number[];
   /** 이 문제의 실제 떨어지는 시간(ms) = max(단계 값, 공정성 바닥) (spec 5.3.3) */
   fallMs: number;
+  /** v9: 기본 / 한 단계 위 */
+  level: QuestionLevel;
 }
 
 export interface Rect {

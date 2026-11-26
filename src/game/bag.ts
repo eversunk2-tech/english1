@@ -1,11 +1,19 @@
-// spec 5.6.1 (v8): 섞은 카드 더미(shuffle bag) — 한 판의 정답 고르기. 순수(입력을 바꾸지 않고 새 상태를 돌려줌).
+// spec 5.6.1 (v8 → v9): 섞은 카드 더미(shuffle bag) — 한 판의 정답 고르기. 순수(입력을 바꾸지 않고 새 상태를 돌려줌).
 // 같은 풀에서 놀면 모든 문항을 한 번씩 정답으로 낸 뒤에만 같은 문항이 다시 나온다(한 "바퀴").
+// v9: 더미 4개(3-4·5-6·vh-mid·vh-adv), 판마다 기본 더미 + 한 단계 위 더미에서 따로 뽑고(drawGame) 정해진 자리에 넣는다.
 import { GAME, type Difficulty } from '../config.ts';
 import { shuffle, type Rng } from './rng.ts';
-import type { BandChoice, Question } from './types.ts';
+import type { BandChoice, Question, QuestionLevel } from './types.ts';
 
-export type BagName = '3-4' | '5-6' | 'veryhard';
-export const BAG_NAMES: readonly BagName[] = ['3-4', '5-6', 'veryhard'];
+export type BagName = '3-4' | '5-6' | 'vh-mid' | 'vh-adv';
+export const BAG_NAMES: readonly BagName[] = ['3-4', '5-6', 'vh-mid', 'vh-adv'];
+
+/** 더미를 나누는 데 쓰는 문항 풀: 부록 A(main), Very Hard(veryhard), 심화 낱말 목록(clue-extra.json veryhardAdvanced) */
+export interface BagPools {
+  main: readonly Question[];
+  veryhard: readonly Question[];
+  advanced: readonly string[];
+}
 
 /** used: 이번 바퀴에 이미 정답으로 낸 id(오래된 것이 앞), recent: 최근에 낸 id(새것이 앞, 최대 BAG_COOLDOWN) */
 export interface BagState {
@@ -30,16 +38,41 @@ export function emptyBag(): BagState {
   return { used: [], recent: [] };
 }
 
-/** 판이 쓰는 더미(spec 5.6.1 ①): Very Hard → veryhard(학년 무시), all → 3-4·5-6 함께 */
-export function bagsFor(band: BandChoice, difficulty: Difficulty): BagName[] {
-  if (difficulty === 'veryhard') return ['veryhard'];
-  if (band === 'all') return ['3-4', '5-6'];
-  return [band];
+/** 한 판이 쓰는 더미와 한 단계 위 뽑기(spec 5.6.1 ①-2, v9) */
+export interface DrawSpec {
+  base: BagName[];
+  up: BagName[];
+  upCount: number;
+  /** 한 단계 위 문항이 나올 수 있는 첫 문제 번호(1부터). upCount가 0이면 null */
+  upFrom: number | null;
 }
 
-/** 더미의 풀(데이터 파일 순서) */
-export function bagPool(name: BagName, pools: { main: readonly Question[]; veryhard: readonly Question[] }): Question[] {
-  if (name === 'veryhard') return pools.veryhard.slice();
+/**
+ * 판이 쓰는 더미(spec 5.6.1 ①-2 표): base = 학년군의 더미(all → 3-4·5-6), up = 3-4 → 5-6, 5-6·all → vh-mid.
+ * Very Hard는 학년 무시 — base vh-mid, up vh-adv. upCount·upFrom은 GAME.DIFFICULTIES(5.3.2).
+ */
+export function drawSpecFor(band: BandChoice, difficulty: Difficulty): DrawSpec {
+  const cfg = GAME.DIFFICULTIES[difficulty];
+  if (difficulty === 'veryhard') return { base: ['vh-mid'], up: ['vh-adv'], upCount: cfg.upCount, upFrom: cfg.upFrom };
+  const base: BagName[] = band === 'all' ? ['3-4', '5-6'] : [band];
+  if (cfg.upCount === 0) return { base, up: [], upCount: 0, upFrom: null };
+  const up: BagName[] = band === '3-4' ? ['5-6'] : ['vh-mid'];
+  return { base, up, upCount: cfg.upCount, upFrom: cfg.upFrom };
+}
+
+/** 판이 쓰는 더미 이름 모두(base 다음 up, 겹침 없음) */
+export function specBagNames(spec: DrawSpec): BagName[] {
+  const out: BagName[] = [];
+  for (const n of [...spec.base, ...spec.up]) if (!out.includes(n)) out.push(n);
+  return out;
+}
+
+/** 더미의 풀(데이터 파일 순서). vh-mid = Very Hard 중 심화 목록에 없는 낱말, vh-adv = 있는 낱말 */
+export function bagPool(name: BagName, pools: BagPools): Question[] {
+  if (name === 'vh-mid' || name === 'vh-adv') {
+    const adv = new Set(pools.advanced);
+    return pools.veryhard.filter((q) => adv.has(q.word) === (name === 'vh-adv'));
+  }
   return pools.main.filter((q) => q.band === name);
 }
 
@@ -142,6 +175,51 @@ export function drawAnswers(bags: readonly BagInput[], n: number, rng: Rng): Dra
     states[w.name] = { used: w.used, recent };
   }
   return { answers: chosen, states };
+}
+
+export interface GameDraw {
+  /** 문제 1~10 순서 */
+  answers: Question[];
+  /** 문제마다 기본('base') / 한 단계 위('up') */
+  levels: QuestionLevel[];
+  /** 쓴 더미들의 새 상태(base·up 모두) */
+  states: Partial<Record<BagName, BagState>>;
+}
+
+/**
+ * 한 판 뽑기(spec 5.6.1 ①-2, v9). rng만 쓴다.
+ * 1. A = drawAnswers(base, n − upCount), 그다음 B = drawAnswers(up, upCount) — upCount가 0이면 B를 부르지 않는다(Easy는 v8과 rng 사용까지 같음).
+ * 2. 자리: shuffle(rng, [upFrom−1 … n−1])에서 upCount개를 작은 순으로 — B를 차례로, 남은 자리에 A를 차례로.
+ */
+export function drawGame(spec: DrawSpec, bag: (name: BagName) => BagInput, rng: Rng, n: number = GAME.QUESTIONS_PER_GAME): GameDraw {
+  const upCount = Math.min(spec.upCount, n);
+  const a = drawAnswers(spec.base.map(bag), n - upCount, rng);
+  if (upCount === 0 || spec.up.length === 0 || spec.upFrom === null) {
+    return { answers: a.answers, levels: a.answers.map(() => 'base'), states: a.states };
+  }
+  const b = drawAnswers(spec.up.map(bag), upCount, rng);
+  const from = Math.max(0, spec.upFrom - 1);
+  const candidates: number[] = [];
+  for (let i = from; i < n; i++) candidates.push(i);
+  const slots = new Set(
+    shuffle(rng, candidates)
+      .slice(0, Math.min(upCount, b.answers.length))
+      .sort((x, y) => x - y),
+  );
+  const answers: Question[] = [];
+  const levels: QuestionLevel[] = [];
+  let ai = 0;
+  let bi = 0;
+  for (let i = 0; i < n; i++) {
+    if (slots.has(i) && bi < b.answers.length) {
+      answers.push(b.answers[bi++]!);
+      levels.push('up');
+    } else if (ai < a.answers.length) {
+      answers.push(a.answers[ai++]!);
+      levels.push('base');
+    }
+  }
+  return { answers, levels, states: { ...a.states, ...b.states } };
 }
 
 /** 화면에 나오지 않은 문제를 더미로 되돌린다(spec 5.6.1 ⑤): 그 id를 used·recent에서 뺀다 */

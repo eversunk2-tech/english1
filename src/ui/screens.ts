@@ -5,7 +5,7 @@ import { DIFFICULTY_NAMES, type Difficulty } from '../config.ts';
 import { tokenize } from '../data/words.ts';
 import { h, ICONS, keepWords, svg } from './dom.ts';
 import { errorMessage, type AppError } from '../camera/errors.ts';
-import { DIFFICULTY_DESCS, DIFFICULTY_LABELS, MARKS, S, V2, VERYHARD_BAND_NOTE, signed } from './strings.ts';
+import { DIFFICULTY_LABELS, MARKS, S, V2, VERYHARD_BAND_NOTE, difficultyDesc, signed } from './strings.ts';
 
 export interface StartHandlers {
   band: BandChoice;
@@ -37,6 +37,12 @@ export class Screens {
   }
 
   start(o: StartHandlers): void {
+    // v9: 한 줄 설명은 난이도와 학년군에 따라 바뀐다(spec 6.2) — 지금 고른 값을 기억
+    let curBand = o.band;
+    let curDiff = o.difficulty;
+    const updateDesc = (): void => {
+      descEl.replaceChildren(...keepWords(difficultyDesc(curDiff, curBand)));
+    };
     const bandBtn = (b: BandChoice, label: string): HTMLButtonElement =>
       h('button', {
         type: 'button',
@@ -45,9 +51,11 @@ export class Screens {
         'aria-pressed': String(o.band === b),
         onclick: () => {
           o.onBand(b);
+          curBand = b;
           for (const el of this.root.querySelectorAll<HTMLButtonElement>('[data-band]')) {
             el.setAttribute('aria-pressed', String(el.dataset.band === b));
           }
+          updateDesc();
         },
       }, label);
     const soundBtn = (on: boolean, label: string): HTMLButtonElement =>
@@ -64,7 +72,7 @@ export class Screens {
         },
       }, label);
     // 난이도 줄(spec 6.2 v2): 큰 영어 + 작은 한국어, Hard에는 별 아이콘
-    const descEl = h('p', { class: 'diff-desc', id: 'difficulty-desc', 'aria-live': 'polite' }, keepWords(DIFFICULTY_DESCS[o.difficulty]));
+    const descEl = h('p', { class: 'diff-desc', id: 'difficulty-desc', 'aria-live': 'polite' }, keepWords(difficultyDesc(o.difficulty, o.band)));
     // Very Hard면 학년 줄을 흐리게(누를 수는 있음) + 안내(spec 6.2 v4)
     const bandNote = h('p', { class: 'band-note', id: 'band-note', hidden: o.difficulty !== 'veryhard' }, keepWords(VERYHARD_BAND_NOTE));
     const bandRow = h('div', { class: `opt-row band-row${o.difficulty === 'veryhard' ? ' dimmed' : ''}`, role: 'group', 'aria-label': S.bandLabel, id: 'band-row' },
@@ -88,7 +96,8 @@ export class Screens {
           for (const el of this.root.querySelectorAll<HTMLButtonElement>('[data-difficulty]')) {
             el.setAttribute('aria-pressed', String(el.dataset.difficulty === d));
           }
-          descEl.replaceChildren(...keepWords(DIFFICULTY_DESCS[d]));
+          curDiff = d;
+          updateDesc();
           setVeryHardLook(d === 'veryhard');
         },
       },

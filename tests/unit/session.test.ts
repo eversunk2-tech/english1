@@ -3,7 +3,8 @@ import questionsJson from '../../src/data/questions.json';
 import veryhardJson from '../../src/data/veryhard.json';
 import type { Difficulty } from '../../src/config.ts';
 import { buildGamePlans } from '../../src/game/questions.ts';
-import { bagPool, drawAnswers, emptyBag } from '../../src/game/bag.ts';
+import extraJson from '../../src/data/vocab/clue-extra.json';
+import { bagPool, drawGame, drawSpecFor, emptyBag } from '../../src/game/bag.ts';
 import { mulberry32 } from '../../src/game/rng.ts';
 import { Session } from '../../src/game/session.ts';
 import type { QuestionsFile } from '../../src/game/types.ts';
@@ -16,10 +17,18 @@ const MULT: Record<Difficulty, number> = { easy: 1.0, normal: 1.2, hard: 1.5, ve
 const PENALTY: Record<Difficulty, number> = { easy: 10, normal: 20, hard: 30, veryhard: 40 };
 const STAGE_FALL: Record<Difficulty, number[]> = {
   easy: [8500, 7000, 6000],
-  normal: [7000, 6000, 5000],
-  hard: [5500, 4500, 4000],
-  veryhard: [5000, 4000, 3500],
+  normal: [6500, 5500, 4500],
+  hard: [5000, 4000, 3500],
+  veryhard: [4500, 3500, 3000],
 };
+/** spec 5.3.3 읽기 계수(v9, ms/낱말) */
+const WORD: Record<Difficulty, Record<'3-4' | '5-6' | 'vh', number>> = {
+  easy: { '3-4': 350, '5-6': 300, vh: 250 },
+  normal: { '3-4': 350, '5-6': 300, vh: 250 },
+  hard: { '3-4': 300, '5-6': 250, vh: 200 },
+  veryhard: { '3-4': 300, '5-6': 250, vh: 200 },
+};
+const advanced = new Set((extraJson as { veryhardAdvanced: string[] }).veryhardAdvanced);
 const vhq = (veryhardJson as QuestionsFile).questions;
 
 function correctPoints(first: boolean, p: number, combo: number, d: Difficulty): number {
@@ -28,18 +37,18 @@ function correctPoints(first: boolean, p: number, combo: number, d: Difficulty):
 
 function expectedFall(clue: string, band: '3-4' | '5-6' | 'vh', qNo: number, d: Difficulty): number {
   const n = (clue.toLowerCase().match(/[a-z]+('[a-z]+)?/g) ?? []).length;
-  const need = 300 + n * (band === '3-4' ? 350 : band === '5-6' ? 300 : 250) + 1000 + 400;
+  const need = 300 + n * WORD[d][band] + 1000 + 400;
   const floor = Math.ceil((need * 100) / 85 / 10) * 10;
   const stage = STAGE_FALL[d][qNo <= 3 ? 0 : qNo <= 6 ? 1 : 2]!;
   return Math.max(stage, floor);
 }
 
-function makeSession(seed: number, d: Difficulty = 'easy', camera = false): Session {
+/** v9: 게임과 같은 순서(drawSpecFor → drawGame → buildGamePlans)로 한 판 */
+function makeSession(seed: number, d: Difficulty = 'easy', camera = false, band: '3-4' | '5-6' | 'all' = '3-4'): Session {
   const rng = mulberry32(seed);
-  const pools = { main: all, veryhard: vhq };
-  const bag = d === 'veryhard' ? 'veryhard' : '3-4';
-  const { answers } = drawAnswers([{ name: bag, pool: bagPool(bag, pools), state: emptyBag() }], 10, rng);
-  const plans = buildGamePlans(pools, '3-4', d, rng, answers);
+  const pools = { main: all, veryhard: vhq, advanced: [...advanced] };
+  const { answers, levels } = drawGame(drawSpecFor(band, d), (name) => ({ name, pool: bagPool(name, pools), state: emptyBag() }), rng);
+  const plans = buildGamePlans(pools, band, d, rng, answers, levels);
   return new Session({ plans, rng, viewport: VP, camera, difficulty: d });
 }
 
@@ -66,6 +75,35 @@ function finishQuestion(s: Session): void {
 }
 
 describe('session (spec 5.2~5.8)', () => {
+  it('v9: 판 구성 — 단계 값·카드 수·같은 주제 수·level(Normal 2개 7~10번, Hard 4개 4~10번), Very Hard 심화 4문제가 4~10번', () => {
+    const cards: Record<Difficulty, number[]> = { easy: [3, 4, 4], normal: [3, 4, 4], hard: [4, 4, 4], veryhard: [4, 4, 4] };
+    const same: Record<Difficulty, number[]> = { easy: [0, 1, 2], normal: [1, 2, 2], hard: [2, 2, 3], veryhard: [3, 3, 3] };
+    const up: Record<Difficulty, [number, number]> = { easy: [0, 11], normal: [2, 7], hard: [4, 4], veryhard: [4, 4] };
+    for (const d of ['easy', 'normal', 'hard', 'veryhard'] as Difficulty[]) {
+      for (const band of ['3-4', '5-6', 'all'] as const) {
+        for (let seed = 1; seed <= 20; seed++) {
+          const s = makeSession(seed, d, false, band);
+          const ups = s.plans.map((p, i) => (p.level === 'up' ? i + 1 : 0)).filter((x) => x > 0);
+          expect(ups.length).toBe(up[d][0]);
+          for (const no of ups) expect(no).toBeGreaterThanOrEqual(up[d][1]);
+          s.plans.forEach((p, i) => {
+            const k = i < 3 ? 0 : i < 6 ? 1 : 2;
+            expect(p.stage.cards).toBe(cards[d][k]);
+            expect(p.options.length).toBe(cards[d][k]);
+            expect(p.stage.sameTopicDistractors).toBe(same[d][k]);
+            expect(p.stage.fallMs).toBe(STAGE_FALL[d][k]);
+            expect(p.fallMs).toBe(expectedFall(p.answer.clue, p.answer.band, i + 1, d));
+            if (d === 'veryhard') {
+              // Very Hard: 심화(veryhardAdvanced) 문제 = level up = 4개, 모두 4~10번
+              expect(advanced.has(p.answer.word)).toBe(p.level === 'up');
+            }
+          });
+          if (d === 'veryhard') expect(s.plans.filter((p) => advanced.has(p.answer.word)).length).toBe(4);
+        }
+      }
+    }
+  });
+
   for (const d of ['easy', 'normal', 'hard', 'veryhard'] as Difficulty[]) {
     it(`${d}: 모두 첫 시도 정답 → 10/10, 점수 = 5.5 식(배율·빠르기·콤보), 문제별 떨어지는 시간 = fallMsFor`, () => {
       const s = makeSession(7, d);

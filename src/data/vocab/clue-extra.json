@@ -4,5 +4,5 @@
   "proper": ["monday", "tuesday", "saturday", "sunday", "christmas", "mars", "italian", "english", "korean", "chinese", "pacific", "asia", "africa"],
   "answerSecondary": ["giraffe", "dolphin", "whale", "medicine", "fever", "dentist", "calendar", "island", "desert", "planet", "airport", "museum", "village", "hungry", "angry", "invent"],
   "notDerived": ["busy", "shoulder"],
-  "veryhardAdvanced": ["insect", "goat", "ingredient", "thumb", "athlete", "passenger", "professor", "vocabulary", "ladder", "continent", "harbor", "tunnel", "gallery", "passport", "submarine", "orchestra", "rhythm", "anniversary", "generous", "grateful", "celebrate", "explore", "translate"]
+  "veryhardAdvanced": ["insect", "goat", "ingredient", "corn", "wheat", "thumb", "chin", "heel", "beard", "athlete", "passenger", "professor", "author", "mayor", "nephew", "vocabulary", "geography", "biology", "ladder", "soap", "stove", "costume", "continent", "cave", "breeze", "horizon", "harbor", "tunnel", "gallery", "statue", "fountain", "passport", "submarine", "ferry", "orchestra", "rhythm", "choir", "microphone", "anniversary", "decade", "generous", "grateful", "loyal", "celebrate", "explore", "translate", "clap", "nod"]
 }

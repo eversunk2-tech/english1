@@ -42,11 +42,14 @@ test('E6 배치: 가장 긴 설명·가장 긴 단어가 넘치지 않음(설명
   for (const c of st.cards) expect(c.textW).toBeLessThanOrEqual(c.rect.w - 24);
 });
 
-test('E6 v2·v4: 시작 화면이 4종 화면에서 스크롤 없이 들어가고, 난이도 버튼 4개가 보이며 높이 ≥ 56px, 한국어가 낱말 가운데서 끊기지 않음', async ({ page }) => {
+test('E6 v2·v4·v9: 시작 화면이 4종 화면에서 스크롤 없이 들어가고(학년군 3종 × 난이도 4종의 한 줄 설명), 난이도 버튼 4개가 보이며 높이 ≥ 56px, 한국어가 낱말 가운데서 끊기지 않음', async ({ page }) => {
+  test.setTimeout(180_000);
   await page.goto('./?test=1');
   for (const size of [{ width: 1024, height: 768 }, { width: 1180, height: 820 }, { width: 768, height: 1024 }, { width: 820, height: 1180 }]) {
     await page.setViewportSize(size);
-    for (const d of ['easy', 'normal', 'hard', 'veryhard']) {
+    // v9: 한 줄 설명이 학년군에 따라 바뀐다 — 가장 긴 줄은 Normal·3~4(28자)
+    for (const [band, d] of ['3-4', '5-6', 'all'].flatMap((b) => ['easy', 'normal', 'hard', 'veryhard'].map((x) => [b, x] as const))) {
+      await page.click(`[data-band="${band}"]`);
       await page.click(`[data-difficulty="${d}"]`);
       const m = await page.evaluate(() => {
         const sc = document.querySelector('.screen-start') as HTMLElement;
@@ -60,7 +63,7 @@ test('E6 v2·v4: 시작 화면이 4종 화면에서 스크롤 없이 들어가�
           winH: window.innerHeight,
         };
       });
-      const tag = `${size.width}×${size.height} ${d}`;
+      const tag = `${size.width}×${size.height} ${band} ${d}`;
       expect(m.scrollH, tag).toBeLessThanOrEqual(m.clientH);
       expect(m.docH, tag).toBeLessThanOrEqual(m.winH);
       expect(m.top, tag).toBeGreaterThanOrEqual(0);

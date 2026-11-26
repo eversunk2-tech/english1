@@ -10,7 +10,13 @@ interface Q {
   band: string;
 }
 const MAIN = (JSON.parse(readFileSync(new URL('../../src/data/questions.json', import.meta.url), 'utf8')) as { questions: Q[] }).questions;
-const ID_OF = new Map(MAIN.map((q) => [q.word, q.id]));
+const VH = (JSON.parse(readFileSync(new URL('../../src/data/veryhard.json', import.meta.url), 'utf8')) as { questions: Q[] }).questions;
+const ADVANCED = new Set(
+  (JSON.parse(readFileSync(new URL('../../src/data/vocab/clue-extra.json', import.meta.url), 'utf8')) as { veryhardAdvanced: string[] }).veryhardAdvanced,
+);
+const VH_MID = VH.filter((q) => !ADVANCED.has(q.word)).map((q) => q.id);
+const VH_ADV = VH.filter((q) => ADVANCED.has(q.word)).map((q) => q.id);
+const ID_OF = new Map([...MAIN, ...VH].map((q) => [q.word, q.id]));
 const IDS_56 = MAIN.filter((q) => q.band === '5-6').map((q) => q.id);
 const IDS_34 = new Set(MAIN.filter((q) => q.band === '3-4').map((q) => q.id));
 
@@ -18,7 +24,7 @@ const BASE = './?input=pointer&test=1&clock=manual&difficulty=easy';
 
 const idOf = (w: string): string => {
   const id = ID_OF.get(w);
-  if (!id) throw new Error(`questions.json에 없는 단어 ${w}`);
+  if (!id) throw new Error(`questions.json·veryhard.json에 없는 단어 ${w}`);
   return id;
 };
 
@@ -141,7 +147,8 @@ test('E10 ④ "모두" 공유: 3~4 한 판 뒤 [모두] 한 판 → 겹침 0, 3-
 });
 
 test('E10 ⑤-a seed는 테스트 모드에서만: ?seed=7(test=1 없음)은 무시되고 보통처럼 더미를 저장', async ({ page }) => {
-  await page.goto('./?input=pointer&seed=7&band=5-6');
+  // v9: 기본 난이도(Normal)는 5~6 판에서 중학 2문제를 섞으므로 E10의 다른 판과 같이 Easy로 연다(5-6 더미에 10개)
+  await page.goto('./?input=pointer&seed=7&band=5-6&difficulty=easy');
   expect(await page.evaluate(() => typeof window.__eg)).toBe('undefined');
   await page.click('#btn-touch');
   await page.click('#start-card');
@@ -216,4 +223,73 @@ test('E10 ⑦ 옛 키 옮기기: catchword.recent = ["cat","dog"] → 지워지�
   const after = await bagOf(page, '3-4');
   expect(after!.used.slice(0, 2).sort()).toEqual([idOf('cat'), idOf('dog')].sort());
   expect(after!.used.length).toBe(12);
+});
+
+test('E10 v9 Hard 5~6 한 판 → catchword.bag.5-6에 6개·catchword.bag.vh-mid에 4개(한 단계 위 문제는 4~10번)', async ({ page }, info) => {
+  test.setTimeout(120_000);
+  const touch = info.project.use.hasTouch === true;
+  await page.goto('./?input=pointer&test=1&clock=manual&difficulty=hard&band=5-6');
+  await startTouchGame(page);
+  const s0 = await state(page);
+  expect(s0.bag.names).toEqual(['5-6', 'vh-mid']);
+  expect(s0.bag.persist).toBe(true);
+  expect(s0.bag.sizes['vh-mid']).toBe(71);
+  expect(s0.bag.sizes['vh-adv']).toBe(48);
+  const levels = s0.plans.map((p) => p.level);
+  const ids = (await playFast(page, touch)).map(idOf);
+  const b56 = await bagOf(page, '5-6');
+  const bmid = await bagOf(page, 'vh-mid');
+  expect(b56!.used.length).toBe(6);
+  expect(bmid!.used.length).toBe(4);
+  expect(await bagOf(page, 'vh-adv')).toBe(null);
+  // 한 단계 위(up) 문제 = 중학 더미에 들어간 4개, 모두 4~10번
+  const upIds = ids.filter((_, i) => levels[i] === 'up');
+  expect(upIds.slice().sort()).toEqual(bmid!.used.slice().sort());
+  expect(levels.slice(0, 3)).toEqual(['base', 'base', 'base']);
+  for (const id of upIds) expect(VH_MID).toContain(id);
+  expect(ids.filter((_, i) => levels[i] === 'base').slice().sort()).toEqual(b56!.used.slice().sort());
+  const s1 = await state(page);
+  expect(s1.bag.remaining['5-6']).toBe(81);
+  expect(s1.bag.remaining['vh-mid']).toBe(67);
+});
+
+test('E10 v9 옛 catchword.bag.veryhard → 열면 vh-mid·vh-adv 두 키로 나뉘고 지워짐, 그 판(Very Hard)은 옮긴 문항을 내지 않음', async ({ page }, info) => {
+  test.setTimeout(120_000);
+  const touch = info.project.use.hasTouch === true;
+  const used = [VH_MID[0]!, VH_ADV[0]!, VH_MID[1]!, VH_ADV[1]!, VH_MID[2]!];
+  const recent = used.slice().reverse();
+  await page.addInitScript((v) => {
+    if (!sessionStorage.getItem('seeded')) {
+      localStorage.setItem('catchword.bag.veryhard', v);
+      sessionStorage.setItem('seeded', '1');
+    }
+  }, JSON.stringify({ v: 1, used, recent }));
+  await page.goto('./?input=pointer&test=1&clock=manual&difficulty=veryhard');
+  expect(await page.evaluate(() => localStorage.getItem('catchword.bag.veryhard'))).toBe(null);
+  expect(await bagOf(page, 'vh-mid')).toEqual({ v: 1, used: [VH_MID[0], VH_MID[1], VH_MID[2]], recent: [VH_MID[2], VH_MID[1], VH_MID[0]] });
+  expect(await bagOf(page, 'vh-adv')).toEqual({ v: 1, used: [VH_ADV[0], VH_ADV[1]], recent: [VH_ADV[1], VH_ADV[0]] });
+  const s0 = await state(page);
+  expect(s0.bag.names).toEqual(['vh-mid', 'vh-adv']);
+  expect(s0.bag.remaining['vh-mid']).toBe(68);
+  expect(s0.bag.remaining['vh-adv']).toBe(46);
+  await startTouchGame(page);
+  const ids = (await playFast(page, touch)).map(idOf);
+  for (const id of used) expect(ids).not.toContain(id);
+  // Very Hard 한 판: 중학 6 + 심화 4
+  expect(ids.filter((id) => VH_ADV.includes(id)).length).toBe(4);
+  expect(ids.filter((id) => VH_MID.includes(id)).length).toBe(6);
+  expect((await bagOf(page, 'vh-mid'))!.used.length).toBe(3 + 6);
+  expect((await bagOf(page, 'vh-adv'))!.used.length).toBe(2 + 4);
+});
+
+test('E10 v9 seed 모드(?test=1&seed=)는 옛 catchword.bag.veryhard를 옮기지도 지우지도 않는다', async ({ page }) => {
+  const old = JSON.stringify({ v: 1, used: [VH_MID[0]], recent: [VH_MID[0]] });
+  await page.addInitScript((v) => {
+    if (localStorage.getItem('catchword.bag.veryhard') === null) localStorage.setItem('catchword.bag.veryhard', v);
+  }, old);
+  await page.goto('./?input=pointer&test=1&clock=manual&seed=3&difficulty=veryhard');
+  expect((await state(page)).bag.persist).toBe(false);
+  expect(await page.evaluate(() => localStorage.getItem('catchword.bag.veryhard'))).toBe(old);
+  expect(await bagOf(page, 'vh-mid')).toBe(null);
+  expect(await bagOf(page, 'vh-adv')).toBe(null);
 });

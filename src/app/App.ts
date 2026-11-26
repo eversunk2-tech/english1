@@ -2,10 +2,11 @@
 import { GAME } from '../config.ts';
 import questionsData from '../data/questions.json';
 import veryhardData from '../data/veryhard.json';
+import clueExtra from '../data/vocab/clue-extra.json';
 import { Camera } from '../camera/camera.ts';
 import { classifyCameraError, type AppError, type ErrorKind } from '../camera/errors.ts';
 import { buildGamePlans } from '../game/questions.ts';
-import { BAG_NAMES, bagsFor, drawAnswers, remainingCount, returnUnshown, type BagName, type BagState } from '../game/bag.ts';
+import { BAG_NAMES, drawGame, drawSpecFor, remainingCount, returnUnshown, specBagNames, type BagName, type BagPools, type BagState } from '../game/bag.ts';
 import { mulberry32, randomSeed } from '../game/rng.ts';
 import { Session, type SessionEvent } from '../game/session.ts';
 import { cardMetrics } from '../game/layout.ts';
@@ -32,6 +33,7 @@ import {
   loadSound,
   migrateBest,
   migrateRecentToBags,
+  migrateVeryHardBag,
   saveBest,
   saveDifficulty,
   saveSound,
@@ -49,7 +51,9 @@ export type Mode = 'camera' | 'pointer' | 'replay';
 const ALL_QUESTIONS = (questionsData as QuestionsFile).questions;
 /** v4: Very Hard 전용 풀(부록 D) */
 const VERYHARD_QUESTIONS = (veryhardData as QuestionsFile).questions;
-const POOLS = { main: ALL_QUESTIONS, veryhard: VERYHARD_QUESTIONS };
+/** v9: 심화 낱말 목록(부록 D "심화" — vh-adv 더미, spec 5.6.1 ①) */
+const ADVANCED_WORDS = (clueExtra as { veryhardAdvanced: string[] }).veryhardAdvanced;
+const POOLS: BagPools = { main: ALL_QUESTIONS, veryhard: VERYHARD_QUESTIONS, advanced: ADVANCED_WORDS };
 const STEP_MS = 1000 / 60;
 
 interface Els {
@@ -138,7 +142,11 @@ export class App {
     migrateBest();
     // v8: seed 모드는 저장된 더미를 읽지도 쓰지도 않는다(옛 키 옮기기도 안 함, spec 5.6.1 ⑥⑦⑧)
     const persist = params.seed === null;
-    if (persist) migrateRecentToBags(POOLS);
+    if (persist) {
+      migrateRecentToBags(POOLS);
+      // v9: v8의 catchword.bag.veryhard → vh-mid·vh-adv(spec 5.6.1 ⑦-2)
+      migrateVeryHardBag(POOLS);
+    }
     this.bags = new BagStore(POOLS, { persist });
     if (params.difficulty) saveDifficulty(params.difficulty);
     this.difficulty = params.difficulty ?? loadDifficulty();
@@ -345,21 +353,19 @@ export class App {
   private startGame(): void {
     const rng = mulberry32((this.seedBase + this.gameCount * 7919) >>> 0);
     this.gameCount += 1;
-    // v8: 정답은 섞은 카드 더미에서(spec 5.6.1). Very Hard면 학년 무시하고 Very Hard 더미, "모두"는 3-4·5-6 더미 함께.
+    // v8: 정답은 섞은 카드 더미에서(spec 5.6.1). "모두"는 3-4·5-6 더미 함께.
+    // v9: 기본 더미에서 10 − upCount개, 한 단계 위 더미에서 upCount개를 따로 뽑아 정해진 자리에(5.6.1 ①-2). Very Hard는 vh-mid + vh-adv.
     // 뽑은 결과는 판을 시작할 때 바로 저장한다(탭을 닫아도 이 판의 문제는 "낸 것").
-    const names = bagsFor(this.band, this.difficulty);
-    const drawn = drawAnswers(
-      names.map((name) => ({ name, pool: this.bags.pool(name), state: this.bags.load(name) })),
-      GAME.QUESTIONS_PER_GAME,
-      rng,
-    );
+    const spec = drawSpecFor(this.band, this.difficulty);
+    const drawn = drawGame(spec, (name) => ({ name, pool: this.bags.pool(name), state: this.bags.load(name) }), rng);
+    const names = specBagNames(spec);
     for (const name of names) {
       const st = drawn.states[name];
       if (st) this.bags.save(name, st);
     }
     this.gameBags = names;
-    // Very Hard면 학년 무시하고 Very Hard 풀에서만 오답(spec 5.6 v4). 오답 고르기는 같은 rng로 이어서
-    const plans = buildGamePlans(POOLS, this.band, this.difficulty, rng, drawn.answers);
+    // 오답 풀은 정답 문항의 수준으로(spec 5.6 v9 — 한 단계 위 문제는 같은 수준 풀). 오답 고르기는 같은 rng로 이어서
+    const plans = buildGamePlans(POOLS, this.band, this.difficulty, rng, drawn.answers, drawn.levels);
     this.session = new Session({ plans, rng, viewport: this.vp, camera: this.mode !== 'pointer', difficulty: this.difficulty });
     this.hud.setDifficulty(DIFFICULTY_LABELS[this.difficulty].en, this.difficulty);
     this.effects.clear();
@@ -408,7 +414,7 @@ export class App {
       sizes[name] = pool.length;
       remaining[name] = remainingCount(pool, this.bags.load(name));
     }
-    const names = this.session && this.gameBags ? this.gameBags : bagsFor(this.band, this.difficulty);
+    const names = this.session && this.gameBags ? this.gameBags : specBagNames(drawSpecFor(this.band, this.difficulty));
     return { names, remaining, sizes, persist: this.bags.persist };
   }
 
@@ -877,6 +883,9 @@ export class App {
       blockedRequests: blockedRequestCount(),
       cameraActive: this.camera.active,
       clueInfo: this.hud.clueInfo(),
+      plans: s
+        ? s.plans.map((p) => ({ word: p.answer.word, band: p.answer.band, level: p.level, fallMs: p.fallMs, cards: p.options.length }))
+        : [],
       bag: this.bagInfo(),
     };
   }

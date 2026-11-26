@@ -12,6 +12,7 @@ describe('config는 실행 중 바꿀 수 없다 (spec 12.2, review M2)', () => 
     }
     expect(Object.isFrozen(GAME.FALL_FLOOR)).toBe(true);
     expect(Object.isFrozen(GAME.FALL_FLOOR.WORD_MS)).toBe(true);
+    for (const d of ['easy', 'normal', 'hard', 'veryhard'] as const) expect(Object.isFrozen(GAME.FALL_FLOOR.WORD_MS[d])).toBe(true);
     expect(Object.isFrozen(GAME.START_DELAYS_MS)).toBe(true);
   });
 
@@ -23,12 +24,19 @@ describe('config는 실행 중 바꿀 수 없다 (spec 12.2, review M2)', () => 
     expect(() => {
       (GAME.DIFFICULTIES.hard.stages[2] as unknown as { fallMs: number }).fallMs = 1;
     }).toThrow(TypeError);
-    expect(GAME.DIFFICULTIES.hard.stages[2]!.fallMs).toBe(4000);
+    expect(GAME.DIFFICULTIES.hard.stages[2]!.fallMs).toBe(3500);
     expect(() => {
       (GAME.DIFFICULTIES.veryhard as unknown as { wrongPenalty: number }).wrongPenalty = 0;
     }).toThrow(TypeError);
     expect(() => {
-      (GAME.FALL_FLOOR.WORD_MS as unknown as { vh: number }).vh = 1;
+      (GAME.FALL_FLOOR.WORD_MS as unknown as { hard: unknown }).hard = {};
+    }).toThrow(TypeError);
+    expect(() => {
+      (GAME.FALL_FLOOR.WORD_MS.veryhard as unknown as { vh: number }).vh = 1;
+    }).toThrow(TypeError);
+    expect(GAME.FALL_FLOOR.WORD_MS.veryhard.vh).toBe(200);
+    expect(() => {
+      (GAME.DIFFICULTIES.hard as unknown as { upCount: number }).upCount = 0;
     }).toThrow(TypeError);
     expect(() => {
       (GAME.DIFFICULTIES.normal as unknown as { wrongPenalty: number }).wrongPenalty = 0;

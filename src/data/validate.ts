@@ -1,18 +1,28 @@
-// spec 7.4: 문항 기계 검사 V1~V10·V5b, Very Hard 검사 VH-V1~V10(spec 16.4). 순수 — 단위 테스트와 scripts/check-data.mjs가 함께 쓴다.
-import { buildPlans, pickDistractors, avoidIndex, distractorPool } from '../game/questions.ts';
+// spec 7.4: 문항 기계 검사 V1~V10·V5b, Very Hard 검사 VH-V1~V10(spec 16.4, v9 VH-V10). 순수 — 단위 테스트와 scripts/check-data.mjs가 함께 쓴다.
+import { buildGamePlans, pickDistractors, avoidIndex, distractorPoolFor } from '../game/questions.ts';
 import { DIFFICULTY_NAMES, GAME } from '../config.ts';
 import { mulberry32, type Rng } from '../game/rng.ts';
-import { bagPool, bagsFor, drawAnswers, emptyBag } from '../game/bag.ts';
+import { bagPool, drawGame, drawSpecFor, emptyBag, type BagPools } from '../game/bag.ts';
 import type { Difficulty } from '../config.ts';
-import { TOPICS, type BandChoice, type Question, type QuestionsFile } from '../game/types.ts';
+import { TOPICS, type BandChoice, type Question, type QuestionPlan, type QuestionsFile } from '../game/types.ts';
 import { clueMentions, derivedRoots, lemmas, sameRootTokens, tokenize } from './words.ts';
 
-/** 빈 더미에서 한 판의 정답을 뽑아 계획을 만든다(실제 게임과 같은 순서, spec 5.6.1 v8) */
-function buildPlansFromEmptyBags(qs: readonly Question[], band: BandChoice, d: Difficulty, rng: Rng): void {
-  const pools = d === 'veryhard' ? { main: [], veryhard: qs } : { main: qs, veryhard: [] };
-  const bags = bagsFor(band, d).map((name) => ({ name, pool: bagPool(name, pools), state: emptyBag() }));
-  const { answers } = drawAnswers(bags, GAME.QUESTIONS_PER_GAME, rng);
-  buildPlans(qs, d === 'veryhard' ? 'all' : band, d, rng, answers);
+/** 빈 더미에서 한 판의 정답을 뽑아 계획을 만든다(실제 게임과 같은 순서 — v9 drawSpecFor·drawGame·buildGamePlans, spec 5.6.1 ①-2) */
+function buildPlansFromEmptyBags(pools: BagPools, band: BandChoice, d: Difficulty, rng: Rng): QuestionPlan[] {
+  const spec = drawSpecFor(band, d);
+  const { answers, levels } = drawGame(spec, (name) => ({ name, pool: bagPool(name, pools), state: emptyBag() }), rng);
+  return buildGamePlans(pools, band, d, rng, answers, levels);
+}
+
+/** 한 판이 10문제이고 한 단계 위 문제가 upCount개, 모두 upFrom번 이후인가 */
+function checkGamePlans(plans: readonly QuestionPlan[], d: Difficulty): string | null {
+  const cfg = GAME.DIFFICULTIES[d];
+  if (plans.length !== GAME.QUESTIONS_PER_GAME) return `문제 ${plans.length}개(≠ ${GAME.QUESTIONS_PER_GAME})`;
+  const ups = plans.map((p, i) => (p.level === 'up' ? i + 1 : 0)).filter((n) => n > 0);
+  if (ups.length !== cfg.upCount) return `한 단계 위 문제 ${ups.length}개(≠ ${cfg.upCount})`;
+  if (cfg.upFrom !== null && ups.some((n) => n < (cfg.upFrom as number))) return `한 단계 위 문제가 ${cfg.upFrom}번보다 앞`;
+  if (new Set(plans.map((p) => p.answer.id)).size !== plans.length) return '한 판 안 정답 중복';
+  return null;
 }
 
 export interface ClueExtra {
@@ -72,10 +82,15 @@ function inList(t: string, list: readonly string[]): boolean {
   return false;
 }
 
+/**
+ * 부록 A 검사. veryhard(부록 D)를 주면 V9의 판 구성 흉내에 Normal·Hard의 한 단계 위 중학 문항까지 넣는다(v9).
+ * 주지 않으면 Very Hard 더미가 필요한 조합(학년군 5-6·all의 Normal·Hard)은 흉내에서 건너뛴다.
+ */
 export function validateQuestions(
   data: QuestionsFile,
   vocabLines: readonly string[],
   extra: ClueExtra,
+  veryhard?: QuestionsFile,
 ): ValidationReport {
   const errors: string[] = [];
   const vocab = makeVocabSet(vocabLines);
@@ -191,20 +206,28 @@ export function validateQuestions(
   if (qs.length < 100) errors.push(`V9 문항 수 ${qs.length} < 100`);
   if (band34 < 50) errors.push(`V9 3~4학년군 ${band34} < 50`);
   if (band56 < 50) errors.push(`V9 5~6학년군 ${band56} < 50`);
+  const pools: BagPools = { main: qs, veryhard: veryhard?.questions ?? [], advanced: extra.veryhardAdvanced ?? [] };
   const avoid = avoidIndex(qs);
-  const maxCards = Math.max(...DIFFICULTY_NAMES.flatMap((d) => GAME.DIFFICULTIES[d].stages.map((s) => s.cards)));
+  const nonVh = DIFFICULTY_NAMES.filter((x) => x !== 'veryhard');
+  const maxCards = Math.max(...nonVh.flatMap((d) => GAME.DIFFICULTIES[d].stages.map((s) => s.cards)));
+  const maxSame = Math.max(...nonVh.flatMap((d) => GAME.DIFFICULTIES[d].stages.map((s) => s.sameTopicDistractors)));
   for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
-    const dPool = distractorPool(qs, band);
-    const answers = band === 'all' ? qs : qs.filter((q) => q.band === band);
+    // 학년군의 기본 정답 + (3-4면) 한 단계 위 5~6 정답 — 오답 풀은 정답 문항의 수준으로(spec 5.6 v9)
+    const answers = band === 'all' ? qs : band === '3-4' ? qs : qs.filter((q) => q.band === band);
     for (const q of answers) {
       const rng = mulberry32(1);
-      const d = pickDistractors(q, dPool, maxCards - 1, 2, rng, avoid);
+      const dPool = distractorPoolFor(q, band, pools);
+      const d = pickDistractors(q, dPool, maxCards - 1, maxSame, rng, avoid);
       if (!d) errors.push(`V9 [${q.id}] 학년군 ${band}에서 오답 ${maxCards - 1}개를 고를 수 없음`);
     }
-    // 한 판을 실제로 만들 수 있는가(Easy·Normal·Hard — Very Hard는 자기 풀만 쓰므로 validateVeryHard가 본다)
-    for (const d of DIFFICULTY_NAMES.filter((x) => x !== 'veryhard')) {
+    // 한 판을 실제로 만들 수 있는가(Easy·Normal·Hard, v9 뽑기 — Very Hard는 자기 풀만 쓰므로 validateVeryHard가 본다)
+    for (const d of nonVh) {
+      const spec = drawSpecFor(band, d);
+      const needsVh = [...spec.base, ...spec.up].some((n) => n === 'vh-mid' || n === 'vh-adv');
+      if (needsVh && !veryhard) continue;
       try {
-        buildPlansFromEmptyBags(qs, band, d, mulberry32(7));
+        const bad = checkGamePlans(buildPlansFromEmptyBags(pools, band, d, mulberry32(7)), d);
+        if (bad) errors.push(`V9 학년군 ${band}·난이도 ${d}의 한 판: ${bad}`);
       } catch (e) {
         errors.push(`V9 학년군 ${band}·난이도 ${d}에서 한 판을 만들 수 없음: ${String(e)}`);
       }
@@ -221,8 +244,10 @@ export type { Question };
 
 // ───────────── Very Hard 검사 (spec 16.1·16.4, v4) ─────────────
 
-/** VH-V10: Very Hard 정답 중 "심화" 낱말 비율 상한 */
-export const VERYHARD_ADVANCED_MAX_RATIO = 0.3;
+/** VH-V10(v9, spec 16.4·18.5): 심화 문항 ≥ 40, 중학 문항 ≥ 60, 심화 비율 ≤ 45% */
+export const VERYHARD_ADVANCED_MIN = 40;
+export const VERYHARD_MID_MIN = 60;
+export const VERYHARD_ADVANCED_MAX_RATIO = 0.45;
 /** VH-V6: 설명 하나의 ** 낱말 상한 */
 export const VERYHARD_CLUE_SECONDARY_MAX = 3;
 export const VERYHARD_MIN_TOTAL = 90;
@@ -233,6 +258,8 @@ export interface VeryHardReport {
   stats: {
     total: number;
     advancedCount: number;
+    /** v9: 중학(심화 목록에 없는) 문항 수 */
+    midCount: number;
     advancedRatio: number;
     tokens: number;
     /** 설명 토큰 중 초등(*)·중학(**)·허용(고유 명사·언어명·의성어) 비율 */
@@ -352,11 +379,14 @@ export function validateVeryHard(
     for (const a of q.avoid) if (!words.has(a)) errors.push(`VH-V8 [${q.id}] avoid "${a}"가 Very Hard 풀에 없음`);
   }
 
-  // VH-V10: 심화 비율 ≤ 30%, 목록 낱말은 모두 쓰임
+  // VH-V10(v9): 심화 문항 ≥ 40·중학 문항 ≥ 60(각 더미가 10판 이상 버팀), 심화 비율 ≤ 45%, 목록 낱말은 모두 쓰임
   const advancedCount = qs.filter((q) => advanced.has(q.word)).length;
+  const midCount = qs.length - advancedCount;
   const advancedRatio = qs.length > 0 ? advancedCount / qs.length : 0;
+  if (advancedCount < VERYHARD_ADVANCED_MIN) errors.push(`VH-V10 심화 문항 ${advancedCount} < ${VERYHARD_ADVANCED_MIN}`);
+  if (midCount < VERYHARD_MID_MIN) errors.push(`VH-V10 중학 문항 ${midCount} < ${VERYHARD_MID_MIN}`);
   if (advancedRatio > VERYHARD_ADVANCED_MAX_RATIO) {
-    errors.push(`VH-V10 심화 정답 ${advancedCount}/${qs.length} = ${(advancedRatio * 100).toFixed(1)}% > 30%`);
+    errors.push(`VH-V10 심화 정답 ${advancedCount}/${qs.length} = ${(advancedRatio * 100).toFixed(1)}% > 45%`);
   }
   for (const w of advanced) if (!words.has(w)) errors.push(`VH-V10 veryhardAdvanced 낱말 "${w}"이 어느 문항에도 쓰이지 않음`);
 
@@ -370,7 +400,9 @@ export function validateVeryHard(
     if (!pickDistractors(q, qs, 3, 3, mulberry32(1), avoid)) errors.push(`VH-V9 [${q.id}] 오답 3개를 고를 수 없음`);
   }
   try {
-    buildPlansFromEmptyBags(qs, 'all', 'veryhard', mulberry32(7));
+    const vhPools: BagPools = { main: main.questions, veryhard: qs, advanced: [...advanced] };
+    const bad = checkGamePlans(buildPlansFromEmptyBags(vhPools, 'all', 'veryhard', mulberry32(7)), 'veryhard');
+    if (bad) errors.push(`VH-V9 Very Hard 한 판: ${bad}`);
   } catch (e) {
     errors.push(`VH-V9 Very Hard 한 판을 만들 수 없음: ${String(e)}`);
   }
@@ -380,6 +412,7 @@ export function validateVeryHard(
     stats: {
       total: qs.length,
       advancedCount,
+      midCount,
       advancedRatio,
       tokens,
       elementaryRatio: tokens ? nElem / tokens : 1,

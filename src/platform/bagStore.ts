@@ -1,8 +1,8 @@
-// spec 5.6.1 ⑥ (v8): 섞은 카드 더미 저장 — 메모리 + localStorage(catchword.bag.<3-4|5-6|veryhard>).
+// spec 5.6.1 ⑥ (v8·v9): 섞은 카드 더미 저장 — 메모리 + localStorage(catchword.bag.<3-4|5-6|vh-mid|vh-adv>).
 // localStorage가 막혀 있으면 읽기는 빈 더미, 쓰기는 건너뛰고 그 페이지 동안 메모리로 이어 간다.
 // persist: false(seed 모드, ?test=1&seed=…)면 localStorage를 읽지도 쓰지도 않고 빈 메모리 더미에서 시작한다.
 import { STORAGE_KEYS } from '../config.ts';
-import { bagPool, emptyBag, sanitizeBag, serializeBag, type BagName, type BagState } from '../game/bag.ts';
+import { BAG_NAMES, bagPool, emptyBag, sanitizeBag, serializeBag, type BagName, type BagPools, type BagState } from '../game/bag.ts';
 import type { Question } from '../game/types.ts';
 import { get, set } from './storage.ts';
 
@@ -11,9 +11,9 @@ export class BagStore {
   private readonly pools = new Map<BagName, Question[]>();
   private readonly mem = new Map<BagName, BagState>();
 
-  constructor(pools: { main: readonly Question[]; veryhard: readonly Question[] }, opts: { persist: boolean }) {
+  constructor(pools: BagPools, opts: { persist: boolean }) {
     this.persist = opts.persist;
-    for (const name of ['3-4', '5-6', 'veryhard'] as BagName[]) this.pools.set(name, bagPool(name, pools));
+    for (const name of BAG_NAMES) this.pools.set(name, bagPool(name, pools));
   }
 
   /** 더미의 풀(데이터 파일 순서) */

@@ -18,6 +18,7 @@
 > v5 목소리 고르기 검증(2026-11-26, 16절) 판정: **통과** — 반드시 수정 0건, 권장 0건(교실·iPad 확인 항목 2개).
 > v7 맥 영어 발음 검증(2026-11-26, 17절) 판정: **통과** — 반드시 수정 0건, 권장 2건(spec ⑲ 문장, README 안드로이드 줄).
 > v8 섞은 카드 더미 검증(2026-11-26, 19절) 판정: **통과** — 반드시 수정 0건, 권장 2건(디버그 줄 단위 테스트, E10 ⑤-a 무작위 확인).
+> v9 난이도 올리기 검증(2026-11-27, 20절) 판정: **통과** — 반드시 수정 0건, 권장 2건(spec 숫자 한 줄, 선택: chin↔beard avoid).
 
 반드시 수정할 것은 3건이다(앱 버그 1, spec 12.2 위반 1, 문항 데이터 1). 나머지 동작(점수, 판정, 배치, 개인정보, 배포 설정)은 spec과 맞았다.
 
@@ -1013,3 +1014,91 @@ git diff로 본 변경 내용:
 3. [ ] `?debug=1`의 `문제 더미: 5-6 …/87 남음`이 판마다 10씩 줄어듦.
 4. [ ] `?seed=7&debug=1`로 한 판 → 더미 줄에 `저장 안 함`이 없고 남은 수가 10 줄어듦.
 5. [ ] iPad Safari 사생활 보기에서도 한 판이 정상으로 끝남.
+
+---
+
+## 20. v9 난이도 올리기 검증 (2026-11-27)
+
+- 작성: 2026-11-27, Review 서브에이전트(Build와 분리, 지침 `docs/briefs/review-brief-v9-harder.md`). 기준은 `spec.md` 본문(0, 5.3, 5.5, 5.6, 5.6.1, 5.8, 6.2, 7.6.4, 12, 16.1·16.4, 부록 D). Build 보고는 검증 대상으로만 봄.
+- 임시 스크립트·스크린샷: `/private/tmp/claude-501/-Users-sungchul-Desktop-play2-----/7bd2217c-e14d-425c-9176-0b2e64f9c244/scratchpad/review-v9/` (`fall.mjs` 바닥·하한, `draw.mjs` 더미·뽑기·오답 풀, `easy.mjs` v8 비교, `stats.mjs` 평균·점수, `mig.mjs` 저장 옮기기, `pw/` 재생 모드 학생, `pw2/` 화면, `shots/` 스크린샷, `v8/` = `git show 9d16c46:src/…`로 꺼낸 옛 코드). worktree·checkout 안 씀, 사용자 Chrome 안 씀(Playwright 새 프로필), 서버는 테스트가 끝나며 꺼짐.
+
+### 20.1 판정: **통과** — 반드시 수정 0건, 권장 2건
+
+### 20.2 직접 돌린 명령과 결과
+| 명령 / 검사 | 결과 |
+|---|---|
+| `npm run check` | **종료 코드 0**(직접 확인). 타입 통과 / 단위 **236 통과, 1 건너뜀**(손 녹화 없음 — 정상) / check:data 부록 A 230 위반 0, Very Hard **119, 중학 71 · 심화 48(40.3%)**, 위반 0 / e2e **165 통과** |
+| `git diff --stat`(`9d16c46` 이후) | 28파일 — spec, src(config·difficulty·bag·questions·types·App·bagStore·storage·validate·strings·screens·debug 2·data 2), scripts/check-data, 테스트 13개. 지침 밖 파일 없음 |
+| `fall.mjs` 독립 계산 | 아래 20.3 |
+| `draw.mjs` 독립 구현 비교 | 아래 20.4 |
+| `easy.mjs` v8 대 지금 | 아래 20.5 |
+| 재생 모드 "잘하는 학생"(`pw/good.spec.ts`) | 아래 20.7 |
+| 화면(`pw2/screens.spec.ts`) | 아래 20.9 |
+
+### 20.3 독립 계산 — 떨어지는 시간·바닥·물리적 하한 (spec 문장만으로)
+- 5.3.2 단계 값·5.3.3 `WORD[d][band]` 표·`T_need = 300 + n×W + 1000 + 400`·`ceil(T×100/85/10)×10`·`max(단계, 바닥)`을 스크립트에 따로 적고, **난이도 4 × 문항 349(부록 A 230 + 부록 D 119, 3-4/5-6/중학/심화 모두) × 문제 번호 1~10 = 13,960건**을 저장소 `fallMsFor`와 비교 → **불일치 0**.
+- 같은 13,960건에서 **물리적 하한 `(0.85 − 0.06) × fall ≥ 1850ms` 위반 0**(가장 작은 창 2,370ms = Very Hard 3.0초), **`0.85 × fall ≥ T_need` 위반 0**. VH 3낱말 2.30 ≤ 2.55초.
+- 바닥 표(계수 350/300/250/200 × 3~10낱말)와 5.3.3 "늘어나는 수 / 평균 / 최대" 표 **모든 칸이 spec과 같음**(예: Hard 3~4 4~6번 121/4.45/4.83, Hard 중학 7~10번 60/3.92/4.36, VH 4~6번 104/3.95/4.36, Easy 전부 0). 가장 짧은 창 Normal 3.56초(1.92배)·Hard 2.77(1.49배)·VH 2.37(1.28배) — spec 5.3.4와 같음.
+- 한 판 실제 평균(조합마다 씨앗 400 × 15판): Normal 7~10번 4.86/4.72/4.74, Hard 4~6번 4.38/4.19/4.22·7~10번 4.31/4.06/4.11, VH 3.95·3.94 — spec 5.3.3·18.2와 0.01초 안(흉내 잡음).
+- **점수**: 같은 판들에서 Session을 스크립트 학생(정답·오답 뒤 정답·놓침을 섞음)으로 8,400판 돌리고 spec 5.5 문장(배율 ×1.2/1.5/2.0, 감점 −20/30/40, `max(0, …)`, 콤보 3번째부터 +20, 빠르기 `round(50(1−p))`)으로 따로 센 점수와 비교 → **불일치 0**(감점 있던 문제 17,617개 포함).
+- **Build 중점 ①(바닥 식이 문항 band와 난이도를 함께 씀)**: 코드 `WORD_MS[d][answer.band]` — "모두"의 3-4 문항은 3-4 계수, 한 단계 위 중학 문항은 vh 계수(Normal 250·Hard 200)를 씀을 위 전수 비교로 확인. spec 5.3.1 마지막 문장과 같다.
+
+### 20.4 한 단계 위 단어·더미·오답 풀 (spec 5.6·5.6.1만으로 짠 구현과 비교)
+- 내 구현: `drawSpecFor` 표, ③ `drawAnswers`(sanitize·새 바퀴·`cool` 뒤로 미루기·recent 30), ①-2 `A → B → slots = shuffle([upFrom−1…9]).slice(0,upCount)` 정렬, 5.6 오답 풀 표(3-4 문항은 학년군 3-4면 3-4만, 3-4 선택의 5-6 문항은 5-6만, vh 문항은 VH 119, 나머지 230), avoid는 그 풀 안. rng·shuffle·`pickDistractors`(v9에서 안 바뀜)만 저장소 것을 씀.
+- 학년 3 × 난이도 4(VH는 학년 무시) 10조합 × (조합마다 혼자 씨앗 40 × 60판 + 조합을 판마다 무작위로 바꾸는 씨앗 150 × 80판, 더미 상태를 이어 감) = **약 36,000판**: 정답 id·level·더미 상태·카드·지연이 저장소와 **완전히 같음(불일치 0)**.
+- 결과: up 개수 틀림 0, **자리가 upFrom 앞 0**(Normal은 7~10번에만 고르게, Hard·VH는 4~10번에 고르게), 수준 틀림 0(3-4 → 5-6, 5-6·모두 → vh-mid, VH → base vh-mid/up vh-adv), **한 판 중복 0**, **오답 풀 틀림 0**, 같은 단어 다시 나온 최소 판 차 **4**(조합 섞음·혼자 모두 — v8 보장 유지), 판 만들기 실패 0.
+- 정답 수준 비율(7.6.4·18.3과 같음): 3-4 Normal 3-4 80%·5-6 20%, 5-6 Hard 5-6 60%·중학 40%, 모두 Hard 3-4 37%·5-6 23%·중학 40%, VH 중학 60%·심화 40%.
+- 같은 주제 오답 요구 충족: Easy 100%, Normal 3-4 98.9%·5-6/모두 100%, Hard 3-4 97.0%·5-6/모두 100%, **VH 99.7%** — 모자랄 때 다른 주제로 채움(5.6 규칙대로). VH의 0.3%는 `decade` 한 문항: time 주제 4개 중 `century`가 설명에 나와 빠져 같은 주제 후보가 2개뿐(권장 1).
+- **Build 중점 ②(`drawGame` 자리 뽑기)**: spec ①-2와 rng 소비 순서까지 같음(위 비교). base가 모자라 `b.answers`가 upCount보다 적은 경우의 방어 코드도 지금 데이터에서는 쓰이지 않음.
+- **Build 중점 ③(더미 옮기기)**: 20.8.
+
+### 20.5 Easy 불변 — v8(`9d16c46`) 코드와 비교
+- `git show 9d16c46:<path>`로 `src` 전체를 scratchpad `v8/`에 꺼내, 같은 seed·같은 저장 상태로 v8 `bagsFor + drawAnswers + buildGamePlans`와 지금 `drawSpecFor + drawGame + buildGamePlans`를 나란히 실행. 학년 3 × 씨앗 120 × 이어지는 25판 = **9,000판**(씨앗 절반은 빈 더미, 절반은 무작위로 저장된 더미 — 다 낸 더미·recent 포함).
+- 정답 id·카드(오답 id·순서)·지연·fallMs·stage·더미 저장 상태 **모두 같음**, 그 판을 같은 스크립트 학생으로 Session에 돌린 점수·결과표·그 뒤 rng 값까지 **같음**(다름 0). `questions.json`은 바뀌지 않음. Easy 최고 점수 키 `catchword.best.<band>.easy`도 그대로.
+
+### 20.6 새 25문항·avoid 3행 사람 눈 검사 (H1~H4)
+- 25문항을 같은 주제의 VH 풀 전체(같은 주제 오답 3장 후보)와 함께 모두 읽음: corn·wheat·chin·heel·beard·author·mayor·nephew·geography·biology·soap·stove·costume·cave·breeze·horizon·statue·fountain·ferry·choir·microphone·decade·loyal·clap·nod.
+- **H1 정답 하나만**: 모두 하나로 정해짐. 헷갈리는 짝은 avoid로 막혀 있음(corn↔wheat, stove↔oven, cave↔tunnel, choir↔orchestra — 양방향, 부록 D 3행 oven·tunnel·orchestra avoid와 JSON 같음). 설명으로 가른 짝도 괜찮음: author("writes books") ↔ professor("teacher at a university"), ferry("boat … across water") ↔ submarine("under the sea"), breeze("soft, cool wind") ↔ storm, horizon("line") ↔ ocean, soap ↔ towel, costume("for a play") ↔ uniform, decade(설명에 century → 자동 제외). chin("part of your face, below your mouth") ↔ beard("hair on their face")도 글로는 갈리지만, beard의 한국어 뜻 "턱수염"에 "턱"이 들어 있어 뜻만 아는 학생이 잠깐 망설일 수 있음(권장 2, 선택).
+- **H2 노출**: 정답·파생이 설명에 없음(check:data V5·V5b 0과 눈으로 확인 — microphone/fountain/biology 등 어근 노출 없음).
+- **H3 영어**: 모두 짧고 자연스러운 초등 수준 문장(평균 약 8.6낱말, 10낱말 이하).
+- **H4 한국어 뜻**: 옥수수·밀·턱·발뒤꿈치·턱수염·작가·시장·조카·지리·생물학·비누·가스레인지, 난로·의상, 분장 옷·동굴·산들바람·수평선, 지평선·동상·분수·여객선·합창단·마이크·10년·충성스러운, 의리 있는·박수 치다·끄덕이다 — 맞음.
+- **Hard에 중학 단어가 섞일 때**: 중학 정답의 오답은 VH 풀 119(심화 포함)에서 나오므로, 새 심화 낱말이 기존 중학 정답의 오답으로 보이는 경우를 다시 봄 — oven/stove·tunnel/cave·orchestra/choir는 avoid로 막힘, 그 밖(storm/breeze, ocean/horizon, instrument/microphone, century/decade, uniform/costume, laboratory/biology, university/professor·geography, ingredient/wheat, castle·gallery/statue, valley/cave, celebrate/clap, whisper/microphone 등)은 설명으로 하나만 맞음. 5-6 기본 문제의 오답은 부록 A 230에서만 나와(위 20.4 오답 풀 틀림 0) 중학 낱말과 섞이지 않음. 3-4 Hard의 5-6 정답은 5-6 풀 87 안에서만 오답 — 이 짝들은 v3 검증(12절)에서 230개와 함께 이미 읽은 것의 부분 집합.
+
+### 20.7 "극악 아님" — 재생 모드(`?input=replay&test=1&clock=manual`) 잘하는 학생
+- 합성 손(저장소 `handSynth`)을 30fps로 넣고 시계를 손으로 돌림. 학생: 문제가 뜬 것을 34ms 안에 알아챈 때부터 **읽기 `0.3 + n×WORD[d][band]`** → 정답 카드 **반대쪽 끝에서 1.0초 동안 편 손으로 카드 쪽 이동**(움직이는 카드를 따라감) → **0.25초 동안 주먹 쥐기 + 0.15초 유지**(spec GRAB 0.4). "물리 하한" 학생: 카드가 p 0.06에서 보인 뒤 0.3초 알아채기 → 1.0초 이동 → 쥐기 0.25 + 유지 0.30(0.55초).
+- Hard 5-6·3-4·모두, Very Hard, Normal 5-6 × 읽기/하한 × 1024×768·768×1024 × 씨앗 12판 = **2,400문제: 모두 첫 시도 정답, 놓침 0**. 잡은 때 p — 하한 학생은 최대 0.55. 읽기 학생은 6문제만 p 0.853~0.873였는데 **모두 1번 문제**(3·2·1 끝과 1번 문제 시작이 한 프레임 묶음 안이라 테스트가 알아챈 때가 실제 시작보다 늦음 — 테스트 쪽 지연), 2~10번은 최대 0.83.
+- 가장 짧은 단계 그대로 도는 문제: Hard 3.5초 문제 28개 잡음(p 최대 0.79). Very Hard 3.0초로 도는 문항은 119개 중 `century` 하나뿐이라 그 문항이 10번에 오는 씨앗(60)을 찾아 따로 돌림 → 읽기 학생 p **0.717**, 하한 학생 p **0.585**(계산 0.72·0.58과 같음). 즉 spec이 정한 속도로 읽고 움직이는 학생은 가장 빠른 단계에서도 편한 한계(p 0.85) 전에 잡는다.
+- 모든 실행에서 콘솔 오류 0, 사이트 밖 요청 0.
+
+### 20.8 저장 옮기기·최고 점수 (spec 5.5·5.6.1 ⑦·⑦-2)
+- 가짜 `localStorage`로 `storage.ts`를 직접 부름(`mig.mjs`): 옛 `catchword.bag.veryhard`(중학·심화 섞임, 모르는 id, 중복, recent 40) → `vh-mid` used `[mid0, mid1]`·`vh-adv` `[adv0, adv1, adv2]`(순서 유지·모르는 id·중복 버림), recent는 sanitize 규칙대로 먼저 30개로 자른 뒤 나뉨, 옛 키 지움. 두 번째 호출은 아무것도 안 함(한 번만). 새 키가 하나라도 있으면 옮기지 않고 옛 키만 지움. 깨진 값 5가지(JSON 아님, 배열, `v:2`, 숫자 섞인 배열, `null`) → 지우기만. 저장소가 막혀도 예외 없음. 옛 `catchword.recent.veryhard`(v4) → 단어별로 `vh-mid`·`vh-adv`에 나뉨.
+- 실제 빌드(Playwright): `?test=1&seed=5`로 열면 옛 `catchword.bag.veryhard`가 **그대로 남음**(seed 모드는 안 옮김), `?test=1`(seed 없음)로 다시 열면 `vh-mid`·`vh-adv`로 나뉘고 지워짐, 새로고침해도 그대로.
+- 최고 점수 키: Easy `catchword.best.<band>.easy`(옛 칸 그대로, v1 → easy 옮기기 그대로), Normal·Hard `catchword.best.v9.<band>.<d>`, VH `catchword.best.v9.veryhard`. 옛 `catchword.best.5-6.hard`=999·`catchword.best.veryhard`=888이 있어도 `loadBest`는 0(읽지 않음), 저장은 새 칸에만, 옛 칸은 남음 — spec 5.5와 같음.
+
+### 20.9 화면 (Playwright 새 프로필, 스크린샷 직접 열어 봄)
+- 화면 4종(1024×768, 1180×820, 768×1024, 820×1180) × 학년 3 × 난이도 4 = 48상태, 학년·난이도 누르는 순서를 바꿔 가며: 한 줄 설명이 spec 6.2 글자와 **같음**(`{위}` = 3~4 → "5~6학년", 5~6·모두 → "중학", 학년을 바꾸면 바로 바뀜), VH면 학년 줄 흐림 + "Very Hard는 학년과 상관없이 중학·심화 단어로 나와요", 다른 난이도면 숨김. **세로·가로 스크롤 0**, 한 줄 설명·안내의 **어절 가운데 끊김 0**. 스크린샷(`shots/start-*.png` 16장) 중 768×1024 Normal 3~4, 1024×768·768×1024 VH를 열어 봄 — 한 줄로 들어가고 겹침 없음.
+- 결과 화면 머리: "5~6학년 · Hard", "3~4학년 · Normal", "모두 · Easy", **"Very Hard · 중학·심화 단어"**(스크린샷 `shots/result-all-veryhard.png`).
+- `?debug=1` 더미 줄: `문제 더미: 5-6 81/87 · 중학 67/71 남음`(Hard 5~6), `3-4 135/143 · 5-6 85/87 남음`(Normal 3~4), `중학 65/71 · 심화 44/48 남음`(VH), `3-4 137/143 · 5-6 83/87 남음`(Easy 모두) — spec 5.6.1 ⑨ 형식과 같음. `state().plans`의 level·fallMs도 위 독립 계산과 맞음.
+
+### 20.10 Build가 스스로 정한 4가지 — 모두 괜찮음
+1. **옛 `catchword.recent.veryhard`를 vh-mid/vh-adv로 나눠 옮김**: v8의 `veryhard` 더미가 없어졌으니 같은 뜻(⑦ "단어의 band로 나눔")을 새 더미에 맞춘 것. 키가 없는 더미에만 쓰고, 그 뒤 `migrateVeryHardBag`는 새 키가 있으므로 옛 bag 키만 지움 — 순서 문제 없음(20.8).
+2. **E10 ⑤-a 주소에 `&difficulty=easy`**: 이 시험의 목적은 "test=1 없는 seed는 무시되고 더미가 저장됨"이고, 저장은 persist 모드에서만 일어나므로 `used 10`을 보는 것은 Easy로도 같은 힘으로 확인된다. Normal이면 5-6 8개 + 중학 2개로 나뉘어 숫자만 바뀔 뿐이라 **약해지지 않았다**. (19.8 권장 2 "두 번 열어 첫 판이 다름" 확인은 여전히 테스트에 없음 — 그대로 권장.)
+3. **V2를 V1보다 먼저**: 결과물에는 차이 없음.
+4. **`state().plans` 추가·`validateQuestions` 4번째 선택 인자**: `plans`는 읽기 전용 복사본(규칙 값 노출 없음). 4번째 인자는 check:data와 data.test의 본 검사가 넘기고, 빠진 경우(위반 예시 테스트들)는 중학 더미가 필요한 조합만 흉내에서 건너뜀 — 본 검사 힘은 그대로.
+
+### 20.11 반드시 수정
+- 없음.
+
+### 20.12 권장 (배포를 막지 않음)
+1. **spec 숫자 한 줄**: 5.6·18.5·18.6의 "Very Hard 같은 주제 3/3/3 요구 100% 채움"은 실제로 99.7% — `vh-time-04 decade`는 설명에 century가 있어 같은 주제 후보가 noon·anniversary 2개뿐(모자란 1장은 다른 주제로 채움 — 규칙대로라 동작 문제 없음). spec 문장만 "99.7%(decade만 2장)"로 고치거나, time 주제에 문항을 하나 더하면 됨.
+2. (선택) **vh-body-09 chin ↔ vh-body-11 beard를 avoid로**: 설명으로는 chin 하나만 맞지만, beard의 뜻 "턱수염"에 "턱"이 들어 있어 뜻만 아는 학생이 고민할 수 있음. body 주제는 11개라 avoid를 더해도 같은 주제 3장을 고르는 데 문제 없음.
+
+### 20.13 사용자 결정 필요
+- 없음.
+
+### 20.14 사람이 확인할 것 (교실·태블릿, spec 18.10 V6)
+1. [ ] 6학년 반에서 Normal·Hard·Very Hard를 2판씩 — 첫 시도 정답률이 목표(약 70% / 50~60% / 35~50%)에 가까운지, 결과 복습표 사진.
+2. [ ] Very Hard 7~10번·Hard 7~10번에서 "잡았는데 안 잡혔다"(손 인식 때문의 놓침)가 v8보다 늘었는지 학생 의견.
+3. [ ] 3~4학년 Normal에서 7~10번에 나오는 5~6학년 단어 2개가 너무 어렵다는 반응이 없는지(그러면 Easy를 권함).
+4. [ ] 업데이트 직후 Very Hard 첫 판에 바로 전에 본 단어가 나오지 않는지(옛 더미 옮기기), `?debug=1`에 `중학 …/71 · 심화 …/48 남음`.
+5. [ ] Normal·Hard·Very Hard 최고 점수가 0에서 새로 시작하고, Easy 최고 점수는 그대로인지.

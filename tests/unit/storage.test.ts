@@ -1,7 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import questionsJson from '../../src/data/questions.json';
 import veryhardJson from '../../src/data/veryhard.json';
-import { bestKey, loadBest, loadDifficulty, migrateBest, migrateRecentToBags, saveBest, saveDifficulty } from '../../src/platform/storage.ts';
+import extraJson from '../../src/data/vocab/clue-extra.json';
+import {
+  bestKey,
+  loadBest,
+  loadDifficulty,
+  migrateBest,
+  migrateRecentToBags,
+  migrateVeryHardBag,
+  saveBest,
+  saveDifficulty,
+} from '../../src/platform/storage.ts';
 import { BagStore } from '../../src/platform/bagStore.ts';
 import { drawAnswers, type BagName } from '../../src/game/bag.ts';
 import { mulberry32 } from '../../src/game/rng.ts';
@@ -9,7 +19,11 @@ import type { QuestionsFile } from '../../src/game/types.ts';
 
 const main = (questionsJson as QuestionsFile).questions;
 const veryhard = (veryhardJson as QuestionsFile).questions;
-const POOLS = { main, veryhard };
+const advanced = (extraJson as { veryhardAdvanced: string[] }).veryhardAdvanced;
+const POOLS = { main, veryhard, advanced };
+const advSet = new Set(advanced);
+const vhMidIds = veryhard.filter((q) => !advSet.has(q.word)).map((q) => q.id);
+const vhAdvIds = veryhard.filter((q) => advSet.has(q.word)).map((q) => q.id);
 const idOf = (w: string): string => [...main, ...veryhard].find((q) => q.word === w)!.id;
 
 class FakeStorage {
@@ -62,21 +76,39 @@ afterEach(() => {
 });
 
 describe('storage v2 (spec 5.5)', () => {
-  it('최고 점수 키는 catchword.best.<band>.<difficulty>', () => {
-    expect(bestKey('5-6', 'hard')).toBe('catchword.best.5-6.hard');
-    saveBest('5-6', 'hard', 1234.4);
-    expect(store.getItem('catchword.best.5-6.hard')).toBe('1234');
-    expect(loadBest('5-6', 'hard')).toBe(1234);
+  it('Easy 최고 점수 키는 catchword.best.<band>.easy 그대로(v2)', () => {
+    expect(bestKey('5-6', 'easy')).toBe('catchword.best.5-6.easy');
+    expect(bestKey('all', 'easy')).toBe('catchword.best.all.easy');
+    saveBest('5-6', 'easy', 1234.4);
+    expect(store.getItem('catchword.best.5-6.easy')).toBe('1234');
+    expect(loadBest('5-6', 'easy')).toBe(1234);
     expect(loadBest('5-6', 'normal')).toBe(0);
   });
 
-  it('Very Hard 최고 점수는 학년과 상관없이 따로(v4)', () => {
-    expect(bestKey('3-4', 'veryhard')).toBe('catchword.best.veryhard');
-    expect(bestKey('5-6', 'veryhard')).toBe('catchword.best.veryhard');
+  it('v9: Normal·Hard는 catchword.best.v9.<band>.<d>, Very Hard는 catchword.best.v9.veryhard(학년 무시) — 옛 키는 읽지도 옮기지도 지우지도 않는다', () => {
+    expect(bestKey('5-6', 'hard')).toBe('catchword.best.v9.5-6.hard');
+    expect(bestKey('3-4', 'normal')).toBe('catchword.best.v9.3-4.normal');
+    expect(bestKey('all', 'hard')).toBe('catchword.best.v9.all.hard');
+    expect(bestKey('3-4', 'veryhard')).toBe('catchword.best.v9.veryhard');
+    expect(bestKey('5-6', 'veryhard')).toBe('catchword.best.v9.veryhard');
+    // 옛 기록(더 쉬운 규칙)
+    store.setItem('catchword.best.5-6.hard', '9999');
+    store.setItem('catchword.best.3-4.normal', '8888');
+    store.setItem('catchword.best.veryhard', '7777');
+    migrateBest();
+    expect(loadBest('5-6', 'hard')).toBe(0);
+    expect(loadBest('3-4', 'normal')).toBe(0);
+    expect(loadBest('all', 'veryhard')).toBe(0);
+    saveBest('5-6', 'hard', 1500);
     saveBest('5-6', 'veryhard', 3000);
-    expect(store.getItem('catchword.best.veryhard')).toBe('3000');
+    expect(store.getItem('catchword.best.v9.5-6.hard')).toBe('1500');
+    expect(store.getItem('catchword.best.v9.veryhard')).toBe('3000');
     expect(loadBest('3-4', 'veryhard')).toBe(3000);
     expect(loadBest('3-4', 'hard')).toBe(0);
+    // 옛 키는 그대로 남는다
+    expect(store.getItem('catchword.best.5-6.hard')).toBe('9999');
+    expect(store.getItem('catchword.best.3-4.normal')).toBe('8888');
+    expect(store.getItem('catchword.best.veryhard')).toBe('7777');
     saveDifficulty('veryhard');
     expect(loadDifficulty()).toBe('veryhard');
   });
@@ -148,7 +180,8 @@ describe('BagStore (v8, spec 5.6.1 ⑥)', () => {
     const b = playOne(bs, ['5-6'], 4);
     expect(new Set([...a, ...b]).size).toBe(20);
     playOne(bs, ['3-4', '5-6'], 5);
-    playOne(bs, ['veryhard'], 6);
+    playOne(bs, ['vh-mid'], 6);
+    playOne(bs, ['vh-adv'], 6);
     expect(cs.gets.filter((k) => k.startsWith('catchword.bag.'))).toEqual([]);
     expect(cs.sets.filter((k) => k.startsWith('catchword.bag.'))).toEqual([]);
     expect(cs.getItem('catchword.bag.5-6')).toBe(pre);
@@ -197,7 +230,7 @@ describe('migrateRecentToBags (v8, spec 5.6.1 ⑦)', () => {
     const w56 = main.filter((q) => q.band === '5-6').slice(0, 2);
     // 새것이 앞
     store.setItem('catchword.recent', JSON.stringify(['cat', w56[0]!.word, 'nosuchword', 'dog', w56[1]!.word]));
-    store.setItem('catchword.recent.veryhard', JSON.stringify(['zebra', 'frog', 'cat']));
+    store.setItem('catchword.recent.veryhard', JSON.stringify(['zebra', 'goat', 'frog', 'cat']));
     migrateRecentToBags(POOLS);
     expect(store.getItem('catchword.recent')).toBe(null);
     expect(store.getItem('catchword.recent.veryhard')).toBe(null);
@@ -208,10 +241,13 @@ describe('migrateRecentToBags (v8, spec 5.6.1 ⑦)', () => {
     const b56 = JSON.parse(store.getItem('catchword.bag.5-6')!);
     expect(b56.used.slice().sort()).toEqual([w56[0]!.id, w56[1]!.id].sort());
     expect(b56.recent).toEqual([w56[0]!.id, w56[1]!.id]);
-    const bvh = JSON.parse(store.getItem('catchword.bag.veryhard')!);
-    // Very Hard 더미에는 Very Hard 단어만(cat은 Very Hard 풀에 없음)
-    expect(bvh.used.slice().sort()).toEqual([idOf('zebra'), idOf('frog')].sort());
-    expect(bvh.recent).toEqual([idOf('zebra'), idOf('frog')]);
+    // v9: Very Hard 단어는 제 더미(중학 vh-mid / 심화 vh-adv)로(cat은 Very Hard 풀에 없음)
+    const bmid = JSON.parse(store.getItem('catchword.bag.vh-mid')!);
+    expect(bmid.used.slice().sort()).toEqual([idOf('zebra'), idOf('frog')].sort());
+    expect(bmid.recent).toEqual([idOf('zebra'), idOf('frog')]);
+    const badv = JSON.parse(store.getItem('catchword.bag.vh-adv')!);
+    expect(badv).toEqual({ v: 1, used: [idOf('goat')], recent: [idOf('goat')] });
+    expect(store.getItem('catchword.bag.veryhard')).toBe(null);
     // BagStore로 읽으면 남은 수가 줄어 있다
     const bs = new BagStore(POOLS, { persist: true });
     expect(bs.load('3-4').used.length).toBe(2);
@@ -220,12 +256,12 @@ describe('migrateRecentToBags (v8, spec 5.6.1 ⑦)', () => {
   it('이미 있는 catchword.bag.*는 그대로 두고 옛 키는 지운다', () => {
     const existing = JSON.stringify({ v: 1, used: [idOf('frog')], recent: [] });
     store.setItem('catchword.bag.3-4', JSON.stringify({ v: 1, used: [], recent: [] }));
-    store.setItem('catchword.bag.veryhard', existing);
+    store.setItem('catchword.bag.vh-mid', existing);
     store.setItem('catchword.recent', JSON.stringify(['cat', 'dog']));
     store.setItem('catchword.recent.veryhard', JSON.stringify(['zebra']));
     migrateRecentToBags(POOLS);
     expect(store.getItem('catchword.bag.3-4')).toBe(JSON.stringify({ v: 1, used: [], recent: [] }));
-    expect(store.getItem('catchword.bag.veryhard')).toBe(existing);
+    expect(store.getItem('catchword.bag.vh-mid')).toBe(existing);
     expect(store.getItem('catchword.bag.5-6')).toBe(null);
     expect(store.getItem('catchword.recent')).toBe(null);
     expect(store.getItem('catchword.recent.veryhard')).toBe(null);
@@ -237,5 +273,68 @@ describe('migrateRecentToBags (v8, spec 5.6.1 ⑦)', () => {
     store.setItem('catchword.recent', '{broken');
     migrateRecentToBags(POOLS);
     expect([...store.m.keys()]).toEqual([]);
+  });
+});
+
+describe('migrateVeryHardBag (v9, spec 5.6.1 ⑦-2)', () => {
+  it('옛 catchword.bag.veryhard의 used·recent → vh-mid·vh-adv로 나뉨(순서 유지), 옛 키 지움, 모르는 id 버림', () => {
+    // used: 중학·심화가 섞인 낸 순서, recent: 새것이 앞
+    const used = [vhMidIds[3]!, vhAdvIds[0]!, 'vh-gone-99', vhMidIds[0]!, vhAdvIds[5]!, vhMidIds[10]!];
+    const recent = [vhMidIds[10]!, vhAdvIds[5]!, 'cat-01', vhMidIds[0]!];
+    store.setItem('catchword.bag.veryhard', JSON.stringify({ v: 1, used, recent }));
+    migrateVeryHardBag(POOLS);
+    expect(store.getItem('catchword.bag.veryhard')).toBe(null);
+    expect(JSON.parse(store.getItem('catchword.bag.vh-mid')!)).toEqual({
+      v: 1,
+      used: [vhMidIds[3], vhMidIds[0], vhMidIds[10]],
+      recent: [vhMidIds[10], vhMidIds[0]],
+    });
+    expect(JSON.parse(store.getItem('catchword.bag.vh-adv')!)).toEqual({ v: 1, used: [vhAdvIds[0], vhAdvIds[5]], recent: [vhAdvIds[5]] });
+    // BagStore로 읽으면 남은 수: 중학 71 − 3, 심화 48 − 2
+    const bs = new BagStore(POOLS, { persist: true });
+    expect(71 - bs.load('vh-mid').used.length).toBe(68);
+    expect(48 - bs.load('vh-adv').used.length).toBe(46);
+  });
+
+  it('옛 더미가 풀 전체(94)였어도 새 문항 25개는 "아직 안 낸 것"이 된다', () => {
+    const old94 = veryhard.slice(0, 94).map((q) => q.id);
+    store.setItem('catchword.bag.veryhard', JSON.stringify({ v: 1, used: old94, recent: old94.slice(-30).reverse() }));
+    migrateVeryHardBag(POOLS);
+    const mid = JSON.parse(store.getItem('catchword.bag.vh-mid')!);
+    const adv = JSON.parse(store.getItem('catchword.bag.vh-adv')!);
+    expect(mid.used.length + adv.used.length).toBe(94);
+    expect(119 - 94).toBe(25);
+    expect(mid.recent.length + adv.recent.length).toBe(30);
+  });
+
+  it('새 키가 하나라도 있으면 옮기지 않고 옛 키만 지운다', () => {
+    const keep = JSON.stringify({ v: 1, used: [vhAdvIds[1]], recent: [] });
+    store.setItem('catchword.bag.vh-adv', keep);
+    store.setItem('catchword.bag.veryhard', JSON.stringify({ v: 1, used: [vhMidIds[0]], recent: [] }));
+    migrateVeryHardBag(POOLS);
+    expect(store.getItem('catchword.bag.veryhard')).toBe(null);
+    expect(store.getItem('catchword.bag.vh-mid')).toBe(null);
+    expect(store.getItem('catchword.bag.vh-adv')).toBe(keep);
+  });
+
+  it('옛 값이 망가졌으면 옮기지 않고 지운다, 옛 키가 없으면 아무것도 하지 않는다', () => {
+    for (const bad of ['{broken', JSON.stringify({ v: 2, used: [], recent: [] }), JSON.stringify({ v: 1, used: 'x', recent: [] })]) {
+      store.m.clear();
+      store.setItem('catchword.bag.veryhard', bad);
+      migrateVeryHardBag(POOLS);
+      expect([...store.m.keys()]).toEqual([]);
+    }
+    store.m.clear();
+    migrateVeryHardBag(POOLS);
+    expect([...store.m.keys()]).toEqual([]);
+  });
+
+  it('persist 끔(seed 모드)이면 App이 부르지 않는다 — 함수 자체는 막힌 저장소에서도 오류가 없다', () => {
+    g.window = {
+      get localStorage(): never {
+        throw new Error('blocked');
+      },
+    };
+    expect(() => migrateVeryHardBag(POOLS)).not.toThrow();
   });
 });

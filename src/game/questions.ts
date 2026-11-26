@@ -1,9 +1,10 @@
-// spec 5.6: 문제마다 오답 카드 고르기와 한 판의 계획. 순수. 정답은 섞은 카드 더미(game/bag.ts, spec 5.6.1 v8)가 뽑아 넘겨준다.
+// spec 5.6: 문제마다 오답 카드 고르기와 한 판의 계획. 순수. 정답은 섞은 카드 더미(game/bag.ts, spec 5.6.1 v8·v9)가 뽑아 넘겨준다.
+// v9: 오답 풀은 정답 문항의 수준으로 정한다(5.6 표) — 한 단계 위 문제의 오답은 정답과 같은 수준의 풀에서.
 import { GAME } from '../config.ts';
 import { clueMentions } from '../data/words.ts';
 import { fallMsFor, stageFor, type Difficulty } from './difficulty.ts';
 import { shuffle, type Rng } from './rng.ts';
-import type { BandChoice, Question, QuestionPlan } from './types.ts';
+import type { BandChoice, Question, QuestionLevel, QuestionPlan } from './types.ts';
 
 export { stageFor };
 
@@ -107,7 +108,7 @@ export function pickDistractors(
   return chosen.length >= count ? chosen.slice(0, count) : null;
 }
 
-/** 한 판의 계획(넘겨받은 정답 + 문제마다 카드·지연·떨어지는 시간). 난이도가 단계(카드 수·같은 주제 수·시간)를 정한다(spec 5.3) */
+/** 한 판의 계획(넘겨받은 정답 + 문제마다 카드·지연·떨어지는 시간) — 오답은 한 풀(all, 학년군)에서. 난이도가 단계를 정한다(spec 5.3) */
 export function buildPlans(
   all: readonly Question[],
   band: BandChoice,
@@ -117,19 +118,47 @@ export function buildPlans(
 ): QuestionPlan[] {
   const avoid = avoidIndex(all);
   const dPool = distractorPool(all, band);
-  return answers.map((answer, i) => {
-    const stage = stageFor(i + 1, difficulty);
-    const distractors = pickDistractors(answer, dPool, stage.cards - 1, stage.sameTopicDistractors, rng, avoid);
-    if (!distractors) throw new Error(`not enough distractors for ${answer.word}`);
-    const options = shuffle(rng, [answer, ...distractors]);
-    const delaysMs = shuffle(rng, GAME.START_DELAYS_MS.slice(0, stage.cards));
-    return { answer, options, stage, delaysMs, fallMs: fallMsFor(answer, stage) };
-  });
+  return answers.map((answer, i) => planOne(answer, i, difficulty, rng, dPool, avoid, 'base'));
+}
+
+function planOne(
+  answer: Question,
+  i: number,
+  difficulty: Difficulty,
+  rng: Rng,
+  dPool: readonly Question[],
+  avoid: Map<string, Set<string>>,
+  level: QuestionLevel,
+): QuestionPlan {
+  const stage = stageFor(i + 1, difficulty);
+  const distractors = pickDistractors(answer, dPool, stage.cards - 1, stage.sameTopicDistractors, rng, avoid);
+  if (!distractors) throw new Error(`not enough distractors for ${answer.word}`);
+  const options = shuffle(rng, [answer, ...distractors]);
+  const delaysMs = shuffle(rng, GAME.START_DELAYS_MS.slice(0, stage.cards));
+  return { answer, options, stage, delaysMs, fallMs: fallMsFor(answer, stage, difficulty), level };
 }
 
 /**
- * 한 판의 계획 — 난이도에 따라 풀을 고른다(spec 5.3.1·5.6 v4).
- * Very Hard면 학년군을 무시하고 Very Hard 풀(부록 D)에서만 오답을 고른다(정답은 veryhard 더미에서). 그 밖에는 부록 A 풀과 학년군.
+ * 정답 문항의 오답 풀(spec 5.6 표, v9):
+ * - vh 문항(Normal·Hard의 한 단계 위 중학, Very Hard 전부) → Very Hard 풀 전체
+ * - 5~6 문항인데 학년군 3-4(한 단계 위) → 5~6 문항만
+ * - 그 밖(3~4 문항, 학년군 5-6·all의 5~6 문항) → 지금 그대로(distractorPool: 3-4면 3~4만, 5-6·all이면 부록 A 전부)
+ */
+export function distractorPoolFor(
+  answer: Question,
+  band: BandChoice,
+  pools: { main: readonly Question[]; veryhard: readonly Question[] },
+): readonly Question[] {
+  if (answer.band === 'vh') return pools.veryhard;
+  if (answer.band === '5-6' && band === '3-4') return pools.main.filter((q) => q.band === '5-6');
+  return distractorPool(pools.main, band);
+}
+
+/**
+ * 한 판의 계획(spec 5.3.1·5.6, v9). 정답 문항마다 오답 풀을 수준으로 고른다(distractorPoolFor).
+ * Very Hard는 학년군을 무시하고(정답이 모두 vh 문항) Very Hard 풀에서만. avoid 표는 그 오답 풀 안에서 만든다.
+ * levels: 문제마다 'base' | 'up'(없으면 모두 'base'). 오답 고르기·카드·지연은 문제 차례대로 같은 rng로 이어서 쓴다
+ * (Easy는 v8의 buildPlans(main, band, …)와 rng 사용까지 같다).
  */
 export function buildGamePlans(
   pools: { main: readonly Question[]; veryhard: readonly Question[] },
@@ -137,7 +166,15 @@ export function buildGamePlans(
   difficulty: Difficulty,
   rng: Rng,
   answers: readonly Question[],
+  levels?: readonly QuestionLevel[],
 ): QuestionPlan[] {
-  if (difficulty === 'veryhard') return buildPlans(pools.veryhard, 'all', difficulty, rng, answers);
-  return buildPlans(pools.main, band, difficulty, rng, answers);
+  const avoidMain = avoidIndex(pools.main);
+  const avoidVh = avoidIndex(pools.veryhard);
+  const cache = new Map<string, readonly Question[]>();
+  return answers.map((answer, i) => {
+    const key = answer.band === 'vh' ? 'vh' : answer.band === '5-6' && band === '3-4' ? 'up56' : `main:${band}`;
+    let dPool = cache.get(key);
+    if (!dPool) cache.set(key, (dPool = distractorPoolFor(answer, band, pools)));
+    return planOne(answer, i, difficulty, rng, dPool, answer.band === 'vh' ? avoidVh : avoidMain, levels?.[i] ?? 'base');
+  });
 }

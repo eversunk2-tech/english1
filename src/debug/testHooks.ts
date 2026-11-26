@@ -52,6 +52,8 @@ export interface TestState {
   blockedRequests: number;
   cameraActive: boolean;
   clueInfo: { lines: number; fontPx: number; height: number; bandH: number };
+  /** v9: 이번 판의 문제별 계획 — 정답 단어·문항 band·수준(base/up)·떨어지는 시간·카드 수(spec 12.2 v9) */
+  plans: { word: string; band: string; level: 'base' | 'up'; fallMs: number; cards: number }[];
   /** v8: 이번 판이 쓰는 더미, 더미마다 남은 수·풀 크기, 저장 여부(seed 모드면 false) (spec 5.6.1·12.2) */
   bag: { names: BagName[]; remaining: Record<BagName, number>; sizes: Record<BagName, number>; persist: boolean };
 }

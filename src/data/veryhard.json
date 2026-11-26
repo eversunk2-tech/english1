@@ -141,6 +141,30 @@
       "base": null
     },
     {
+      "id": "vh-food-08",
+      "word": "corn",
+      "band": "vh",
+      "topic": "food",
+      "ko": "옥수수",
+      "clue": "Small yellow seeds that grow on a tall plant.",
+      "avoid": [
+        "wheat"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-food-09",
+      "word": "wheat",
+      "band": "vh",
+      "topic": "food",
+      "ko": "밀",
+      "clue": "We make bread from this plant. It grows in fields.",
+      "avoid": [
+        "corn"
+      ],
+      "base": null
+    },
+    {
       "id": "vh-body-01",
       "word": "shoulder",
       "band": "vh",
@@ -217,6 +241,36 @@
       "topic": "body",
       "ko": "엄지손가락",
       "clue": "The short, thick finger on your hand.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-09",
+      "word": "chin",
+      "band": "vh",
+      "topic": "body",
+      "ko": "턱",
+      "clue": "The bottom part of your face, below your mouth.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-10",
+      "word": "heel",
+      "band": "vh",
+      "topic": "body",
+      "ko": "발뒤꿈치",
+      "clue": "The back part of your foot.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-11",
+      "word": "beard",
+      "band": "vh",
+      "topic": "body",
+      "ko": "턱수염",
+      "clue": "Some men grow this hair on their face.",
       "avoid": [],
       "base": null
     },
@@ -315,6 +369,36 @@
       "base": null
     },
     {
+      "id": "vh-people-10",
+      "word": "author",
+      "band": "vh",
+      "topic": "people",
+      "ko": "작가",
+      "clue": "This person writes books and stories.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-11",
+      "word": "mayor",
+      "band": "vh",
+      "topic": "people",
+      "ko": "시장",
+      "clue": "This person is the leader of a city.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-12",
+      "word": "nephew",
+      "band": "vh",
+      "topic": "people",
+      "ko": "조카",
+      "clue": "The son of your brother or sister.",
+      "avoid": [],
+      "base": null
+    },
+    {
       "id": "vh-school-01",
       "word": "dictionary",
       "band": "vh",
@@ -390,6 +474,26 @@
       "base": null
     },
     {
+      "id": "vh-school-08",
+      "word": "geography",
+      "band": "vh",
+      "topic": "school",
+      "ko": "지리",
+      "clue": "In this subject, we learn about maps and countries.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-school-09",
+      "word": "biology",
+      "band": "vh",
+      "topic": "school",
+      "ko": "생물학",
+      "clue": "The science of plants, animals, and other living things.",
+      "avoid": [],
+      "base": null
+    },
+    {
       "id": "vh-home-01",
       "word": "furniture",
       "band": "vh",
@@ -436,7 +540,9 @@
       "topic": "home",
       "ko": "오븐",
       "clue": "We bake bread and cakes inside it.",
-      "avoid": [],
+      "avoid": [
+        "stove"
+      ],
       "base": null
     },
     {
@@ -471,6 +577,28 @@
       "ko": "사다리",
       "clue": "We climb it to reach high places.",
       "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-home-09",
+      "word": "soap",
+      "band": "vh",
+      "topic": "home",
+      "ko": "비누",
+      "clue": "We wash our hands with it. It makes bubbles.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-home-10",
+      "word": "stove",
+      "band": "vh",
+      "topic": "home",
+      "ko": "가스레인지, 난로",
+      "clue": "We cook food on top of it in the kitchen.",
+      "avoid": [
+        "oven"
+      ],
       "base": null
     },
     {
@@ -510,6 +638,16 @@
       "topic": "clothes",
       "ko": "교복, 제복",
       "clue": "The same clothes that all students in a school wear.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-clothes-05",
+      "word": "costume",
+      "band": "vh",
+      "topic": "clothes",
+      "ko": "의상, 분장 옷",
+      "clue": "Clothes for a play. You look like someone else.",
       "avoid": [],
       "base": null
     },
@@ -602,6 +740,38 @@
       "base": null
     },
     {
+      "id": "vh-nature-09",
+      "word": "cave",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "동굴",
+      "clue": "A big hole in a mountain. Bats live in it.",
+      "avoid": [
+        "tunnel"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-nature-10",
+      "word": "breeze",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "산들바람",
+      "clue": "A soft, cool wind on a nice day.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-nature-11",
+      "word": "horizon",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "수평선, 지평선",
+      "clue": "The line where the sky meets the sea.",
+      "avoid": [],
+      "base": null
+    },
+    {
       "id": "vh-place-01",
       "word": "hotel",
       "band": "vh",
@@ -668,7 +838,9 @@
       "topic": "place",
       "ko": "터널",
       "clue": "A long road under a mountain or the sea.",
-      "avoid": [],
+      "avoid": [
+        "cave"
+      ],
       "base": null
     },
     {
@@ -678,6 +850,26 @@
       "topic": "place",
       "ko": "미술관",
       "clue": "A place where people look at art.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-09",
+      "word": "statue",
+      "band": "vh",
+      "topic": "place",
+      "ko": "동상",
+      "clue": "A big model of a person, made of stone.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-10",
+      "word": "fountain",
+      "band": "vh",
+      "topic": "place",
+      "ko": "분수",
+      "clue": "Water shoots up from it in a park.",
       "avoid": [],
       "base": null
     },
@@ -736,6 +928,16 @@
       "base": null
     },
     {
+      "id": "vh-transport-06",
+      "word": "ferry",
+      "band": "vh",
+      "topic": "transport",
+      "ko": "여객선",
+      "clue": "A boat that carries people and cars across water.",
+      "avoid": [],
+      "base": null
+    },
+    {
       "id": "vh-music-01",
       "word": "instrument",
       "band": "vh",
@@ -752,7 +954,9 @@
       "topic": "music",
       "ko": "오케스트라",
       "clue": "A large group of people playing music together.",
-      "avoid": [],
+      "avoid": [
+        "choir"
+      ],
       "base": null
     },
     {
@@ -762,6 +966,28 @@
       "topic": "music",
       "ko": "리듬",
       "clue": "The beat in music that makes you move.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-music-04",
+      "word": "choir",
+      "band": "vh",
+      "topic": "music",
+      "ko": "합창단",
+      "clue": "A group of people who sing songs together.",
+      "avoid": [
+        "orchestra"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-music-05",
+      "word": "microphone",
+      "band": "vh",
+      "topic": "music",
+      "ko": "마이크",
+      "clue": "You speak into it to make your voice louder.",
       "avoid": [],
       "base": null
     },
@@ -792,6 +1018,16 @@
       "topic": "time",
       "ko": "기념일",
       "clue": "The same date every year when we remember something.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-time-04",
+      "word": "decade",
+      "band": "vh",
+      "topic": "time",
+      "ko": "10년",
+      "clue": "Ten years. One century has ten of these.",
       "avoid": [],
       "base": null
     },
@@ -890,6 +1126,16 @@
       "base": null
     },
     {
+      "id": "vh-feeling-10",
+      "word": "loyal",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "충성스러운, 의리 있는",
+      "clue": "You never leave your friends or your team.",
+      "avoid": [],
+      "base": null
+    },
+    {
       "id": "vh-action-01",
       "word": "explain",
       "band": "vh",
@@ -982,6 +1228,26 @@
       "topic": "action",
       "ko": "번역하다",
       "clue": "You change words from English into Korean.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-action-10",
+      "word": "clap",
+      "band": "vh",
+      "topic": "action",
+      "ko": "박수 치다",
+      "clue": "You hit your hands together when you like a show.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-action-11",
+      "word": "nod",
+      "band": "vh",
+      "topic": "action",
+      "ko": "끄덕이다",
+      "clue": "You move your head up and down to say yes.",
       "avoid": [],
       "base": null
     }

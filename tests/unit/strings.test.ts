@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { CHALLENGE_LINES, DIFFICULTY_DESCS, DIFFICULTY_LABELS, ERROR_MESSAGES, PRIVACY_NOTICE, PRIVACY_VOICE_NOTICE, S, V2, VOICE_QUALITY_HINT, VERYHARD_BAND_NOTE, signed } from '../../src/ui/strings.ts';
+import { CHALLENGE_LINES, DIFFICULTY_LABELS, difficultyDesc, upLevelName, ERROR_MESSAGES, PRIVACY_NOTICE, PRIVACY_VOICE_NOTICE, S, V2, VOICE_QUALITY_HINT, VERYHARD_BAND_NOTE, signed } from '../../src/ui/strings.ts';
 
 const spec = readFileSync(resolve(__dirname, '..', '..', 'spec.md'), 'utf8');
 
@@ -67,7 +67,6 @@ describe('strings (spec 6·8.2·9)', () => {
 
   it('v2 난이도 문구가 spec 5.8·6.2와 글자 그대로 같다', () => {
     for (const d of ['easy', 'normal', 'hard', 'veryhard'] as const) {
-      expect(spec.includes(`"${DIFFICULTY_DESCS[d]}"`), DIFFICULTY_DESCS[d]).toBe(true);
       expect(spec.includes(`"${CHALLENGE_LINES[d]}"`), CHALLENGE_LINES[d]).toBe(true);
       expect(spec.includes(`\`${DIFFICULTY_LABELS[d].en}\`/`) || spec.includes(`/\`${DIFFICULTY_LABELS[d].en}\``)).toBe(true);
       expect(spec.includes(`\`${DIFFICULTY_LABELS[d].ko}\``), DIFFICULTY_LABELS[d].ko).toBe(true);
@@ -85,15 +84,60 @@ describe('strings (spec 6·8.2·9)', () => {
     expect(V2.wrongWords(['cat'])).toBe('오답: cat');
     expect(spec.includes('"오답: cat"')).toBe(true);
     expect(V2.resultCombo('5-6', 'hard')).toBe('5~6학년 · Hard');
-    // v4: Very Hard 결과 머리·안내·권유
-    expect(V2.resultCombo('3-4', 'veryhard')).toBe('Very Hard · 중학 단어');
-    expect(spec.includes('"Very Hard · 중학 단어"')).toBe(true);
+    // v4 → v9: Very Hard 결과 머리·안내·권유
+    expect(V2.resultCombo('3-4', 'veryhard')).toBe('Very Hard · 중학·심화 단어');
+    expect(V2.resultCombo('all', 'veryhard')).toBe('Very Hard · 중학·심화 단어');
+    expect(spec.includes('"Very Hard · 중학·심화 단어"')).toBe(true);
+    expect(VERYHARD_BAND_NOTE).toBe('Very Hard는 학년과 상관없이 중학·심화 단어로 나와요');
     expect(spec.includes(`"${VERYHARD_BAND_NOTE}"`)).toBe(true);
     expect(CHALLENGE_LINES.hard).toBe('다음엔 Very Hard에 도전해 볼까요?');
     expect(DIFFICULTY_LABELS.veryhard).toEqual({ en: 'Very Hard', ko: '매우 어려움' });
     expect(spec.includes('"5~6학년 · Hard"')).toBe(true);
+    expect(V2.resultCombo('3-4', 'normal')).toBe('3~4학년 · Normal');
     expect([S.great, S.goodJob, S.tryAgain, S.newRecord, S.startCard, S.score]).toEqual([
       'Great!', 'Good job!', 'Try again!', 'New record!', 'START', 'Score',
     ]);
+  });
+
+  it('v9 한 줄 설명이 spec 6.2와 글자 그대로 같고, Normal·Hard는 학년군(3~4·5~6·모두)에 따라 {위}가 바뀐다', () => {
+    // spec 6.2 v9 문장(테스트 안에 따로 적음)
+    const want = {
+      easy: '천천히 떨어져요. 처음 하는 친구에게 좋아요.',
+      normal: '조금 빨라요. {위} 단어가 2개 섞여 나와요.',
+      hard: '빠르고 헷갈려요. {위} 단어가 4개 나와요!',
+      veryhard: '중학·심화 단어가 아주 빠르게! 최고의 도전!',
+    } as const;
+    const up = { '3-4': '5~6학년', '5-6': '중학', all: '중학' } as const;
+    for (const d of ['easy', 'normal', 'hard', 'veryhard'] as const) {
+      expect(spec.includes(`"${want[d]}"`), want[d]).toBe(true);
+      for (const band of ['3-4', '5-6', 'all'] as const) {
+        expect(upLevelName(band)).toBe(up[band]);
+        expect(difficultyDesc(d, band)).toBe(want[d].replace('{위}', up[band]));
+      }
+    }
+    // spec 6.2의 예시 두 줄
+    expect(difficultyDesc('normal', '5-6')).toBe('조금 빨라요. 중학 단어가 2개 섞여 나와요.');
+    expect(spec.includes('"조금 빨라요. 중학 단어가 2개 섞여 나와요."')).toBe(true);
+    expect(difficultyDesc('hard', '3-4')).toBe('빠르고 헷갈려요. 5~6학년 단어가 4개 나와요!');
+    expect(spec.includes('"빠르고 헷갈려요. 5~6학년 단어가 4개 나와요!"')).toBe(true);
+    // 가장 긴 줄은 Normal·3~4 선택 28자(spec 18.8)
+    const lens = (['easy', 'normal', 'hard', 'veryhard'] as const).flatMap((d) => (['3-4', '5-6', 'all'] as const).map((b) => [...difficultyDesc(d, b)].length));
+    expect(Math.max(...lens)).toBe(28);
+    expect([...difficultyDesc('normal', '3-4')].length).toBe(28);
+  });
+
+  it('v9 디버그 더미 줄(spec 5.6.1 ⑨·18.8): base·up 더미를 ` · `로, 이름은 3-4·5-6·중학·심화', async () => {
+    const { bagDebugLine } = await import('../../src/debug/debugOverlay.ts');
+    const sizes = { '3-4': 143, '5-6': 87, 'vh-mid': 71, 'vh-adv': 48 };
+    expect(bagDebugLine({ names: ['5-6', 'vh-mid'], remaining: { '3-4': 143, '5-6': 57, 'vh-mid': 40, 'vh-adv': 48 }, sizes, persist: true })).toBe(
+      '문제 더미: 5-6 57/87 · 중학 40/71 남음',
+    );
+    expect(spec.includes('`문제 더미: 5-6 57/87 · 중학 40/71 남음`')).toBe(true);
+    expect(bagDebugLine({ names: ['vh-mid', 'vh-adv'], remaining: { '3-4': 0, '5-6': 0, 'vh-mid': 71, 'vh-adv': 44 }, sizes, persist: false })).toBe(
+      '문제 더미: 중학 71/71 · 심화 44/48 남음 · 저장 안 함',
+    );
+    expect(bagDebugLine({ names: ['3-4', '5-6'], remaining: { '3-4': 120, '5-6': 57, 'vh-mid': 71, 'vh-adv': 48 }, sizes, persist: true })).toBe(
+      '문제 더미: 3-4 120/143 · 5-6 57/87 남음',
+    );
   });
 });

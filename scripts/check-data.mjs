@@ -18,7 +18,8 @@ const extra = JSON.parse(read('src/data/vocab/clue-extra.json'));
 const pct = (x) => `${(x * 100).toFixed(1)}%`;
 let failed = false;
 
-const { errors, stats } = validateQuestions(data, vocab, extra);
+// v9: 부록 D를 함께 넘겨 Normal·Hard의 한 단계 위(중학) 문항까지 판 구성 흉내(V9)에 넣는다
+const { errors, stats } = validateQuestions(data, vocab, extra, vh);
 console.log("문항 검사 (spec 7.4 V1~V9·V5b·V5c, 7.6.5 V7'·V10)");
 console.log(`- 문항 ${stats.total}개 (3~4학년군 ${stats.band34}, 5~6학년군 ${stats.band56})`);
 console.log(
@@ -36,7 +37,7 @@ const r = validateVeryHard(vh, data, vocab, secondary, extra);
 console.log('');
 console.log('Very Hard 문항 검사 (spec 16.4 VH-V1~V10, V5b·V5c 포함)');
 console.log(`- 문항 ${r.stats.total}개, 주제 ${Object.keys(r.stats.topics).length}개`);
-console.log(`- 정답 중 심화(표시 없는 등급) 낱말 ${r.stats.advancedCount}/${r.stats.total}개 = ${pct(r.stats.advancedRatio)} (기준 30% 이하, VH-V10)`);
+console.log(`- Very Hard: 중학 ${r.stats.midCount} · 심화 ${r.stats.advancedCount}(${pct(r.stats.advancedRatio)}) (기준 심화 ≥ 40·중학 ≥ 60·심화 ≤ 45%, VH-V10 v9)`);
 console.log(
   `- 설명 낱말 ${r.stats.tokens}개: 초등 ${pct(r.stats.elementaryRatio)}, 중학 ${pct(r.stats.secondaryRatio)}, 허용 ${pct(r.stats.allowedRatio)}, 설명당 중학 낱말 최대 ${r.stats.maxSecondaryInClue}개`,
 );

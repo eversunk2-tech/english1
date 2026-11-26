@@ -1,11 +1,16 @@
-// spec 5.6.1 (v8) 섞은 카드 더미 — 12.1 bag.test ①~⑩. 기대값은 spec 문장에서 따로 세운다.
+// spec 5.6.1 (v8·v9) 섞은 카드 더미 — 12.1 bag.test ①~⑨ + v9 ①~⑤. 기대값은 spec 문장에서 따로 세운다.
 import { describe, expect, it } from 'vitest';
 import questionsJson from '../../src/data/questions.json';
 import veryhardJson from '../../src/data/veryhard.json';
+import extraJson from '../../src/data/vocab/clue-extra.json';
 import {
+  BAG_NAMES,
   bagPool,
-  bagsFor,
   drawAnswers,
+  drawGame,
+  drawSpecFor,
+  specBagNames,
+  type DrawSpec,
   emptyBag,
   remainingCount,
   returnUnshown,
@@ -13,18 +18,26 @@ import {
   type BagName,
   type BagState,
 } from '../../src/game/bag.ts';
+import { buildGamePlans, buildPlans } from '../../src/game/questions.ts';
 import { mulberry32, type Rng } from '../../src/game/rng.ts';
+import type { Difficulty } from '../../src/config.ts';
 import type { BandChoice, Question, QuestionsFile } from '../../src/game/types.ts';
 
 const main = (questionsJson as QuestionsFile).questions;
 const vh = (veryhardJson as QuestionsFile).questions;
-const POOLS = { main, veryhard: vh };
+const advanced = (extraJson as { veryhardAdvanced: string[] }).veryhardAdvanced;
+const POOLS = { main, veryhard: vh, advanced };
+const advSet = new Set(advanced);
 const P: Record<BagName, Question[]> = {
   '3-4': main.filter((q) => q.band === '3-4'),
   '5-6': main.filter((q) => q.band === '5-6'),
-  veryhard: vh.slice(),
+  'vh-mid': vh.filter((q) => !advSet.has(q.word)),
+  'vh-adv': vh.filter((q) => advSet.has(q.word)),
 };
-const SIZE: Record<BagName, number> = { '3-4': 143, '5-6': 87, veryhard: 94 };
+/** spec 5.6.1 ① 표(v9) */
+const SIZE: Record<BagName, number> = { '3-4': 143, '5-6': 87, 'vh-mid': 71, 'vh-adv': 48 };
+/** v8의 bagsFor(Easy/Normal/Hard 부분) — 학년군의 기본 더미(테스트 안에 따로 적음) */
+const v8BagsFor = (band: BandChoice): BagName[] => (band === 'all' ? ['3-4', '5-6'] : [band]);
 const COOL = 30;
 const SEEDS = 200;
 
@@ -42,9 +55,15 @@ function play(states: States, names: readonly BagName[], rng: Rng): string[] {
 }
 
 describe('bag (spec 5.6.1)', () => {
-  it('풀 크기: 3-4 143, 5-6 87, veryhard 94 (bagPool)', () => {
-    for (const n of ['3-4', '5-6', 'veryhard'] as BagName[]) expect(bagPool(n, POOLS).length).toBe(SIZE[n]);
-    expect(bagPool('5-6', POOLS).map((q) => q.id)).toEqual(P['5-6'].map((q) => q.id));
+  it('v9 ① BAG_NAMES·풀 크기: 3-4 143, 5-6 87, vh-mid 71, vh-adv 48 (bagPool, 데이터 파일 순서)', () => {
+    expect(BAG_NAMES).toEqual(['3-4', '5-6', 'vh-mid', 'vh-adv']);
+    for (const n of BAG_NAMES) {
+      expect(bagPool(n, POOLS).length).toBe(SIZE[n]);
+      expect(bagPool(n, POOLS).map((q) => q.id)).toEqual(P[n].map((q) => q.id));
+    }
+    // 네 더미는 서로 겹치지 않고 349문항 전부
+    const all = BAG_NAMES.flatMap((n) => P[n].map((q) => q.id));
+    expect(new Set(all).size).toBe(143 + 87 + 71 + 48);
   });
 
   it('① 5~6 경계: 8판 80개 모두 다름, 9판 = 남은 7개 전부 + 6~8판에 없는 새 3개, used·recent', () => {
@@ -73,8 +92,8 @@ describe('bag (spec 5.6.1)', () => {
     }
   });
 
-  it('② 바퀴 성질: 혼자 노는 더미 3종 × 60판 — 풀 크기씩 끊은 구간이 풀 전체를 정확히 한 번씩', () => {
-    for (const name of ['3-4', '5-6', 'veryhard'] as BagName[]) {
+  it('② 바퀴 성질: 혼자 노는 더미 4종 × 60판 — 풀 크기씩 끊은 구간이 풀 전체를 정확히 한 번씩', () => {
+    for (const name of BAG_NAMES) {
       const all = P[name].map((q) => q.id).sort();
       for (let seed = 1; seed <= SEEDS; seed++) {
         const rng = mulberry32(seed);
@@ -104,7 +123,7 @@ describe('bag (spec 5.6.1)', () => {
 
   it('③ 간격: 혼자 노는 더미 60판과 학년군을 무작위로 바꾸는 80판 — 같은 id 사이 판 차 ≥ 4, 한 판 안 중복 0', () => {
     for (let seed = 1; seed <= SEEDS; seed++) {
-      for (const name of ['3-4', '5-6', 'veryhard'] as BagName[]) {
+      for (const name of BAG_NAMES) {
         const rng = mulberry32(seed);
         const st: States = {};
         const games: string[][] = [];
@@ -117,7 +136,7 @@ describe('bag (spec 5.6.1)', () => {
       const games: string[][] = [];
       for (let g = 0; g < 80; g++) {
         const band = (['3-4', '5-6', 'all'] as BandChoice[])[Math.floor(pick() * 3)]!;
-        const names = bagsFor(band, 'normal');
+        const names = v8BagsFor(band);
         const ids = play(st, names, rng);
         expect(ids.length).toBe(10);
         games.push(ids);
@@ -135,7 +154,7 @@ describe('bag (spec 5.6.1)', () => {
       for (let g = 0; g < 5; g++) play(st, ['3-4'], rng);
       const used34 = st['3-4']!.used.slice();
       expect(used34.length).toBe(50);
-      const g6 = play(st, bagsFor('all', 'easy'), rng);
+      const g6 = play(st, drawSpecFor('all', 'easy').base, rng);
       expect(g6.filter((id) => used34.includes(id))).toEqual([]);
       const new34 = g6.filter((id) => band34.has(id));
       const new56 = g6.filter((id) => band56.has(id));
@@ -178,8 +197,8 @@ describe('bag (spec 5.6.1)', () => {
     // 문항의 band를 5-6 → 3-4로 옮기면 5-6 used에서 빠지고 3-4에서는 남은 문항
     const moved = { ...P['5-6'][0]!, band: '3-4' as const };
     const main2 = main.map((q) => (q.id === moved.id ? moved : q));
-    const p34 = bagPool('3-4', { main: main2, veryhard: vh });
-    const p56 = bagPool('5-6', { main: main2, veryhard: vh });
+    const p34 = bagPool('3-4', { main: main2, veryhard: vh, advanced });
+    const p56 = bagPool('5-6', { main: main2, veryhard: vh, advanced });
     const raw56 = JSON.stringify({ v: 1, used: [moved.id, ids56[1]], recent: [moved.id] });
     const s56 = sanitizeBag(raw56, p56.map((q) => q.id));
     expect(s56.used).toEqual([ids56[1]]);
@@ -270,12 +289,113 @@ describe('bag (spec 5.6.1)', () => {
     }
   });
 
-  it('⑩ bagsFor: veryhard → [veryhard](학년 무시), all → [3-4, 5-6], 세 난이도는 같은 더미', () => {
-    for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) expect(bagsFor(band, 'veryhard')).toEqual(['veryhard']);
-    for (const d of ['easy', 'normal', 'hard'] as const) {
-      expect(bagsFor('all', d)).toEqual(['3-4', '5-6']);
-      expect(bagsFor('3-4', d)).toEqual(['3-4']);
-      expect(bagsFor('5-6', d)).toEqual(['5-6']);
+  it('v9 ② drawSpecFor 표(5.6.1 ①-2): Easy 3조합 · Normal 3 · Hard 3 · Very Hard(학년 무시)', () => {
+    const base: Record<BandChoice, BagName[]> = { '3-4': ['3-4'], '5-6': ['5-6'], all: ['3-4', '5-6'] };
+    const up: Record<BandChoice, BagName[]> = { '3-4': ['5-6'], '5-6': ['vh-mid'], all: ['vh-mid'] };
+    for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
+      expect(drawSpecFor(band, 'easy')).toEqual({ base: base[band], up: [], upCount: 0, upFrom: null });
+      expect(drawSpecFor(band, 'normal')).toEqual({ base: base[band], up: up[band], upCount: 2, upFrom: 7 });
+      expect(drawSpecFor(band, 'hard')).toEqual({ base: base[band], up: up[band], upCount: 4, upFrom: 4 });
+      expect(drawSpecFor(band, 'veryhard')).toEqual({ base: ['vh-mid'], up: ['vh-adv'], upCount: 4, upFrom: 4 });
+    }
+    expect(specBagNames(drawSpecFor('all', 'hard'))).toEqual(['3-4', '5-6', 'vh-mid']);
+    expect(specBagNames(drawSpecFor('3-4', 'normal'))).toEqual(['3-4', '5-6']);
+    expect(specBagNames(drawSpecFor('5-6', 'easy'))).toEqual(['5-6']);
+  });
+
+  /** 한 판 뽑기(빈 더미 또는 states에서) */
+  function game(states: States, spec: DrawSpec, rng: Rng) {
+    const r = drawGame(spec, (name) => ({ name, pool: P[name], state: states[name] ?? emptyBag() }), rng);
+    for (const n of specBagNames(spec)) states[n] = r.states[n]!;
+    return r;
+  }
+  const COMBOS: [BandChoice, Difficulty][] = [
+    ['3-4', 'normal'], ['5-6', 'normal'], ['all', 'normal'],
+    ['3-4', 'hard'], ['5-6', 'hard'], ['all', 'hard'],
+    ['all', 'veryhard'],
+  ];
+
+  it('v9 ③ 한 판: up 문항 수 = upCount, 자리가 모두 ≥ upFrom, up 문항은 up 더미에서·base는 base 더미에서, 중복 0, 같은 씨앗 = 같은 결과', () => {
+    const want: Record<Difficulty, [number, number]> = { easy: [0, 0], normal: [2, 7], hard: [4, 4], veryhard: [4, 4] };
+    for (const [band, d] of [...COMBOS, ['3-4', 'easy'], ['5-6', 'easy'], ['all', 'easy']] as [BandChoice, Difficulty][]) {
+      const spec = drawSpecFor(band, d);
+      const [upCount, upFrom] = want[d];
+      const upIds = new Set(spec.up.flatMap((n) => P[n].map((q) => q.id)));
+      const baseIds = new Set(spec.base.flatMap((n) => P[n].map((q) => q.id)));
+      const seen = new Set<number>();
+      for (let seed = 1; seed <= SEEDS; seed++) {
+        const r = game({}, spec, mulberry32(seed));
+        expect(r.answers.length).toBe(10);
+        expect(r.levels.length).toBe(10);
+        expect(new Set(r.answers.map((q) => q.id)).size).toBe(10);
+        const ups = r.levels.map((l, i) => (l === 'up' ? i + 1 : 0)).filter((x) => x > 0);
+        expect(ups.length).toBe(upCount);
+        for (const no of ups) {
+          expect(no).toBeGreaterThanOrEqual(upFrom);
+          seen.add(no);
+        }
+        r.answers.forEach((q, i) => expect(r.levels[i] === 'up' ? upIds.has(q.id) : baseIds.has(q.id), `${band} ${d} ${i}`).toBe(true));
+        // 같은 씨앗 = 같은 결과
+        const again = game({}, spec, mulberry32(seed));
+        expect(again.answers.map((q) => q.id)).toEqual(r.answers.map((q) => q.id));
+        expect(again.levels).toEqual(r.levels);
+      }
+      // 자리는 rng로 무작위 — upFrom~10번 모두 한 번은 나온다
+      if (upCount > 0) expect([...seen].sort((a, b) => a - b)).toEqual(Array.from({ length: 11 - upFrom }, (_, i) => upFrom + i));
     }
   });
+
+  it('v9 ④ 조합을 판마다 무작위로 바꾸는 80판 · 조합마다 하나만 60판 — 같은 단어 사이 판 차 ≥ 4(사이에 3판 이상), 한 판 안 중복 0', () => {
+    for (let seed = 1; seed <= 60; seed++) {
+      const rng = mulberry32(seed);
+      const pick = mulberry32(seed + 7000);
+      const st: States = {};
+      const games: string[][] = [];
+      for (let g = 0; g < 80; g++) {
+        const [band, d] = COMBOS[Math.floor(pick() * COMBOS.length)]!;
+        const r = game(st, drawSpecFor(band, d), rng);
+        expect(r.answers.length).toBe(10);
+        games.push(r.answers.map((q) => q.id));
+      }
+      expectGap(games, `mixed v9 seed ${seed}`);
+    }
+    for (const [band, d] of COMBOS) {
+      for (let seed = 1; seed <= 40; seed++) {
+        const rng = mulberry32(seed);
+        const st: States = {};
+        const games: string[][] = [];
+        for (let g = 0; g < 60; g++) games.push(game(st, drawSpecFor(band, d), rng).answers.map((q) => q.id));
+        expectGap(games, `${band} ${d} seed ${seed}`);
+      }
+    }
+  });
+
+  it('v9 ⑤ Easy는 v8과 같은 결과: 같은 씨앗·같은 더미 상태에서 v8 bagsFor + drawAnswers + buildPlans와 정답·상태·카드·rng 뒤 값까지 같다', () => {
+    for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
+      for (let seed = 1; seed <= 20; seed++) {
+        const st8: States = {};
+        const st9: States = {};
+        const rng8 = mulberry32(seed);
+        const rng9 = mulberry32(seed);
+        // 같은 더미 상태로 이어지는 16판(3-4는 15판째, 5-6은 9판째에 바퀴 경계)
+        for (let g = 0; g < 16; g++) {
+          const names = v8BagsFor(band);
+          const d8 = drawAnswers(names.map((name) => ({ name, pool: P[name], state: st8[name] ?? emptyBag() })), 10, rng8);
+          for (const n of names) st8[n] = d8.states[n]!;
+          const plans8 = buildPlans(main, band, 'easy', rng8, d8.answers);
+
+          const d9 = game(st9, drawSpecFor(band, 'easy'), rng9);
+          const plans9 = buildGamePlans(POOLS, band, 'easy', rng9, d9.answers, d9.levels);
+
+          expect(d9.answers.map((q) => q.id)).toEqual(d8.answers.map((q) => q.id));
+          expect(d9.levels.every((l) => l === 'base')).toBe(true);
+          expect(st9).toEqual(st8);
+          expect(plans9.map((p) => [p.options.map((q) => q.word), p.delaysMs, p.fallMs, p.stage.cards])).toEqual(
+            plans8.map((p) => [p.options.map((q) => q.word), p.delaysMs, p.fallMs, p.stage.cards]),
+          );
+        }
+        expect(rng9()).toBe(rng8());
+      }
+    }
+  }, 60_000);
 });
