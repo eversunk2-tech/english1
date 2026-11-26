@@ -42,6 +42,13 @@ function withQuestion(mut: (q: Question) => void, idx = 0): string[] {
   return validateQuestions(d, vocab, extra).errors;
 }
 
+/**
+ * 검사기(validateQuestions·validateVeryHard)를 통째로 다시 도는 묶음의 테스트별 시간 제한(vitest 기본 5초 대신).
+ * 근거: 배포 러너(run 45878021468 attempt 1)에서 이 묶음은 로컬보다 약 5.6배 느려 테스트 하나가 최대 2.7초(로컬 0.5초)였다.
+ * 30초면 러너 실측·추정의 3배 이상 여유. 검사 내용·위반 예시는 그대로다.
+ */
+const SLOW_TIMEOUT_MS = 30_000;
+
 describe('data (spec 7)', () => {
   it('validate.ts V1~V9 위반 0 (v9: 부록 D를 함께 넘겨 Normal·Hard 한 단계 위까지 판 구성 흉내)', () => {
     const r = validateQuestions(data, vocab, extra, vhData);
@@ -199,7 +206,7 @@ describe('data (spec 7)', () => {
       const errs = validateQuestions(d, vocab, extra).errors;
       expect(has(errs, 'V9')).toBe(true);
     });
-  });
+  }, SLOW_TIMEOUT_MS);
 
   describe('V5b(spec 7.4 v4): 정답의 어근(base 조각·파생 접사를 뗀 기본형)이 설명에 있으면 실패', () => {
     const has = (errs: string[], code: string): boolean => errs.some((e) => e.startsWith(code));
@@ -257,7 +264,7 @@ describe('data (spec 7)', () => {
       const i = data.questions.findIndex((q) => q.word === 'farmer');
       expect(has(withQuestion((q) => (q.clue = 'This person works on a farm.'), i), 'V5b')).toBe(true);
     });
-  });
+  }, SLOW_TIMEOUT_MS);
 
   describe('Very Hard(spec 16.4·부록 D·E)', () => {
     const vhRows = (): string[][] =>
@@ -390,7 +397,7 @@ describe('data (spec 7)', () => {
       expect(vrun(() => undefined).filter((e) => e.startsWith('VH-V10'))).toEqual([]);
       expect(has(vrun(() => undefined, { ...extra, veryhardAdvanced: [...(extra.veryhardAdvanced ?? []), 'volcano'] }), 'VH-V10')).toBe(true);
     });
-  });
+  }, SLOW_TIMEOUT_MS);
 
   it('토큰·기본형 규칙(spec 7.4)', () => {
     expect(tokenize("She is your father's wife.")).toEqual(['she', 'is', 'your', 'father', 'wife']);

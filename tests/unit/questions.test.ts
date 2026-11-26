@@ -30,20 +30,45 @@ const advSet = new Set(advanced);
 const POOLS = { main: all, veryhard: vh, advanced };
 
 /** v9: 빈 더미에서 게임과 같은 순서로 뽑아(drawSpecFor → drawGame) 같은 rng로 계획을 만든다(spec 5.6.1 ①-2) */
-function gamePlansOf(band: BandChoice, d: Difficulty, seed: number) {
+function freshGamePlansOf(band: BandChoice, d: Difficulty, seed: number) {
   const rng = mulberry32(seed);
   const spec = drawSpecFor(band, d);
   const { answers, levels } = drawGame(spec, (name) => ({ name, pool: bagPool(name, POOLS), state: emptyBag() }), rng);
   return buildGamePlans(POOLS, band, d, rng, answers, levels);
 }
 
+/**
+ * 같은 (학년군, 난이도, 씨앗)의 판은 이 파일 안에서 한 번만 만든다. 빈 더미 + 같은 씨앗이면 판이 같으므로(아래 "같은 씨앗 = 같은 판"이
+ * 캐시 없이 따로 확인) 검사 대상은 그대로이고, 같은 판을 여러 테스트가 되풀이해 만들던 시간만 줄인다(배포 러너 5초 제한 대응).
+ * 돌려받은 판은 어느 테스트도 바꾸지 않는다.
+ */
+const planCache = new Map<string, ReturnType<typeof freshGamePlansOf>>();
+function gamePlansOf(band: BandChoice, d: Difficulty, seed: number) {
+  const key = `${band}|${d}|${seed}`;
+  let plans = planCache.get(key);
+  if (!plans) {
+    plans = freshGamePlansOf(band, d, seed);
+    planCache.set(key, plans);
+  }
+  return plans;
+}
+
 /** spec 5.6 표(v9)를 테스트 안에서 따로: 정답 문항 → 오답 풀 */
+const POOL_56 = all.filter((q) => q.band === '5-6');
+const POOL_34 = all.filter((q) => q.band === '3-4');
 function expectedDistractorPool(answer: Question, band: BandChoice): Question[] {
   if (answer.band === 'vh') return vh;
-  if (answer.band === '5-6' && band === '3-4') return all.filter((q) => q.band === '5-6');
-  if (band === '3-4') return all.filter((q) => q.band === '3-4');
+  if (answer.band === '5-6' && band === '3-4') return POOL_56;
+  if (band === '3-4') return POOL_34;
   return all;
 }
+
+/**
+ * 무거운 테스트의 시간 제한(vitest 기본 5초 대신). 근거: 배포 러너(run 45878021468 attempt 1)에서 같은 테스트가 로컬(맥)보다
+ * 최대 약 5.6배 느렸다(예: bag ③ 1.6초 → 7.3초, questions easy·5-6 0.69초 → 3.5초). 이 값을 쓰는 테스트는 로컬 최대 약 1.1초
+ * (러너 추정 6~7초)라 30초면 러너 추정의 3배 이상 여유가 있다.
+ */
+const SLOW_TIMEOUT_MS = 30_000;
 
 describe('questions (spec 5.6)', () => {
   it('난이도별 문제 번호마다 단계(spec 5.3.2 표, v9)', () => {
@@ -54,6 +79,23 @@ describe('questions (spec 5.6)', () => {
       }
     }
   });
+
+  /**
+   * 같은 주제 오답 후보 수 — 정답 문항과 오답 풀(학년군으로 정해짐)만의 함수라 (학년군, 정답 id)마다 한 번만 센다.
+   * 세는 규칙은 그대로(같은 주제·다른 낱말·avoid 아님·설명에 안 나옴).
+   */
+  const sameAvailCache = new Map<string, number>();
+  function sameAvailOf(answer: Question, band: BandChoice, pool: Question[], av: Map<string, Set<string>>): number {
+    const key = `${band}|${answer.id}`;
+    let n = sameAvailCache.get(key);
+    if (n === undefined) {
+      n = pool.filter(
+        (q) => q.topic === answer.topic && q.word !== answer.word && !(av.get(answer.word)?.has(q.word) ?? false) && !clueMentions(answer.clue, q.word),
+      ).length;
+      sameAvailCache.set(key, n);
+    }
+    return n;
+  }
 
   /** 한 판 검사(spec 5.3.2·5.6·5.6.1 ①-2 v9) */
   function checkPlans(band: BandChoice, d: Difficulty, seed: number): void {
@@ -94,9 +136,7 @@ describe('questions (spec 5.6)', () => {
         expect(clueMentions(p.answer.clue, o.word)).toBe(false);
       }
       // 같은 주제 오답 수: 후보가 충분하면 정확히 stage 값(모자라면 다른 주제로 채움)
-      const sameAvail = pool.filter(
-        (q) => q.topic === p.answer.topic && q.word !== p.answer.word && !(av.get(p.answer.word)?.has(q.word) ?? false) && !clueMentions(p.answer.clue, q.word),
-      ).length;
+      const sameAvail = sameAvailOf(p.answer, band, pool, av);
       expect(ds.filter((o) => o.topic === p.answer.topic).length).toBe(Math.min(sameTopic, sameAvail));
     });
   }
@@ -105,7 +145,7 @@ describe('questions (spec 5.6)', () => {
   for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
     it(`${d} · 학년군 ${band}: 씨앗 150개 — 카드 수·같은 주제 오답 수 5.3.2대로, 한 단계 위 문제 수·자리, 10문제 중복 없음, 오답 풀은 정답 수준(5.6 표), avoid(양방향)·설명 속 단어 없음`, () => {
       for (let seed = 1; seed <= 150; seed++) checkPlans(band, d, seed);
-    });
+    }, SLOW_TIMEOUT_MS);
   }
 
   it('Very Hard: 학년 선택과 상관없이 Very Hard 풀에서만 정답·오답, 중학 6 + 심화 4(4~10번), 카드 4장, 같은 주제 오답 3/3/3', () => {
@@ -120,7 +160,7 @@ describe('questions (spec 5.6)', () => {
     const a = gamePlansOf('3-4', 'veryhard', 5).map((p) => p.options.map((o) => o.word).join());
     const b = gamePlansOf('5-6', 'veryhard', 5).map((p) => p.options.map((o) => o.word).join());
     expect(a).toEqual(b);
-  });
+  }, SLOW_TIMEOUT_MS);
 
   it('v9 오답 풀(5.6 표): 3~4 Hard의 5~6 정답이면 오답이 모두 5~6 문항, vh 정답이면 모두 Very Hard 풀, Easy는 부록 A만', () => {
     const vhWords = new Set(vh.map((q) => q.word));
@@ -142,7 +182,7 @@ describe('questions (spec 5.6)', () => {
     }
     expect(up56).toBe(400);
     expect(upVh).toBe(400);
-  });
+  }, SLOW_TIMEOUT_MS);
 
   it('오답의 주제는 가능한 한 서로 다르다(같은 주제 0개 단계)', () => {
     const plans = gamePlansOf('all', 'easy', 5);
@@ -153,8 +193,9 @@ describe('questions (spec 5.6)', () => {
   });
 
   it('같은 씨앗 = 같은 판', () => {
-    const a = gamePlansOf('all', 'hard', 99).map((p) => [p.level, ...p.options.map((o) => o.word)].join(','));
-    const b = gamePlansOf('all', 'hard', 99).map((p) => [p.level, ...p.options.map((o) => o.word)].join(','));
+    // 캐시 없이 두 번 따로 만든다
+    const a = freshGamePlansOf('all', 'hard', 99).map((p) => [p.level, ...p.options.map((o) => o.word)].join(','));
+    const b = freshGamePlansOf('all', 'hard', 99).map((p) => [p.level, ...p.options.map((o) => o.word)].join(','));
     expect(a).toEqual(b);
   });
 

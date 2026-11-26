@@ -54,6 +54,31 @@ function play(states: States, names: readonly BagName[], rng: Rng): string[] {
   return r.answers.map((q) => q.id);
 }
 
+/**
+ * 무거운 테스트의 시간 제한(vitest 기본 5초 대신). 근거: 배포 러너(run 45878021468 attempt 1)에서 같은 테스트가 로컬(맥)보다
+ * 최대 약 5.6배 느렸다(예: bag ③ 1.6초 → 7.3초, questions easy·5-6 0.69초 → 3.5초). 이 값을 쓰는 테스트는 로컬 최대 약 1.1초
+ * (러너 추정 6~7초)라 30초면 러너 추정의 3배 이상 여유가 있다.
+ */
+const SLOW_TIMEOUT_MS = 30_000;
+
+/**
+ * 혼자 노는 더미 하나를 빈 상태·mulberry32(seed)로 60판 이어 뽑은 결과. ②(바퀴)와 ③(간격)이 똑같은 60판을 각자 다시 뽑던 것을
+ * 한 번만 뽑아 함께 쓴다(배포 러너 5초 제한 대응). 뽑는 방법·씨앗은 두 테스트에 있던 것 그대로이고, 결과 배열은 어느 테스트도 바꾸지 않는다.
+ */
+const soloCache = new Map<string, string[][]>();
+function soloGames(name: BagName, seed: number): string[][] {
+  const key = `${name}|${seed}`;
+  let games = soloCache.get(key);
+  if (!games) {
+    const rng = mulberry32(seed);
+    const st: States = {};
+    games = [];
+    for (let g = 0; g < 60; g++) games.push(play(st, [name], rng));
+    soloCache.set(key, games);
+  }
+  return games;
+}
+
 describe('bag (spec 5.6.1)', () => {
   it('v9 ① BAG_NAMES·풀 크기: 3-4 143, 5-6 87, vh-mid 71, vh-adv 48 (bagPool, 데이터 파일 순서)', () => {
     expect(BAG_NAMES).toEqual(['3-4', '5-6', 'vh-mid', 'vh-adv']);
@@ -96,40 +121,37 @@ describe('bag (spec 5.6.1)', () => {
     for (const name of BAG_NAMES) {
       const all = P[name].map((q) => q.id).sort();
       for (let seed = 1; seed <= SEEDS; seed++) {
-        const rng = mulberry32(seed);
-        const st: States = {};
-        const seq: string[] = [];
-        for (let g = 0; g < 60; g++) seq.push(...play(st, [name], rng));
+        const seq: string[] = soloGames(name, seed).flat();
         const n = SIZE[name];
         for (let k = 0; (k + 1) * n <= seq.length; k++) {
           expect(seq.slice(k * n, (k + 1) * n).sort(), `${name} seed ${seed} 바퀴 ${k}`).toEqual(all);
         }
       }
     }
-  });
+  }, SLOW_TIMEOUT_MS);
 
-  /** 같은 id가 나온 판 번호 차가 늘 4 이상, 한 판 안 중복 0 */
+  /**
+   * 같은 id가 나온 판 번호 차가 늘 4 이상, 한 판 안 중복 0.
+   * 검사 내용은 그대로이고, id마다 expect를 부르던 것(③에서 약 64만 번)을 위반 목록을 모아 한 번 비교하는 것으로 바꿨다
+   * (배포 러너에서 5초 제한을 넘던 원인). 위반이 있으면 목록에 판 번호·id가 그대로 찍힌다.
+   */
   function expectGap(games: string[][], label: string): void {
     const last = new Map<string, number>();
+    const bad: string[] = [];
     games.forEach((g, i) => {
-      expect(new Set(g).size, `${label} 판 ${i}`).toBe(g.length);
+      if (new Set(g).size !== g.length) bad.push(`${label} 판 ${i}: 한 판 안 중복`);
       for (const id of g) {
         const prev = last.get(id);
-        if (prev !== undefined) expect(i - prev, `${label} ${id}`).toBeGreaterThanOrEqual(4);
+        if (prev !== undefined && i - prev < 4) bad.push(`${label} ${id}: 판 ${prev} → ${i} (차 ${i - prev} < 4)`);
         last.set(id, i);
       }
     });
+    expect(bad, label).toEqual([]);
   }
 
   it('③ 간격: 혼자 노는 더미 60판과 학년군을 무작위로 바꾸는 80판 — 같은 id 사이 판 차 ≥ 4, 한 판 안 중복 0', () => {
     for (let seed = 1; seed <= SEEDS; seed++) {
-      for (const name of BAG_NAMES) {
-        const rng = mulberry32(seed);
-        const st: States = {};
-        const games: string[][] = [];
-        for (let g = 0; g < 60; g++) games.push(play(st, [name], rng));
-        expectGap(games, `${name} seed ${seed}`);
-      }
+      for (const name of BAG_NAMES) expectGap(soloGames(name, seed), `${name} seed ${seed}`);
       const rng = mulberry32(seed + 1000);
       const pick = mulberry32(seed + 5000);
       const st: States = {};
@@ -143,7 +165,7 @@ describe('bag (spec 5.6.1)', () => {
       }
       expectGap(games, `mixed seed ${seed}`);
     }
-  });
+  }, SLOW_TIMEOUT_MS);
 
   it('④ "모두" 공유: 3-4로 5판 뒤 all 1판 — 3-4 used에 있던 id 0개, 뽑힌 문항은 제 학년군 더미 used에 더해짐', () => {
     const band34 = new Set(P['3-4'].map((q) => q.id));
@@ -368,7 +390,7 @@ describe('bag (spec 5.6.1)', () => {
         expectGap(games, `${band} ${d} seed ${seed}`);
       }
     }
-  });
+  }, SLOW_TIMEOUT_MS);
 
   it('v9 ⑤ Easy는 v8과 같은 결과: 같은 씨앗·같은 더미 상태에서 v8 bagsFor + drawAnswers + buildPlans와 정답·상태·카드·rng 뒤 값까지 같다', () => {
     for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
@@ -397,5 +419,7 @@ describe('bag (spec 5.6.1)', () => {
         expect(rng9()).toBe(rng8());
       }
     }
-  }, 60_000);
+    // 시간 제한: 로컬 약 5.6초, 배포 러너 실측 24.5초(run 45878021468 attempt 1)·14.5초(attempt 2) — 옛 60초는 2.4배뿐이라
+    // 러너 최악 추정(로컬 × 5.6 ≈ 31초)의 3배 이상인 120초로 올림. 씨앗 20개 × 학년군 3 × 16판은 그대로(바퀴 경계 두 곳을 씨앗마다 지남).
+  }, 120_000);
 });

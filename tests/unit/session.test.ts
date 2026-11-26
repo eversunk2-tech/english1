@@ -102,7 +102,8 @@ describe('session (spec 5.2~5.8)', () => {
         }
       }
     }
-  });
+    // 시간 제한: 로컬 약 0.7초, 배포 러너 실측 2.9초(run 45878021468 attempt 1) — 기본 5초는 1.7배뿐이라 3배 이상인 30초로.
+  }, 30_000);
 
   for (const d of ['easy', 'normal', 'hard', 'veryhard'] as Difficulty[]) {
     it(`${d}: 모두 첫 시도 정답 → 10/10, 점수 = 5.5 식(배율·빠르기·콤보), 문제별 떨어지는 시간 = fallMsFor`, () => {
