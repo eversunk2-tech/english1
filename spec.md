@@ -17,6 +17,7 @@
   - 2026-11-26 **Plan 수정 v3b**(Review 12절 반영, 지침 `docs/briefs/plan-fix-brief-v3b.md`, 사용자 결정 "모두 고치기"): 부록 A 6문항(forest·coat·hero·lazy·office·fever), 7.3·7.6.5 `source` 문구, 7.4 V5 보완, 13절 W4. 15절.
   - 2026-11-26 Plan v3 W1(지침 `docs/briefs/plan-fix-brief-v3.md`): 부록 A 본표를 v3 표(230행)로 바꿔 끼우고 부록 A-v3 절을 지움. v3 표시를 승인으로 정리, 문항 수 기준(0·1.2·5.3.3·7.2·12.1)을 230으로. 15절.
   - 2026-11-26 **Plan v4(Very Hard) — 사용자 승인(2026-11-26, "추천대로 승인")** (지침 `docs/briefs/plan-brief-v4-veryhard.md`와 그 덧붙임): Very Hard 모드, Easy/Normal/Hard 약간 빠르게, scientist 설명·V5b 제안 [추천]. 새 절 16, 부록 D(Very Hard 문항 94개)·부록 E(중학 권장 ** 낱말 목록). **기존 승인 값(5.3 표, 부록 A, 7.x 규칙)은 바꾸지 않았다** — 바꿀 값은 16절의 "전 → 후" 표에만 있다.
+  - 2026-11-26 **Plan v5(영어 목소리)**(지침 `docs/briefs/plan-brief-v5-voice.md`, 사용자 "고치기"): 5.9 목소리 고르기 규칙(5.9.1 새로), 11 파일, 12.1·12.2(E9)·12.4-12 테스트, 13 Y1~Y4, 부록 C 자료. 15절.
   - 2026-11-26 Plan 수정 v4b 덧붙임(Build 보고): V5c 문장 다듬음(길이 같음·끝 한 글자·초등 낱말·기능어 제외), Very Hard 7~10번 평균 4.36→4.38초로 5.3.3·16.2·16.1·14.3·v4 요약 수치 고침.
   - 2026-11-26 **Plan 수정 v4b**(Review 14절 반영, 지침 `docs/briefs/plan-fix-brief-v4b.md`, 사용자 결정 "모두 고치기"): 부록 D 3문항(ingredient·snack·poem) 설명, 7.4 V5b 가짜 어근 예외·V5c, 16.4 `notDerived`, 16.8 X7. 15절.
   - 2026-11-26 Plan v4 반영(지침 `docs/briefs/plan-fix-brief-v4.md`): 16절 값을 본문에 바꿔 끼움 — 0, 5.3(5.3.1~5.3.5, 수치 다시 계산), 5.5, 5.6, 5.8, 6.2, 7.4(V5b 확정), 부록 A people-14, 부록 D·E 확정. 15절.
@@ -416,8 +417,39 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 
 ### 5.9 소리 [추천: 14절 3번]
 - 효과음: Web Audio로 짧게 합성(파일 없음) — 잡기 "딸깍", 정답(올라가는 두 음), 오답(낮은 음), 카운트다운. 첫 터치 때 `AudioContext.resume()`.
-- 영어 읽어 주기(Web Speech API `speechSynthesis`): 문제 시작 때 설명을 한 번, 정답을 잡았을 때 단어를 한 번. `lang` `en-US`(없으면 `en`으로 시작하는 아무 목소리), `rate 0.9`. 영어 목소리가 없거나 API가 없으면 조용히 건너뜀. iPad Safari는 첫 발화가 사용자 동작 안에서 일어나야 하므로[추정] 시작 버튼을 누를 때 빈 발화(`' '`)를 한 번 한다.
+- 영어 읽어 주기(Web Speech API `speechSynthesis`): 문제 시작 때 설명을 한 번, 정답을 잡았을 때 단어를 한 번. `rate 0.9`, `pitch 1`(기본값). 목소리는 아래 5.9.1 규칙으로 고른다(v5). API가 없거나 영어 목소리가 하나도 없으면 조용히 건너뜀. iPad Safari는 첫 발화가 사용자 동작 안에서 일어나야 하므로[추정] 시작 버튼을 누를 때 빈 발화(`' '`)를 한 번 한다.
+  - v1의 규칙("`lang`이 `en-US`인 첫 목소리")은 v5에서 바뀌었다 — macOS·iPadOS는 목소리 목록이 이름순이라 첫 en-US 목소리가 장난용 **Albert**(일부러 쉰 목소리)가 되어 "목이 쉰 이상한 목소리"로 들렸다(사용자 피드백, 코디네이터 확인).
 - 시작 화면 토글: 소리 켬/끔(효과음과 읽어 주기를 함께). 기본 켬. 설정은 `localStorage` `catchword.sound`.
+
+#### 5.9.1 영어 목소리 고르기 (v5, 2026-11-26 — 사용자 "고치기") (`src/audio/voicePick.ts`, 순수 함수)
+- **입력·출력**: `chooseVoice(voices: {name, lang, default, localService, voiceURI}[])` → `{ mode: 'voice', voice }` | `{ mode: 'lang-only' }` | `{ mode: 'skip' }`.
+  - `voice`: 그 목소리로 말한다(`u.voice = voice; u.lang = voice.lang`).
+  - `lang-only`: 목소리를 정하지 않고 `u.lang = 'en-US'`만 준다(브라우저가 기본 영어 목소리를 고름). 목록이 아직 비어 있을 때와 영어 목소리가 장난용뿐일 때.
+  - `skip`: 목록에 영어 목소리가 하나도 없으면(장난용도 없음) 말하지 않는다(지금과 같음).
+- **이름·언어 정리**: `lang`은 `_`를 `-`로 바꾸고 소문자(`en_US` → `en-us`). 이름은 소문자로 바꾼 전체(`full`)와, 거기서 ` - `부터 끝까지와 첫 ` (`부터 끝까지를 지우고 앞의 `microsoft `·`apple `을 뗀 **기본 이름**(`base`)을 함께 쓴다. 예: `Eddy (영어(미국))` → `eddy`, `Samantha (Enhanced)` → `samantha`(full에는 `enhanced`가 남음), `Microsoft Zira - English (United States)` → `zira`. 영어 목소리 = 정리한 `lang`이 `en`으로 시작.
+- **① 장난용 제외(어느 경우에도 고르지 않음)** — 애플 novelty 목소리, `base`가 다음 중 하나: `albert, bad news, bahh, bells, boing, bubbles, cellos, good news, jester, organ, superstar, trinoids, whisper, wobble, zarvox` + 옛 이름 `deranged, hysterical, pipe organ, princess`.
+  - 근거: 이 맥(macOS 27.2.1)의 `say -v '?'` 영어 목록과 코디네이터가 배포 사이트에서 본 en-US 28개 목록 [확인, 2026-11-26]. Wikipedia PlainTalk가 Whisper·Zarvox·Trinoids·Cellos·Good News·Bad News·Pipe Organ·Albert·Bells·Boing·Bubbles를 novelty로, Princess → Superstar 개명을 적음 [확인]. Deranged → Wobble, Hysterical → Jester, Pipe Organ → Organ 개명은 사용자 게시판 글 [추정].
+- **② 맨 뒤로(다른 목소리가 없을 때만)** — 사람 목소리지만 기계음이 강하거나 캐릭터 목소리: 애플 Eloquence 계열 `eddy, flo, grandma, grandpa, reed, rocko, sandy, shelley`(이 중 grandma·grandpa·rocko는 노인·굵은 캐릭터 목소리)와 옛 MacinTalk `fred, junior, kathy, ralph`(Junior는 아이 캐릭터).
+  - 근거: Wikipedia PlainTalk(Fred·Kathy·Ralph = 옛 표준 목소리, Junior = 아이 목소리) [확인]. 음질 판단은 [추정]. 빼지 않는 이유: 이것뿐인 기기에서 아무 소리도 안 나는 것보다 낫다.
+- **③ 좋은 목소리 등급**(높을수록 먼저):
+  - A: `full`에 `premium`·`enhanced`(애플 고품질 내려받기 목소리) 또는 `natural`(마이크로소프트 자연 음성, 예: `Microsoft Aria Online (Natural) - English (United States)`)이 들어 있음 [추정: 이름 표기].
+  - B: 알려진 성인 표준 목소리 — 애플 `samantha, ava, allison, susan, tom, nathan, zoe, evan, joelle, nicky, noelle, daniel, kate, serena, arthur, martha, karen, lee, moira, tessa, rishi, veena, aman, tara`, 구글(`full`이 `google `으로 시작, 예: `Google US English`, `Google UK English Female`), 마이크로소프트 `zira, david, mark, hazel, george` [추정: 이 맥 목록 + 널리 알려진 이름].
+  - C: 그 밖의 알 수 없는 이름(안드로이드의 `English United States` 같은 기기 목소리 등).
+  - D: ②의 맨 뒤 목록.
+- **④ 순서**: 영어 목소리 중 ①을 뺀 것을 다음 순서로 줄 세워 첫 번째를 고른다.
+  1. D 등급이 아닌 것이 먼저(D는 언어와 상관없이 맨 뒤 — en-GB의 Daniel이 en-US의 Eddy보다 먼저).
+  2. 언어: `en-us` → `en-gb` → 그 밖의 `en-*`(교과서가 대체로 미국 영어 [추정]).
+  3. 등급: A → B → C.
+  4. `default`가 true인 것.
+  5. `localService`가 true인 것(같은 언어·등급이면 기기 안 목소리 — 인터넷이 없어도 되고 문장이 밖으로 나가지 않음. 마이크로소프트 자연 음성처럼 원격이라도 A 등급이면 3번에서 이미 앞섬).
+  6. 목록에 나온 순서.
+- **목록이 늦게 오는 경우**: 크롬 등은 처음 `getVoices()`가 빈 배열이고 나중에 `voiceschanged`로 채워진다 [추정 — MDN 예제는 처음 한 번 읽고 `voiceschanged`에서 다시 읽음(확인), 빈 배열이라는 문장은 MDN에 없음]. 그래서
+  - `Speech`는 만들 때 `voiceschanged`를 듣고, 목록이 바뀔 때마다 `chooseVoice`를 다시 돌려 고른 목소리를 바꾼다.
+  - 고른 결과가 `voice`일 때만 기억한다. `lang-only`·`skip`은 기억하지 않고 다음 `say()`에서 다시 고른다. 지금 코드는 빈 목록이면 첫 설명을 건너뛴다 → 고침: 빈 목록이면 `lang-only`로 말한다.
+  - `prime()`(시작 버튼)에서 `getVoices()`를 한 번 불러 목록 적재를 재촉한다(지금과 같음).
+- **속도·높이**: `rate 0.9` 그대로(배우는 아이에게 조금 느리게, 표준 목소리에서 자연스러운 범위 [추정]), `pitch` 1 그대로(높이를 바꾸면 사람 목소리가 오히려 부자연스러움 [추정]).
+- **디버그**: `?debug=1` 화면에 고른 목소리 `name (lang, local/remote, 등급)`과 mode를 보인다(교실에서 어떤 목소리였는지 사진으로 남기기).
+- 사용자 결정이 더 필요한 갈림길은 없다(목소리 직접 고르기 기능은 사용자가 고르지 않음) — 이 절대로 바로 Build할 수 있다.
 
 ---
 
@@ -681,10 +713,11 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 │  ├─ ui/hud.ts                    설명 띠·점수·문제 번호
 │  ├─ ui/strings.ts                모든 화면 문구(6.1)
 │  ├─ audio/sfx.ts                 Web Audio 효과음
-│  ├─ audio/speech.ts              영어 읽어 주기
+│  ├─ audio/speech.ts              영어 읽어 주기(v5: voiceschanged 듣기, chooseVoice 결과 적용)
+│  ├─ audio/voicePick.ts           5.9.1 목소리 고르기(순수, v5)
 │  ├─ platform/wakeLock.ts
 │  ├─ platform/storage.ts          localStorage try/catch 감싸기
-│  ├─ debug/debugOverlay.ts        ?debug=1: 21점 뼈대, 손가락별 c_f·C·상태, fps(그리기·인식), 검사 ms, 영상 크기, delegate
+│  ├─ debug/debugOverlay.ts        ?debug=1: 21점 뼈대, 손가락별 c_f·C·상태, fps(그리기·인식), 검사 ms, 영상 크기, delegate, 고른 목소리(v5)
 │  ├─ debug/testHooks.ts           ?test=1: window.__eg (12.2)
 │  ├─ debug/recorder.ts            ?debug=1&record=1: 손 좌표 JSON 내려받기
 │  └─ data/questions.json, data/validate.ts, data/vocab/elementary-2022.txt, data/vocab/clue-extra.json
@@ -716,6 +749,8 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 | `data.test.ts` | `validate.ts`가 V1~V9 위반 0, **부록 A와 JSON이 같음**(테스트가 `spec.md`의 부록 A 표를 직접 읽어 230문항(v3)의 모든 칸을 JSON과 비교), 위반 예시(정답이 든 설명, 11낱말 설명 등)를 일부러 넣으면 잡아냄 |
 | `assets.test.ts` | `public/models/hand_landmarker.task` SHA-256 = 2.4 값, `package.json`의 tasks-vision 버전 = `1.2.3` |
 | `strings.test.ts` | 8.2·9절 문구가 strings.ts에 그대로 있음 |
+| `voicePick.test.ts`(v5) | ① 이 맥 en-US 28개(Albert, Bad News, Bahh, Bells, Boing, Bubbles, Cellos, Eddy, Flo, Fred, Good News, Grandma, Grandpa, Jester, Junior, Kathy, Organ, Ralph, Reed, Rocko, Samantha, Sandy, Shelley, Superstar, Trinoids, Whisper, Wobble, Zarvox) + 다른 언어 섞음 → Samantha ② 같은 목록을 `say` 표기(`Eddy (영어(미국))`, `Samantha (영어(미국))`, lang `en_US`)로 → Samantha ③ 장난용만(Albert, Bells, Zarvox) → `lang-only` ④ 빈 목록 → `lang-only` ⑤ ko-KR·ja-JP만 → `skip` ⑥ 안드로이드 예(`한국어 대한민국` ko-KR default, `English United States` en-US local, `English United Kingdom` en-GB) → English United States ⑦ 윈도 크롬 예(Microsoft David·Zira·Mark local, Google US English·Google UK English Female remote) → Microsoft David(같은 B 등급에서 local 먼저, 그다음 목록 순서) ⑧ 엣지 예(⑦ + `Microsoft Aria Online (Natural) - English (United States)` remote) → Aria ⑨ `Samantha`·`Samantha (Enhanced)` → Samantha (Enhanced) ⑩ en-US는 Eddy·Flo뿐 + en-GB Daniel → Daniel ⑪ 대소문자·`_`/`-`가 섞인 lang(`EN_us`) 처리 |
+| `speech.test.ts`(v5) | 가짜 `speechSynthesis`(빈 목록 → `voiceschanged` 뒤 목록)로: 첫 `say()`는 lang-only로 말함(건너뛰지 않음), 목록이 온 뒤 `say()`는 Samantha, 목록이 다시 바뀌면 다시 고름, `rate 0.9` |
 
 ### 12.2 자동 — 브라우저 테스트(Playwright, chromium)
 - 설정: `webServer`가 `node scripts/serve-dist.mjs --dir dist --prefix /english1/ --port ${E2E_PORT:-4173} --host 127.0.0.1`(`reuseExistingServer: false`). `baseURL = http://127.0.0.1:4173/english1/`. 프로젝트: `tablet-landscape`(1180×820, hasTouch), `tablet-portrait`(820×1180, hasTouch), `small-landscape`(1024×768).
@@ -730,6 +765,7 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 | E5 | 실제 MediaPipe 적재: chromium 인자 `--use-fake-ui-for-media-stream --use-fake-device-for-media-stream`, 권한 `camera` 부여 → [카메라로 시작] → 30초 안에 손 확인 화면, 디버그 훅으로 검사 횟수 > 10, 오류 0. `?delegate=CPU`로 한 번 더. (가짜 카메라 무늬에는 손이 없으므로 손 0개가 정상.) |
 | E6 | 배치: 세 화면 크기에서 가장 긴 설명(10낱말)·가장 긴 단어(10자)가 넘치지 않음(설명 띠 두 줄 이내, 카드 글자 폭 ≤ 카드 폭 − 24). v2: 시작 화면이 1024×768·1180×820·768×1024·820×1180에서 스크롤 없이 들어가고(문서 높이 ≤ 창 높이), 난이도 버튼 세 개가 모두 보이고 높이 ≥ 56px, 한국어 글자가 낱말 중간에서 줄바꿈되지 않음. |
 | E7 | 개인정보 문구가 시작 화면에 보임, 터치 모드에서 `getUserMedia`가 불리지 않음. |
+| E9(v5) | 목소리: `addInitScript`로 `speechSynthesis.getVoices`가 이 맥 목록(voicePick ①)을 돌려주고 `speak`가 넘겨받은 `utterance.voice?.name`을 기록하게 바꾼 뒤 터치 모드 한 판 → 설명 읽기에 쓴 목소리가 모두 Samantha, Albert 0회. 처음 빈 목록 → 0.5초 뒤 `voiceschanged`로 목록을 주는 경우에도 첫 설명이 건너뛰어지지 않음 |
 | E8(v2) | 난이도: ① 시작 화면에서 Hard를 누르고 새로고침 → Hard가 선택돼 있음(`catchword.difficulty`) ② `?difficulty=easy`가 기억한 값보다 우선 ③ 설명 띠 배지·결과 화면에 고른 난이도 표시 ④ Hard·Normal·Easy 각각 터치 모드 한 판(`seed` 고정, 문제마다 오답 0~2번 섞어 누름): 점수 = 독립 계산(배율·감점·0점 바닥 포함), `state()`의 문제별 `fallMs`·카드 수가 5.3.2·5.3.3 식과 같음 ⑤ 최고 점수가 `catchword.best.<band>.<difficulty>`에 저장되고, v1 키만 있는 상태로 열면 Easy 최고 점수로 옮겨짐 ⑥ 첫 시도 8/10 이상이면 도전 권유 문구 |
 
 ### 12.3 실제 손 녹화 재생(선택, S7)
@@ -748,6 +784,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 9. 아이가 한 판을 끝까지 했을 때 팔이 너무 힘들지 않은지, 속도가 적당한지(5.3 값 조정 근거).
 10. 배포 주소에서 `.wasm` 응답 형식(application/wasm)과 첫 준비 시간.
 11. (v2) 학생 3~5명이 Easy·Normal·Hard를 각각 2판: 첫 시도 정답률이 5.3.5 목표 근처인지, Hard에서 "너무 빨라 손이 못 따라간다"는 문제가 없는지, 긴 설명 문제(8~10낱말)에서 읽고 잡을 시간이 되는지. `?debug=1` 결과 화면의 문제별 잡은 시각을 사진으로 남긴다.
+12. (v5) 영어 읽어 주기 목소리: iPad Safari·맥 Safari·맥 크롬·안드로이드 크롬에서 각각 한 판 들어 보고, 쉰 목소리·노래·로봇 소리가 아닌 자연스러운 성인 목소리인지 확인한다. `?debug=1` 화면의 "고른 목소리"를 사진으로 남긴다(예: iPad → Samantha 또는 내려받은 고품질 목소리). 이상하면 그 기기의 목소리 이름을 알려 주면 Plan이 5.9.1 목록을 고친다.
 
 ---
 
@@ -775,6 +812,15 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | D5 기기 조정(사람과 함께) | 12.4-11 | 측정한 정답률과 바꾼 값(있으면) 보고 → Plan이 5.3 표를 고침 |
 
 - S1~S6은 Build 한 번에, S7은 Embed(배포) 뒤 사람 확인과 함께 진행한다. v2는 D1~D4를 Build 한 번에, D5는 배포 뒤.
+- **v5(영어 목소리) Build 단계** — 사용자 "고치기"(2026-11-26), 더 물을 것 없이 바로 Build 가능
+
+| 단계 | 할 일 | 완료 기준 |
+|---|---|---|
+| Y1 순수 함수 | `src/audio/voicePick.ts`(`chooseVoice`, 5.9.1) + `voicePick.test.ts` ①~⑪ | 단위 테스트 통과 |
+| Y2 Speech 연결 | `speech.ts`: `voiceschanged` 듣기, `voice`만 기억, 빈 목록은 `lang-only`로 말하기, 디버그 표시 + `speech.test.ts` | 단위 테스트 통과, 이 맥 Safari·크롬에서 `?debug=1`의 고른 목소리가 Samantha(또는 고품질 목소리) |
+| Y3 브라우저 테스트 | E9 | `npm run check` 통과 |
+| Y4 사람 확인 | 12.4-12 | 기기별 고른 목소리 이름 보고 |
+
 - **v4(Very Hard·전체 난이도) Build 단계는 16.8의 X1~X6**(Plan 몫 X1·X2·X5는 2026-11-26 완료, Build 몫이 남음).
 
 **v3(낱말 수준) 단계 — 사용자 승인(2026-11-26), v2 배포(`0b6cfc7`) 뒤 다음 Build** (각 단계 끝에 `npm run typecheck && npm test`, 마지막에 `npm run check`)
@@ -994,6 +1040,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | vh-school-03 poem | A poet writes it. It has short lines. / — | **Beautiful words in short lines, like a song.** / — | poet이 poem과 같은 뿌리라 답을 알려 줌(R-v4-2). 초등 낱말만 |
 
   - Plan 확인: 저장소 `validateQuestions` 부록 A 위반 0, `validateVeryHard` 94문항 위반 0(심화 24.5%, 설명 초등 92.6%·중학 6.2%·허용 1.2%, 설명당 중학 낱말 최대 3). V5c를 Plan이 따로 계산: 고친 데이터 0(같은 날 다듬은 V5c로 다시 계산해도 0). 판 구성 흉내(저장소 `buildGamePlans`, Very Hard × 씨앗 6,000): 오류 0. 세 문항에 같은 주제 오답(ingredient: lemon·pepper·strawberry·mushroom·snack 51~57%, snack: mushroom·strawberry·ingredient·lemon·recipe·pepper 42~48%, poem: diary·language·dictionary·grade·vocabulary·laboratory 40~48%)이 함께 나오지만, 바뀐 설명은 예로 든 범주(재료·간식)나 "노래 같은 짧은 줄의 아름다운 말"을 가리켜 이 오답들은 답이 되지 않는다.
+- 2026-11-26 **Plan v5(영어 목소리)**: 사용자 원문 "영어 스피킹이 목이 쉬고 뭔가 이상한 느낌의 목소리인데 목소리 점검해줘" → 코디네이터 점검(원인: en-US 첫 목소리 = macOS·iPadOS 장난용 "Albert") → 사용자 **"고치기"**(자동으로 자연스러운 목소리 고르기 안. 목소리 직접 선택 기능은 고르지 않음). Plan이 고른 것: 5.9.1(장난용 제외 목록, 맨 뒤 목록, 좋은 목소리 등급, 언어·등급·default·local 순서, 빈 목록·`voiceschanged` 처리, `rate 0.9`·`pitch 1` 그대로). 더 물을 갈림길 없음 — 바로 Build(Y1~Y4).
 
 
 ---
@@ -1345,6 +1392,12 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | GitHub 요금제(Free: 공개 저장소에서 Pages) | https://docs.github.com/en/get-started/learning-about-github/githubs-plans |
 | 2022 개정 영어과 기본 어휘(KICE Word Lister 안내, 교육부 고시 제2022-33호 [별책 14] 인용) | https://www.goe.go.kr/resource/old/BBSMSTR_000000030136/BBS_202307111028067791.pdf |
 | 저장소 상태(`gh repo view eversunk2-tech/english1`: 공개, 비어 있음) | https://github.com/eversunk2-tech/english1 |
+| (v5) SpeechSynthesisVoice 속성(default, lang, localService, name, voiceURI). 마지막 수정 2025-09-24 | https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice |
+| (v5) `voiceschanged` 사건(목록이 바뀌면 발생, 예제는 이때 목록을 다시 읽음). 마지막 수정 2026-10-26 | https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/voiceschanged_event |
+| (v5) `getVoices()` 예제(처음 한 번 읽고 `onvoiceschanged`에서 다시 읽음 — 빈 목록이라는 설명은 없음). 마지막 수정 2026-11-12 | https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices |
+| (v5) 애플 novelty·MacinTalk 목소리 이름(Whisper, Zarvox, Trinoids, Cellos, Good News, Bad News, Pipe Organ, Albert, Bells, Boing, Bubbles; Princess → Superstar; Fred·Kathy·Ralph·Junior) | https://en.wikipedia.org/wiki/PlainTalk |
+| (v5) 맥 목소리 내려받기 안내(고품질 변형 이름은 이 쪽에 없음) | https://support.apple.com/guide/mac-help/mchlp2290/mac |
+| (v5) 이 맥(macOS 27.2.1)의 실제 영어 목소리: `say -v '?'`(Albert … Zarvox, Samantha 2개, Eddy·Flo·Grandma·Grandpa·Reed·Rocko·Sandy·Shelley는 `이름 (영어(미국))`·`(영어(영국))` 표기) | 로컬 명령, 2026-11-26 |
 | 형제 프로젝트 참고(읽기만): spec 형식, Vite 8/TS 6/Vitest 5, Pages 워크플로 | `/Users/sungchul/Desktop/play2/selectio game/`, `/Users/sungchul/Desktop/play2/game2/.github/workflows/pages.yml` |
 
 **확인하지 못한 것**: 2022 개정 교육과정의 초등 문장 길이 기준(V4의 8/10낱말은 추정), iPad Safari에서 GPU 대리 실행이 실제로 되는지·속도, 어린이 손에서의 임계값(4.6), GitHub Pages의 `.wasm` MIME과 캐시 시간, 트레일링 슬래시 넘겨주기 — 모두 S2·S7과 12.4에서 확인한다.

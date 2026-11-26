@@ -33,6 +33,8 @@ export class DebugOverlay {
     mode: string;
     screen: string;
     blocked: number;
+    /** v5: 고른 영어 목소리(spec 5.9.1) */
+    voice: string;
   }): void {
     const lines: string[] = [];
     lines.push(`screen ${info.screen}  input ${info.mode}  draw ${info.renderFps} fps`);
@@ -44,6 +46,7 @@ export class DebugOverlay {
       lines.push(`video ${m.videoW}×${m.videoH}${m.lastError ? `  err ${m.lastError.slice(0, 60)}` : ''}`);
     }
     lines.push(`blocked external requests ${info.blocked}`);
+    lines.push(`voice ${info.voice}`);
     for (const t of info.tracks) {
       const f = t.fist;
       const cs = f ? f.curls.map((c) => c.toFixed(2)).join(' ') : '-';

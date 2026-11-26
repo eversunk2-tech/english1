@@ -15,6 +15,7 @@
 > 재검토 v3b(2026-11-26, 13절) 판정: **통과** — 12절 지적 모두 고쳐짐, 새 반드시 수정 0건, 새 권장 1건(scientist 설명).
 > v4 Very Hard 검증(2026-11-26, 14절) 판정: **수정 필요** — 문항 1건(vh-food-07 ingredient), 권장 3건.
 > 재검토 v4b(2026-11-26, 15절) 판정: **통과** — 14절 지적 모두 고쳐짐, 새 반드시 수정 0건, 새 권장 1건(아주 작음).
+> v5 목소리 고르기 검증(2026-11-26, 16절) 판정: **통과** — 반드시 수정 0건, 권장 0건(교실·iPad 확인 항목 2개).
 
 반드시 수정할 것은 3건이다(앱 버그 1, spec 12.2 위반 1, 문항 데이터 1). 나머지 동작(점수, 판정, 배치, 개인정보, 배포 설정)은 spec과 맞았다.
 
@@ -776,3 +777,84 @@ git diff로 본 변경 내용:
 
 ### 15.8 남은 것
 - 14.12의 교실 확인(X6) 체크 항목 그대로.
+
+---
+
+## 16. v5 목소리 고르기 검증 (2026-11-26)
+
+- 지침: `docs/briefs/review-brief-v5-voice.md`. 기준은 spec 5.9·5.9.1, 12.1(voicePick ①~⑪·speech.test)·12.2 E9, 13 Y1~Y4다.
+- 변경 범위는 커밋 `d0a685f` 뒤의 `git diff`로 봤다. git은 읽기만 했다.
+- 임시 스크립트: `/private/tmp/claude-501/-Users-sungchul-Desktop-play2-----/7bd2217c-e14d-425c-9176-0b2e64f9c244/scratchpad/review-v5/`
+
+### 16.1 판정: **통과**
+반드시 수정 0건, 권장 0건이다. 자동으로 확인할 수 없는 것 2개는 16.6에 적었다.
+
+### 16.2 직접 돌린 명령과 결과
+
+| 명령 / 검사 | 결과 |
+|---|---|
+| `npm run check` | **종료 코드 0**(로그 끝 `EXIT 0` 직접 확인). 단위 **179 통과, 1 건너뜀**. 문항 검사 부록 A·Very Hard 위반 0. e2e **114 통과**(E9 목소리 테스트 포함). |
+| `git diff` 범위 | `speech.ts`(다시 씀), `App.ts`(디버그·state에 목소리), `debugOverlay.ts`, `testHooks.ts`(`voice`), `spec.md`, 새 파일 `voicePick.ts`·`voicePick.test.ts`·`speech.test.ts`·`tests/helpers/voices.ts`·`e9-voice.spec.ts`. **Y1~Y3 범위 안이다.** 게임 규칙·데이터 파일은 바뀌지 않았다. |
+
+### 16.3 독립 구현 비교 (spec 5.9.1 문장만으로 Python으로 짬)
+- **spec 예시 11개**는 내 구현에서 모두 spec이 적은 답과 같다.
+  - ① 이 맥 28개 + 다른 언어 → Samantha
+  - ② `say` 표기 → Samantha (영어(미국))
+  - ③ 장난용만 → lang-only
+  - ④ 빈 목록 → lang-only
+  - ⑤ ko/ja만 → skip
+  - ⑥ 안드로이드 → English United States
+  - ⑦ 윈도 크롬 → Microsoft David
+  - ⑧ 엣지 → Aria (Natural)
+  - ⑨ → Samantha (Enhanced)
+  - ⑩ Eddy·Flo + en-GB Daniel → Daniel
+  - ⑪ `EN_us` → Samantha
+- **무작위 목록 6,000개**로 비교했다. 목록 구성:
+  - 장난용 19종(옛 이름·대문자 `BELLS`·`Albert (Enhanced)` 포함), D 등급 12종, `(Enhanced)`·`(Premium)`·`(Natural)`, Google·Microsoft·안드로이드식 이름, 알 수 없는 이름
+  - lang 16종(`en_US`·`EN_us`·`en`·빈 값·다른 언어), `default`·`localService` 무작위, 0~30개, 순서 섞기
+  - 결과: 코드 `chooseVoice`와 **불일치 0**(voice 4,645 / lang-only 967 / skip 388). **코드가 장난용을 고른 경우 0.**
+
+### 16.4 이 맥 실제 브라우저에서 고른 목소리 (`?input=pointer&test=1&debug=1`, 빌드 결과)
+- 세 브라우저에서 확인했다. 모두 목소리 180개(영어 40개, 첫 en-US가 **Albert**)이고, `voiceschanged`가 1번 왔다.
+  - Playwright Chromium(headless)
+  - 설치된 **Google Chrome**(headless)
+  - 설치된 **Google Chrome**(창을 띄워서)
+- 세 경우 모두 결과가 같다.
+  - 고른 목소리 **Samantha (en-US, local, B)**. 디버그 패널 줄도 "voice Samantha (en-US, local, B) · voice"로 같다.
+  - 실제 `speak`에 넘어간 첫 설명은 voice=Samantha, lang en-US, rate 0.9. **Albert로 말한 적 0.**
+- **Safari**: AppleScript 없이 설치된 Safari를 자동으로 열 방법이 없고, Playwright WebKit도 이 맥에 설치돼 있지 않아 **확인하지 못했다**(16.6 체크 1번).
+- 콘솔 오류 0, 사이트 밖 요청 0.
+
+### 16.5 흐름·누수·노출
+- **voiceschanged·빈 목록**:
+  - `say()`는 고른 결과가 `voice`일 때만 기억한다. 빈 목록이면 `lang-only`(u.lang = en-US)로 **말한다**(건너뛰지 않음).
+  - `voiceschanged`가 오면 기억을 지우고 다시 고른다.
+  - skip은 영어 목소리가 하나도 없을 때뿐이다.
+  - 단위 테스트(speech.test)와 E9("처음 빈 목록 → 0.5초 뒤 voiceschanged여도 첫 설명이 건너뛰어지지 않음")가 이를 확인한다.
+- **리스너 중복·누수 없음**:
+  - `Speech`는 앱에 하나뿐(`App`의 필드)이고, `listen()`은 한 번만 등록하게 막혀 있다.
+  - 실제 브라우저에서 두 판 하고 [처음으로]·소리 끔/켬을 오가도 페이지가 등록한 `voiceschanged` 리스너는 **1개**다.
+- **소리 끔/켬·cancel**:
+  - 소리 끔이면 `say`·`prime` 모두 아무것도 하지 않는다.
+  - `say`는 말하기 전에 앞 발화를 `cancel`한다. 일시정지·판 끝에서도 `cancel`한다(이전과 같음).
+  - `prime`은 시작 버튼마다 볼륨 0 빈 발화를 한다(터치 모드에서 [터치로 하기]·START로 2번, 소리 없음, 문제 아님).
+- **장난용·D 목록 ↔ 이 맥 `say -v '?'`**:
+  - 이 맥의 영어 장난용 15개(Albert, Bad News, Bahh, Bells, Boing, Bubbles, Cellos, Good News, Jester, Organ, Superstar, Trinoids, Whisper, Wobble, Zarvox)가 **모두 `NOVELTY_VOICES`에 있다**. 빠진 것 0.
+  - Eloquence·옛 MacinTalk 12개(Eddy, Flo, Grandma, Grandpa, Reed, Rocko, Sandy, Shelley, Fred, Junior, Kathy, Ralph)는 **모두 D 목록에 있다**.
+  - 나머지 영어 목소리(Samantha, Daniel, Karen, Moira, Rishi, Tessa, Aman, Tara)는 모두 B 등급 목록에 있다.
+- **노출**:
+  - 매개변수 없이 열면 `window.__eg` 없음, 디버그 패널 없음, 화면에 목소리 이름 없음.
+  - `state().voice`는 `?test=1`, 패널은 `?debug=1`일 때만 있다.
+  - 훅은 여전히 5개 함수로 얼려 있고, 목소리를 바꾸거나 게임 규칙을 건드리는 길은 없다.
+
+### 16.6 자동으로 확인할 수 없는 것
+1. **iPad Safari·맥 Safari에서 실제로 고르는 목소리**: iPadOS도 목록에 Albert 같은 장난용이 있으나, 이름 규칙이 같으면 Samantha(또는 고품질 Enhanced/Premium)를 고를 것이다. 직접 들어 봐야 한다.
+2. **lang-only일 때 브라우저가 고르는 기본 목소리**: 목록이 아직 비었거나 장난용뿐이라 `lang = en-US`만 줄 때다. 이때 어떤 목소리가 나오는지는 브라우저·OS 기본 설정에 달려 있다. 이 맥 크롬에서는 목록이 시작 전에 와서 이 경우가 생기지 않았다. 혹시 첫 문제만 다른 목소리로 들리면 이 경우다.
+
+**iPad 체크(선생님용, 배포 주소에 `?debug=1`을 붙여 열기)**
+1. [ ] 소리 [켬]으로 [터치로 하기] → START를 누르면, 문제 설명을 읽는 목소리가 또렷한 보통 사람 목소리(여자 목소리 Samantha 등)다. 쉰 목소리·노래·속삭임·로봇 소리가 아니다.
+2. [ ] 왼쪽 아래 디버그 글자에서 "voice …" 줄을 사진으로 남긴다(예: "voice Samantha (en-US, local, B) · voice"). Albert, Bells 같은 이름이면 알려 주세요.
+3. [ ] **첫 문제**부터 설명을 읽어 준다(첫 문제만 조용하거나 다른 목소리면 알려 주세요).
+4. [ ] 정답을 잡으면 그 단어를 같은 목소리로 읽어 준다. 속도가 아이에게 알맞다(조금 느린 편).
+5. [ ] 시작 화면에서 소리 [끔]이면 읽어 주기도 효과음도 나지 않는다.
+6. [ ] (선택) iPad 설정 › 손쉬운 사용 › 읽기 및 말하기 › 음성 › 영어에서 "Samantha (향상됨)" 같은 고품질 목소리를 내려받으면 게임이 그 목소리를 먼저 고르는지 들어 본다.

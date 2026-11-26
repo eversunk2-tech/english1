@@ -749,6 +749,7 @@ export class App {
         mode: this.mode,
         screen: this.screen,
         blocked: blockedRequestCount(),
+        voice: this.speech.describe(),
       });
     }
     if (this.screen !== 'start' && this.screen !== 'loading' && this.screen !== 'error') drawCursors(cctx, cursors);
@@ -780,6 +781,7 @@ export class App {
       clue: s?.current?.answer.clue ?? null,
       difficulty: s ? s.difficulty : this.difficulty,
       fallMs: s?.current?.fallMs ?? null,
+      voice: this.speech.describe(),
       answer: s?.current?.answer.word ?? null,
       bandH: s ? s.bandH() : cardMetrics(this.vp, 3).bandH,
       viewport: { ...this.vp },
