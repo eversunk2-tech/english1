@@ -134,7 +134,8 @@ export const GAME = deepFreeze({
   RESUME_OPEN_MS: 500,
   COUNTDOWN_MS: 3000,
   MAX_DT_MS: 100,
-  RECENT_MAX: 20,
+  /** v8: 섞은 카드 더미 — 바퀴 경계에서 뒤로 미루는 최근 정답 수(3판, spec 5.6.1 ②③) */
+  BAG_COOLDOWN: 30,
   DEFAULT_BAND: '3-4',
 } as const);
 
@@ -191,10 +192,13 @@ export const ASSETS = deepFreeze({
 /** localStorage 키 (spec 5.5, 5.6, 5.9) */
 export const STORAGE_KEYS = deepFreeze({
   bestPrefix: 'catchword.best.',
-  recent: 'catchword.recent',
-  /** v4: Very Hard 최근 정답(다른 난이도와 섞이지 않게)·최고 점수(학년과 상관없이 한 칸) */
-  recentVeryHard: 'catchword.recent.veryhard',
+  /** v4: Very Hard 최고 점수(학년과 상관없이 한 칸) */
   bestVeryHard: 'catchword.best.veryhard',
+  /** v8: 섞은 카드 더미 catchword.bag.<3-4|5-6|veryhard> (spec 5.6.1 ②) */
+  bagPrefix: 'catchword.bag.',
+  /** v4 최근 정답 키 — v8에서 더미로 한 번 옮기고 지운다(spec 5.6.1 ⑦). 옮기기에만 쓴다. */
+  legacyRecent: 'catchword.recent',
+  legacyRecentVeryHard: 'catchword.recent.veryhard',
   sound: 'catchword.sound',
   /** 마지막으로 고른 난이도 easy|normal|hard (spec 5.5 v2) */
   difficulty: 'catchword.difficulty',

@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import questionsJson from '../../src/data/questions.json';
 import veryhardJson from '../../src/data/veryhard.json';
 import { clueMentions } from '../../src/data/words.ts';
-import { avoidIndex, buildGamePlans, buildPlans, pickAnswers, stageFor, updateRecent } from '../../src/game/questions.ts';
-import { mulberry32 } from '../../src/game/rng.ts';
+import { avoidIndex, buildGamePlans, buildPlans, stageFor } from '../../src/game/questions.ts';
+import { bagPool, bagsFor, drawAnswers, emptyBag } from '../../src/game/bag.ts';
+import { mulberry32, type Rng } from '../../src/game/rng.ts';
 import type { BandChoice, QuestionsFile } from '../../src/game/types.ts';
 import type { Difficulty } from '../../src/config.ts';
 
@@ -21,6 +22,20 @@ const DIFFS: Difficulty[] = ['easy', 'normal', 'hard'];
 const vh = (veryhardJson as QuestionsFile).questions;
 const vhAvoid = avoidIndex(vh);
 
+/** v8: 정답은 빈 더미에서 뽑아 넘긴다(spec 5.6.1 — 게임과 같은 순서로 같은 rng를 이어서 씀) */
+function answersFor(band: BandChoice, d: Difficulty, rng: Rng) {
+  const pools = { main: all, veryhard: vh };
+  return drawAnswers(bagsFor(band, d).map((name) => ({ name, pool: bagPool(name, pools), state: emptyBag() })), 10, rng).answers;
+}
+function plansOf(band: BandChoice, d: Difficulty, seed: number) {
+  const rng = mulberry32(seed);
+  return buildPlans(all, band, d, rng, answersFor(band, d, rng));
+}
+function gamePlansOf(band: BandChoice, d: Difficulty, seed: number) {
+  const rng = mulberry32(seed);
+  return buildGamePlans({ main: all, veryhard: vh }, band, d, rng, answersFor(band, d, rng));
+}
+
 describe('questions (spec 5.6)', () => {
   it('난이도별 문제 번호마다 단계(spec 5.3.2 표, v4)', () => {
     for (const d of [...DIFFS, 'veryhard'] as Difficulty[]) {
@@ -35,7 +50,7 @@ describe('questions (spec 5.6)', () => {
   for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
     it(`${d} · 학년군 ${band}: 씨앗 150개 — 카드 수·같은 주제 오답 수가 5.3.2대로, 10문제 중복 없음, 학년군 필터, avoid(양방향)·설명 속 단어 없음`, () => {
       for (let seed = 1; seed <= 150; seed++) {
-        const plans = buildPlans(all, band, d, mulberry32(seed));
+        const plans = plansOf(band, d, seed);
         expect(plans.length).toBe(10);
         const answers = plans.map((p) => p.answer.word);
         expect(new Set(answers).size).toBe(10);
@@ -75,7 +90,7 @@ describe('questions (spec 5.6)', () => {
     const vhWords = new Set(vh.map((q) => q.word));
     for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
       for (let seed = 1; seed <= 150; seed++) {
-        const plans = buildGamePlans({ main: all, veryhard: vh }, band, 'veryhard', mulberry32(seed));
+        const plans = gamePlansOf(band, 'veryhard', seed);
         expect(plans.length).toBe(10);
         expect(new Set(plans.map((p) => p.answer.word)).size).toBe(10);
         plans.forEach((p, i) => {
@@ -102,24 +117,16 @@ describe('questions (spec 5.6)', () => {
       }
     }
     // 학년 선택은 Very Hard 판 구성에 영향이 없다
-    const a = buildGamePlans({ main: all, veryhard: vh }, '3-4', 'veryhard', mulberry32(5)).map((p) => p.options.map((o) => o.word).join());
-    const b = buildGamePlans({ main: all, veryhard: vh }, '5-6', 'veryhard', mulberry32(5)).map((p) => p.options.map((o) => o.word).join());
+    const a = gamePlansOf('3-4', 'veryhard', 5).map((p) => p.options.map((o) => o.word).join());
+    const b = gamePlansOf('5-6', 'veryhard', 5).map((p) => p.options.map((o) => o.word).join());
     expect(a).toEqual(b);
     // 다른 난이도는 부록 A 풀만
-    const hp = buildGamePlans({ main: all, veryhard: vh }, '5-6', 'hard', mulberry32(5));
+    const hp = gamePlansOf('5-6', 'hard', 5);
     for (const p of hp) for (const o of p.options) expect(vhWords.has(o.word)).toBe(false);
   });
 
-  it('Very Hard 최근 단어 피하기', () => {
-    const recent = vh.slice(0, 20).map((q) => q.word);
-    for (let s = 0; s < 30; s++) {
-      const plans = buildGamePlans({ main: all, veryhard: vh }, 'all', 'veryhard', mulberry32(s), recent);
-      expect(plans.some((p) => recent.includes(p.answer.word))).toBe(false);
-    }
-  });
-
   it('오답의 주제는 가능한 한 서로 다르다(같은 주제 0개 단계)', () => {
-    const plans = buildPlans(all, 'all', 'easy', mulberry32(5));
+    const plans = plansOf('all', 'easy', 5);
     for (const p of plans.slice(0, 3)) {
       const topics = p.options.filter((o) => o !== p.answer).map((o) => o.topic);
       expect(new Set(topics).size).toBe(topics.length);
@@ -127,29 +134,14 @@ describe('questions (spec 5.6)', () => {
   });
 
   it('같은 씨앗 = 같은 판', () => {
-    const a = buildPlans(all, 'all', 'hard', mulberry32(99)).map((p) => p.options.map((o) => o.word).join(','));
-    const b = buildPlans(all, 'all', 'hard', mulberry32(99)).map((p) => p.options.map((o) => o.word).join(','));
+    const a = plansOf('all', 'hard', 99).map((p) => p.options.map((o) => o.word).join(','));
+    const b = plansOf('all', 'hard', 99).map((p) => p.options.map((o) => o.word).join(','));
     expect(a).toEqual(b);
   });
 
-  it('최근 단어 피하기(풀이 충분할 때), 모자라면 채운다', () => {
-    const pool = all.filter((q) => q.band === '3-4');
-    const recent = pool.slice(0, 20).map((q) => q.word);
-    for (let s = 0; s < 50; s++) {
-      const ans = pickAnswers(pool, 10, mulberry32(s), recent);
-      expect(ans.some((q) => recent.includes(q.word))).toBe(false);
-    }
-    const small = pool.slice(0, 12);
-    const ans = pickAnswers(small, 10, mulberry32(1), small.slice(0, 5).map((q) => q.word));
-    expect(ans.length).toBe(10);
-    expect(new Set(ans.map((q) => q.word)).size).toBe(10);
-  });
-
-  it('최근 목록은 이번 판을 앞에, 최대 20개', () => {
-    const r = updateRecent(['a', 'b'], ['c', 'd', 'a']);
-    expect(r).toEqual(['c', 'd', 'a', 'b']);
-    const many = updateRecent(Array.from({ length: 20 }, (_, i) => `x${i}`), Array.from({ length: 10 }, (_, i) => `y${i}`));
-    expect(many.length).toBe(20);
-    expect(many[0]).toBe('y0');
+  it('넘겨받은 정답 순서대로 문제를 만든다(v8 — 정답 고르기는 bag.test.ts)', () => {
+    const pick = all.filter((q) => q.band === '5-6').slice(0, 10);
+    const plans = buildPlans(all, '5-6', 'normal', mulberry32(3), pick);
+    expect(plans.map((p) => p.answer.id)).toEqual(pick.map((q) => q.id));
   });
 });

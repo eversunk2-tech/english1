@@ -152,13 +152,18 @@ for (const g of GAMES) {
     await expect(page.locator('#diff-badge')).toHaveText(LABEL[g.d]);
     const { score, first } = await playGame(page, g.d, g.band, g.wrongs, touch);
     expect(first).toBe(10 - Object.keys(g.wrongs).length);
-    // ⑤ 최고 점수 키(Very Hard는 학년과 상관없이 한 칸), 최근 목록도 Very Hard는 따로
+    // ⑤ 최고 점수 키(Very Hard는 학년과 상관없이 한 칸)
     const key = g.d === 'veryhard' ? 'catchword.best.veryhard' : `catchword.best.${g.band}.${g.d}`;
     expect(await page.evaluate((k) => localStorage.getItem(k), key)).toBe(String(score));
-    const recentKey = g.d === 'veryhard' ? 'catchword.recent.veryhard' : 'catchword.recent';
-    const otherKey = g.d === 'veryhard' ? 'catchword.recent' : 'catchword.recent.veryhard';
-    expect(JSON.parse((await page.evaluate((k) => localStorage.getItem(k), recentKey)) ?? '[]').length).toBe(10);
-    expect(await page.evaluate((k) => localStorage.getItem(k), otherKey)).toBe(null);
+    // v8: 정답 기억은 섞은 카드 더미 — Very Hard는 veryhard 더미 하나, 그 밖에는 학년군 더미(spec 5.6.1).
+    // seed 모드(?test=1&seed=)라 저장하지 않으므로 state().bag으로 확인하고, 옛 recent 키·bag 키가 없음을 본다.
+    const bag = (await state(page)).bag;
+    expect(bag.names).toEqual(g.d === 'veryhard' ? ['veryhard'] : [g.band]);
+    expect(bag.persist).toBe(false);
+    const name = bag.names[0]!;
+    expect(bag.remaining[name]).toBe(bag.sizes[name] - 10);
+    const keys = await page.evaluate(() => Object.keys(localStorage));
+    expect(keys.filter((k) => k.startsWith('catchword.recent') || k.startsWith('catchword.bag.'))).toEqual([]);
     await expect(page.locator('#result-best b')).toHaveText(String(score));
     // ⑥ 도전 권유
     if (g.challenge) await expect(page.locator('#challenge')).toHaveText(g.challenge);

@@ -1,9 +1,19 @@
 // spec 7.4: 문항 기계 검사 V1~V10·V5b, Very Hard 검사 VH-V1~V10(spec 16.4). 순수 — 단위 테스트와 scripts/check-data.mjs가 함께 쓴다.
 import { buildPlans, pickDistractors, avoidIndex, distractorPool } from '../game/questions.ts';
 import { DIFFICULTY_NAMES, GAME } from '../config.ts';
-import { mulberry32 } from '../game/rng.ts';
+import { mulberry32, type Rng } from '../game/rng.ts';
+import { bagPool, bagsFor, drawAnswers, emptyBag } from '../game/bag.ts';
+import type { Difficulty } from '../config.ts';
 import { TOPICS, type BandChoice, type Question, type QuestionsFile } from '../game/types.ts';
 import { clueMentions, derivedRoots, lemmas, sameRootTokens, tokenize } from './words.ts';
+
+/** 빈 더미에서 한 판의 정답을 뽑아 계획을 만든다(실제 게임과 같은 순서, spec 5.6.1 v8) */
+function buildPlansFromEmptyBags(qs: readonly Question[], band: BandChoice, d: Difficulty, rng: Rng): void {
+  const pools = d === 'veryhard' ? { main: [], veryhard: qs } : { main: qs, veryhard: [] };
+  const bags = bagsFor(band, d).map((name) => ({ name, pool: bagPool(name, pools), state: emptyBag() }));
+  const { answers } = drawAnswers(bags, GAME.QUESTIONS_PER_GAME, rng);
+  buildPlans(qs, d === 'veryhard' ? 'all' : band, d, rng, answers);
+}
 
 export interface ClueExtra {
   secondary: string[];
@@ -194,7 +204,7 @@ export function validateQuestions(
     // 한 판을 실제로 만들 수 있는가(Easy·Normal·Hard — Very Hard는 자기 풀만 쓰므로 validateVeryHard가 본다)
     for (const d of DIFFICULTY_NAMES.filter((x) => x !== 'veryhard')) {
       try {
-        buildPlans(qs, band, d, mulberry32(7));
+        buildPlansFromEmptyBags(qs, band, d, mulberry32(7));
       } catch (e) {
         errors.push(`V9 학년군 ${band}·난이도 ${d}에서 한 판을 만들 수 없음: ${String(e)}`);
       }
@@ -360,7 +370,7 @@ export function validateVeryHard(
     if (!pickDistractors(q, qs, 3, 3, mulberry32(1), avoid)) errors.push(`VH-V9 [${q.id}] 오답 3개를 고를 수 없음`);
   }
   try {
-    buildPlans(qs, 'all', 'veryhard', mulberry32(7));
+    buildPlansFromEmptyBags(qs, 'all', 'veryhard', mulberry32(7));
   } catch (e) {
     errors.push(`VH-V9 Very Hard 한 판을 만들 수 없음: ${String(e)}`);
   }

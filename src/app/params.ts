@@ -7,6 +7,7 @@ export type InputParam = 'camera' | 'pointer' | 'replay';
 export interface Params {
   input: InputParam;
   band: BandChoice | null;
+  /** ?seed= — ?test=1이 함께 있을 때만(v8), 아니면 null */
   seed: number | null;
   debug: boolean;
   record: boolean;
@@ -22,7 +23,9 @@ export function parseParams(search: string): Params {
   const input = q.get('input');
   const band = q.get('band');
   const seedStr = q.get('seed');
-  const seed = seedStr !== null && /^\d+$/.test(seedStr) ? Number(seedStr) >>> 0 : null;
+  const test = q.get('test') === '1';
+  // ?seed=는 ?test=1이 함께 있을 때만(spec 5.6.1 ⑧ v8) — 보통 사용자가 seed 붙은 주소로 열면 무시하고 판마다 무작위
+  const seed = test && seedStr !== null && /^\d+$/.test(seedStr) ? Number(seedStr) >>> 0 : null;
   const delegate = (q.get('delegate') ?? '').toUpperCase();
   const diff = (q.get('difficulty') ?? '').toLowerCase();
   return {
@@ -31,10 +34,10 @@ export function parseParams(search: string): Params {
     seed,
     debug: q.get('debug') === '1',
     record: q.get('record') === '1',
-    test: q.get('test') === '1',
+    test,
     delegate: delegate === 'CPU' ? 'CPU' : delegate === 'GPU' ? 'GPU' : 'auto',
     // ?clock=manual은 ?test=1이 함께 있을 때만(spec 11·12.2, review R1)
-    manualClock: q.get('test') === '1' && q.get('clock') === 'manual',
+    manualClock: test && q.get('clock') === 'manual',
     difficulty: diff === 'easy' || diff === 'normal' || diff === 'hard' || diff === 'veryhard' ? diff : null,
   };
 }

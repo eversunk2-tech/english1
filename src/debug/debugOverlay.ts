@@ -3,6 +3,18 @@ import type { Track } from '../hand/handTracks.ts';
 import type { MediapipeStats } from '../hand/mediapipeSource.ts';
 import { drawSkeleton, trackColor } from '../render/canvasRenderer.ts';
 import { VOICE_QUALITY_HINT } from '../ui/strings.ts';
+import type { BagName } from '../game/bag.ts';
+
+/** v8 디버그 더미 줄(spec 5.6.1 ⑨): `문제 더미: 5-6 57/87 남음`, "모두"는 ` · `로 이어 붙임, seed 모드면 ` · 저장 안 함` */
+export function bagDebugLine(info: {
+  names: readonly BagName[];
+  remaining: Readonly<Record<BagName, number>>;
+  sizes: Readonly<Record<BagName, number>>;
+  persist: boolean;
+}): string {
+  const parts = info.names.map((n) => `${n} ${info.remaining[n]}/${info.sizes[n]}`).join(' · ');
+  return `문제 더미: ${parts} 남음${info.persist ? '' : ' · 저장 안 함'}`;
+}
 
 export class DebugOverlay {
   private readonly panel: HTMLElement;
@@ -38,6 +50,8 @@ export class DebugOverlay {
     voice: string;
     /** v7(5.9.1 디버그·5.9.3): 애플 기기 안 보통 목소리면 고품질 목소리 안내 한 줄 */
     voiceHint?: boolean;
+    /** v8: 섞은 카드 더미 요약(spec 5.6.1 ⑨) */
+    bag?: Parameters<typeof bagDebugLine>[0];
   }): void {
     const lines: string[] = [];
     lines.push(`screen ${info.screen}  input ${info.mode}  draw ${info.renderFps} fps`);
@@ -51,6 +65,7 @@ export class DebugOverlay {
     lines.push(`blocked external requests ${info.blocked}`);
     lines.push(`voice ${info.voice}`);
     if (info.voiceHint) lines.push(VOICE_QUALITY_HINT);
+    if (info.bag) lines.push(bagDebugLine(info.bag));
     for (const t of info.tracks) {
       const f = t.fist;
       const cs = f ? f.curls.map((c) => c.toFixed(2)).join(' ') : '-';

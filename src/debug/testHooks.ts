@@ -3,6 +3,7 @@
 import type { ErrorKind } from '../camera/errors.ts';
 import type { HandFrame, Point2 } from '../hand/tracker.ts';
 import type { Rect } from '../game/types.ts';
+import type { BagName } from '../game/bag.ts';
 
 export interface TestCard {
   id: number;
@@ -51,6 +52,8 @@ export interface TestState {
   blockedRequests: number;
   cameraActive: boolean;
   clueInfo: { lines: number; fontPx: number; height: number; bandH: number };
+  /** v8: 이번 판이 쓰는 더미, 더미마다 남은 수·풀 크기, 저장 여부(seed 모드면 false) (spec 5.6.1·12.2) */
+  bag: { names: BagName[]; remaining: Record<BagName, number>; sizes: Record<BagName, number>; persist: boolean };
 }
 
 export interface LayoutProbe {

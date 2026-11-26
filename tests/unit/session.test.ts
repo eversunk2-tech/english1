@@ -3,6 +3,7 @@ import questionsJson from '../../src/data/questions.json';
 import veryhardJson from '../../src/data/veryhard.json';
 import type { Difficulty } from '../../src/config.ts';
 import { buildGamePlans } from '../../src/game/questions.ts';
+import { bagPool, drawAnswers, emptyBag } from '../../src/game/bag.ts';
 import { mulberry32 } from '../../src/game/rng.ts';
 import { Session } from '../../src/game/session.ts';
 import type { QuestionsFile } from '../../src/game/types.ts';
@@ -35,7 +36,10 @@ function expectedFall(clue: string, band: '3-4' | '5-6' | 'vh', qNo: number, d: 
 
 function makeSession(seed: number, d: Difficulty = 'easy', camera = false): Session {
   const rng = mulberry32(seed);
-  const plans = buildGamePlans({ main: all, veryhard: vhq }, '3-4', d, rng);
+  const pools = { main: all, veryhard: vhq };
+  const bag = d === 'veryhard' ? 'veryhard' : '3-4';
+  const { answers } = drawAnswers([{ name: bag, pool: bagPool(bag, pools), state: emptyBag() }], 10, rng);
+  const plans = buildGamePlans(pools, '3-4', d, rng, answers);
   return new Session({ plans, rng, viewport: VP, camera, difficulty: d });
 }
 

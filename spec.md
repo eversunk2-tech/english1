@@ -22,6 +22,14 @@
   - 2026-11-26 **Plan 수정 v4b**(Review 14절 반영, 지침 `docs/briefs/plan-fix-brief-v4b.md`, 사용자 결정 "모두 고치기"): 부록 D 3문항(ingredient·snack·poem) 설명, 7.4 V5b 가짜 어근 예외·V5c, 16.4 `notDerived`, 16.8 X7. 15절.
   - 2026-11-26 **Plan v7(맥 영어 발음 — Google 음성 우선)**(지침 `docs/briefs/plan-brief-v7-voice.md`, 사용자 "Google 음성 우선"): 5.9.1 고르는 순서(A → N → G → B → C, `lang-only` 없앰, `wait` 새로), 5.9.2(새: 기다렸다 말하기, 인터넷 목소리 1.5초 감시와 기기 안 목소리로 다시 말하기), 5.9.3(새: Safari·iPad 고품질 목소리 안내), 0·9 개인정보(인터넷 목소리 문구), 11, 12.1·12.2(E9)·12.4-12, 13 Z1~Z5, 14.4(새 갈림길 U1·U2), 15, 부록 C. (v6 UI 디자인은 일시정지 상태라 17절을 비워 둔다 — 이 개정은 17절을 쓰지 않는다.) 같은 날 덧붙임(사용자 결정 14.4 — U1 "윈도는 지금 그대로", U2 "디버그 화면 + 안내 문서"): 5.9.1에 **윈도 목록 규칙**(목록에 `Microsoft ` 목소리가 있으면 순서 A → N → B → G → C — 윈도는 v5 결과 그대로), 12.1 ⑦⑧·⑱⑲, 12.2 E9 ⑥, 12.4-13 ⑤, 13 Z1·Z4, 14.4 결정됨, 15.
   - 2026-11-26 Plan v4 반영(지침 `docs/briefs/plan-fix-brief-v4.md`): 16절 값을 본문에 바꿔 끼움 — 0, 5.3(5.3.1~5.3.5, 수치 다시 계산), 5.5, 5.6, 5.8, 6.2, 7.4(V5b 확정), 부록 A people-14, 부록 D·E 확정. 15절.
+  - 2026-11-26 **Plan v8(문제 순서 — 섞은 카드 더미, seed는 테스트 모드에서만)**(지침 `docs/briefs/plan-brief-v8-shuffle.md`, 사용자 "고치기"): 5.6(정답 고르기를 5.6.1 "섞은 카드 더미"로 바꿈), 5.5(저장 키), 0, 9(저장 목록), 11(`game/bag.ts`·`platform/bagStore.ts` 새로, `params.ts` seed 규칙), 12.1(`bag.test.ts` 새로, questions·params·storage), 12.2(테스트 훅 `bag`, E10 새로), 12.4-14, 13(B1~B4), 14.5(더 물을 것 없음), 15, 16.3·16.6(옛 `recent` 표시). 아래 "v8 변경 요약".
+
+### v8 변경 요약 — 문제를 모두 한 번씩 낸 뒤에만 반복 + seed는 테스트 모드에서만 (사용자 결정 "고치기", 2026-11-26 — 바로 Build 가능)
+- **사용자 요청(원문)**: "문제를 난이도마다 100문제 정도 만들어놓은거 맞지? 그런데 문제 나오는 순서가 똑같으니 몇번 도전하면 답을 외우게 돼. 무작위로 문제가 나오게 수정해줘" → 코디네이터 점검 → 사용자 **"고치기"**.
+- **원인(코디네이터 확인)**: 순서는 이미 판마다 무작위였지만, 정답 고르기가 최근 2판(20개)만 피해서 같은 단어(= 늘 같은 설명)가 3판째부터 다시 나왔다. 또 `?seed=`가 `?test=1` 없이도 순서를 완전히 고정했다.
+- **바뀌는 것 ①(5.6.1)**: 풀(3~4학년 143 / 5~6학년 87 / Very Hard 94)마다 **이번 바퀴에 이미 정답으로 낸 문항 id**를 기기에 저장하고(`catchword.bag.<풀>`), 판마다 **아직 안 낸 문항 중에서** 10개를 무작위로 뽑는다. 풀을 다 낸 뒤에만 새 바퀴(다시 섞기). 바퀴가 바뀌는 판은 남은 것을 먼저 다 쓰고 새 바퀴에서 채운다. 바퀴 경계에서도 **최근 30개 정답(3판)은 맨 뒤로 미뤄** 같은 단어는 적어도 3판을 사이에 둔다. "모두"는 3~4·5~6 더미를 함께 쓰고, Easy/Normal/Hard는 같은 더미를 쓴다. 판을 끝까지 하지 않고 나가면 **화면에 나오지 않은 문제는 더미로 되돌린다.** `localStorage`가 막혀 있으면 그 페이지 동안만 메모리 더미. 옛 `catchword.recent`·`catchword.recent.veryhard`는 한 번 옮기고 지운다.
+- **바뀌는 것 ②(11·12.2)**: `?seed=`는 `?test=1`이 함께 있을 때만 쓴다(`?clock=manual`과 같은 방식). seed를 쓰는 판은 저장된 더미를 읽지도 쓰지도 않고 페이지 안 메모리 더미로만 돈다(테스트가 결정적).
+- **그대로인 것**: 오답 카드 고르기(무작위, 5.6), 판 구성(카드 수·같은 주제 오답 수·떨어지는 시간·공정성 바닥), 점수·감점·최고 점수, 결과 화면과 모든 화면 문구. 화면에 새 문구 없음(`?debug=1` 디버그 줄만 더함).
 
 ### v4 변경 요약 — Very Hard 모드 + 전체 난이도 올리기 (사용자 승인 2026-11-26, 14.3 X1~X10 모두 추천안대로 — 본문에 반영됨, 자세한 근거는 16절)
 - **사용자 요청(원문)**: "very hard 모드를 만들어서 단어의 수준(중학교 과정을 심화까지), 빠르기를 더 빠르게 해줘. hard도 쉽다고 하네. 그리고 전체적으로 모든 모드 난이도 조금씩 더 올려야 겠어. 빠르기를 약간 더 빠르게 하는 등"
@@ -67,6 +75,7 @@
 | 게임 | 한 판 **10문제**(약 1분 40초). 문제마다 영어 설명 1개 + 떨어지는 단어 카드 3~4개 중 정답 1개. 오답은 그 카드만 사라짐(v1: 감점 없음 → v2 덧붙임: 오답마다 감점, 사용자 승인 2026-11-26). 문제가 진행될수록 카드 수·속도 증가. [추천] |
 | 난이도(v2 → v4, 사용자 승인 2026-11-26) | 시작 화면에서 **Easy / Normal / Hard / Very Hard**(기본 Normal). v4 단계 값: Easy 8.5/7.0/6.0초, Normal 7.0/6.0/5.0, Hard 5.5/4.5/4.0 + 카드 4장, **Very Hard 5.0/4.0/3.5 + 학년과 상관없는 중학 단어 전용 풀 94개(부록 D)**. 설명 길이에 따른 공정성 바닥으로 잡을 수 있는 시간을 보장. 점수 배율 ×1.0/×1.2/×1.5/×2.0. 오답 감점 −10/−20/−30/−40(0점 아래로는 안 내려감). (5.3, 5.5, 16) |
 | 문항 | **이 문서 부록 A에 230문항을 확정해 둔다**(3~4학년군 143, 5~6학년군 87, 15개 주제 — v3, 2026-11-26. v1은 161문항). Build는 그대로 JSON으로 옮기고, 검사 스크립트로 기계 검사, Review는 사람 눈 검사. 근거: 2022 개정 영어과 교육과정 [별표 3] 기본 어휘 중 초등 권장(*) 800개. |
+| 문제 순서(v8, 사용자 결정 "고치기" 2026-11-26) | **섞은 카드 더미**: 고른 풀의 문제를 모두 한 번씩 정답으로 낸 뒤에만 다시 섞어 반복(기기에 저장, 새로고침해도 이어짐). 바퀴 경계에서도 같은 단어는 3판 이상 사이를 둔다. `?seed=`는 `?test=1`일 때만. (5.6.1) |
 | 화면 문구 | 안내·버튼·오류는 **한국어**, 퀴즈(설명·단어)와 짧은 칭찬(Great! 등)은 **영어**. |
 | 카메라 대체 | 카메라가 없거나 거부되면 **터치/마우스로 하기**(같은 게임, 누르기 = 잡기). 개발·검증용 `?input=pointer`, `?input=replay`. |
 | 개인정보 | 영상은 기기 안에서만 처리, 저장·전송 없음. 사이트 밖으로 나가는 요청 0개를 자동 테스트로 확인. 시작 화면에 안내. v7: 영어 읽어 주기에 브라우저의 인터넷 목소리(Chrome의 Google 등)를 쓰면 영어 문장만 그 회사로 갈 수 있다는 한 줄을 더한다(9절). |
@@ -392,16 +401,84 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 | Very Hard(v4) | 4 | 260 | 208 (80%) | 148 (57%) | 180 |
 
 - 표의 뜻: 감점이 없으면 아무 카드나 차례로 잡아도 읽고 잡을 때 점수의 80%를 얻는다 — 사용자가 감점을 원한 이유와 맞다. 감점을 넣으면 마구 잡기는 57~68%로 확실히 손해다. 그러면서도 "두 장 중 하나"처럼 반쯤 알 때 골라 보는 것은 여전히 0보다 훨씬 큰 이득(95~135)이라, 아이들이 틀릴까 겁나서 아예 손을 안 내미는 일은 막는다. 감점 크기는 정답 한 번 점수의 약 8~15%로, 오답 한 번이 정답 한 번을 지우지 못한다.
-- 판 최고 점수는 **학년군 × 난이도별로** 기기 안(`localStorage` 키 `catchword.best.<band>.<difficulty>`, 예: `catchword.best.5-6.hard`)에 저장(v2). **Very Hard는 학년과 상관없이 한 칸 `catchword.best.veryhard`**(v4), 최근 정답 기억도 따로 `catchword.recent.veryhard`(최대 20개). 이름 없음. v1 키 `catchword.best.<band>`가 있고 새 `….easy` 키가 없으면 그 값을 `….easy`로 한 번 옮긴다(v1 기록은 Easy와 같은 규칙으로 낸 것). 옛 키는 지우지 않는다. `localStorage`가 막혀 있으면(사생활 모드 등) 저장만 건너뜀(try/catch).
+- 판 최고 점수는 **학년군 × 난이도별로** 기기 안(`localStorage` 키 `catchword.best.<band>.<difficulty>`, 예: `catchword.best.5-6.hard`)에 저장(v2). **Very Hard는 학년과 상관없이 한 칸 `catchword.best.veryhard`**(v4). (v4의 최근 정답 기억 `catchword.recent`·`catchword.recent.veryhard`는 v8에서 문제 더미 `catchword.bag.<풀>`로 바뀐다 — 5.6.1.) 이름 없음. v1 키 `catchword.best.<band>`가 있고 새 `….easy` 키가 없으면 그 값을 `….easy`로 한 번 옮긴다(v1 기록은 Easy와 같은 규칙으로 낸 것). 옛 키는 지우지 않는다. `localStorage`가 막혀 있으면(사생활 모드 등) 저장만 건너뜀(try/catch).
 - 마지막으로 고른 난이도는 `catchword.difficulty`(`easy|normal|hard|veryhard`, 없거나 이상한 값이면 `normal`)에 기억한다.
 
 ### 5.6 문항 고르기와 오답 카드 고르기 (`src/game/questions.ts`, 순수)
 - 학년군 선택: `3-4`이면 3~4학년군 문항만, `5-6`이면 5~6학년군만, `all`이면 전부에서 정답을 고른다. [추천: 14절 2번 — 기본 3~4학년]
-- 한 판의 정답 10개: 해당 풀에서 무작위. 최근 2판에 정답으로 나온 단어(`localStorage` `catchword.recent`, 최대 20개)는 풀이 충분하면 피한다.
+- 한 판의 정답 10개: **섞은 카드 더미(5.6.1, v8)**에서 뽑는다 — 고른 풀의 문제를 모두 한 번씩 낸 뒤에만 반복. (v1~v7: "해당 풀에서 무작위, 최근 2판(`catchword.recent`, 20개)만 피함" — 3판째부터 같은 단어가 다시 나와 답을 외우게 되어 v8에서 바꿈.)
 - 오답 카드 후보 = 같은 풀(3~4 선택이면 3~4 단어만 — 아이가 읽을 수 있게; 5~6·all이면 둘 다) − 정답 − **정답의 `avoid`(양방향으로 본다: A의 avoid에 B가 있으면 B의 avoid에도 A가 있는 것으로)** − **정답의 설명에 나온 단어(4.3의 같은 어근 규칙으로)** − 이번 문제에서 이미 고른 단어.
 - 같은 주제 오답 수는 5.3 표대로(후보가 모자라면 다른 주제로 채움). 나머지는 다른 주제에서 무작위로, 가능한 한 서로 다른 주제로.
 - 반대로, 오답 단어 B의 설명에 정답 A가 나오는 경우는 상관없다(화면에 B의 설명은 안 나옴).
-- **Very Hard(v4)**: 정답 풀과 오답 풀 모두 Very Hard 풀(94개)만 쓴다(학년군 무시). 같은 주제 오답 수는 2/3/3(후보가 모자라면 다른 주제로 채움), 최근 정답 피하기는 `catchword.recent.veryhard`. avoid·설명 속 단어 빼기 규칙은 위와 같다.
+- **Very Hard(v4)**: 정답 풀과 오답 풀 모두 Very Hard 풀(94개)만 쓴다(학년군 무시). 같은 주제 오답 수는 2/3/3(후보가 모자라면 다른 주제로 채움), 정답은 Very Hard 더미(`catchword.bag.veryhard`, 5.6.1)에서. avoid·설명 속 단어 빼기 규칙은 위와 같다.
+- **오답 카드 고르기는 v8에서도 그대로**(위 규칙대로 그 문제마다 무작위, 더미와 상관없음). 이유: 사용자가 외우게 된다고 한 것은 "설명 → 정답"의 짝이고, 오답 카드는 문제마다 다른 조합으로 섞여 나와 외울 대상이 아니다. 오답까지 더미로 묶으면 같은 주제 오답(5.3.2)을 고르는 후보가 줄어 판 구성이 바뀐다.
+
+#### 5.6.1 섞은 카드 더미(shuffle bag) — 정답 고르기 (v8, 사용자 결정 "고치기" 2026-11-26) (`src/game/bag.ts` 순수 + `src/platform/bagStore.ts` 저장)
+
+**목표**: 같은 풀에서 놀면 **모든 문제를 한 번씩 정답으로 낸 뒤에만** 같은 문제가 다시 나온다(한 "바퀴"). 바퀴가 바뀔 때도 막 나온 단어가 곧바로 다시 나오지 않는다. 새로고침·다음 날에도 이어진다.
+
+**① 더미(bag)와 풀** — 더미는 세 개, 문항 `id`로 센다(id는 `questions.json`·`veryhard.json` 324개 모두 서로 다르고, 낱말도 겹치지 않음 — Plan 2026-11-26 확인).
+
+| 더미 이름(`BagName`) | 문항 | 수 |
+|---|---|---|
+| `3-4` | `questions.json`에서 `band === '3-4'` | 143 |
+| `5-6` | `questions.json`에서 `band === '5-6'` | 87 |
+| `veryhard` | `veryhard.json` 전체 | 94 |
+
+- 판이 쓰는 더미(`bagsFor(band, difficulty)`): Very Hard → `['veryhard']`(학년 무시), 학년군 `3-4` → `['3-4']`, `5-6` → `['5-6']`, **`all` → `['3-4', '5-6']`(두 더미를 함께)**. Easy/Normal/Hard는 같은 더미를 쓴다.
+- **"모두"는 3~4·5~6 더미를 함께 쓴다 [추천 — Plan 결정]**: "모두" 판은 두 더미의 남은 문항을 합친 것에서 뽑고, 뽑힌 문항은 제 학년군 더미에서 "낸 것"이 된다. 이유: "모두"의 230문항은 3~4·5~6 문항 그 자체라, 따로 세면 3~4학년으로 몇 판 한 뒤 "모두"로 바꾼 아이가 방금 본 3~4 단어를 곧바로 다시 본다. 함께 쓰면 어떤 학년군 선택을 오가도 "한 바퀴에 한 번"이 지켜진다. 남은 수에 비례해 뽑히므로 3~4로 많이 논 뒤의 "모두" 판은 아직 안 본 5~6 단어가 더 많이 나온다(외우지 않게 하려는 목적과 맞음).
+- **Easy/Normal/Hard는 더미를 함께 쓴다 [추천 — Plan 결정]**: 세 난이도는 같은 풀(5.3.1, 난이도는 속도·헷갈림만 바꿈)이라 "설명 → 정답" 짝이 같다. 따로 세면 Easy에서 본 문제를 Normal로 바꾸자마자 다시 보게 된다. (v4까지의 `catchword.recent`도 세 난이도가 함께 썼다.)
+
+**② 저장 형식** — 더미마다 `localStorage` 키 하나.
+- 키: `catchword.bag.3-4`, `catchword.bag.5-6`, `catchword.bag.veryhard` (`STORAGE_KEYS.bagPrefix = 'catchword.bag.'`).
+- 값(JSON): `{"v":1,"used":["animal-03","food-11",…],"recent":["food-11","animal-03",…]}`
+  - `used`: **이번 바퀴에 이미 정답으로 낸 문항 id**, 낸 순서대로(오래된 것이 앞). 더미에 "남은 문항" = 풀 − `used`. (남은 목록 대신 낸 목록을 저장하는 이유: 문항이 더해지면 따로 손대지 않아도 "아직 안 낸 것"이 되어 이번 바퀴에 들어간다. 뽑을 때마다 남은 것에서 새로 무작위로 고르므로, 섞어 둔 순서를 저장하는 것과 결과 분포가 같다.)
+  - `recent`: 이 더미에서 **최근에 정답으로 낸 id**, 새것이 앞, 최대 `GAME.BAG_COOLDOWN` = **30개**(3판). 바퀴 경계에서 막 나온 단어를 미루는 데 쓴다(④).
+  - 가장 클 때 약 4KB(3~4 더미 `used` 143개). 개인을 알아볼 정보 없음(9절).
+- **읽을 때 맞추기(`sanitizeBag(raw, poolIds)`)** — 문항이 바뀐 경우(추가·삭제·id 변경·학년군 이동)를 따로 옮기는 코드 없이 처리한다:
+  - JSON이 아니거나, 객체가 아니거나, `v !== 1`이거나, `used`/`recent`가 문자열 배열이 아니면 → 빈 더미(`{used: [], recent: []}`). 다음 저장 때 덮어쓴다.
+  - `used`·`recent`에서 **지금 그 더미의 풀에 없는 id는 버리고**, 같은 id가 두 번 있으면 처음 것만 남긴다. `recent`는 30개로 자른다.
+  - 결과: **새 문항**은 `used`에 없으니 이번 바퀴의 남은 문항이 된다. **지운 문항**은 사라진다. **id가 바뀐 문항**은 새 문항처럼 이번 바퀴에 다시 들어간다(한 번 더 나올 수 있음 — 드물고 해가 없음). **학년군을 옮긴 문항**(id 그대로, `band`만 바뀜)은 옛 더미에서 빠지고 새 더미에서는 "아직 안 낸 것"이 된다.
+
+**③ 한 판 뽑기 — `drawAnswers(bags, n, rng)`** (순수, 입력을 바꾸지 않고 새 상태를 돌려줌. `bags = [{name, pool: Question[], state: BagState}]`, `n = GAME.QUESTIONS_PER_GAME` 10, `rng`만 씀)
+1. 각 더미를 `sanitizeBag`으로 맞춘다. **풀을 다 낸 더미**(풀의 모든 id가 `used`에 있음)는 여기서 **새 바퀴**: `used = []`(`recent`는 그대로).
+2. `chosen = []`. `chosen`이 n개가 될 때까지 되풀이:
+   - `R` = 쓰는 더미들의 풀에서 `used`에도 `chosen`에도 없는 문항(더미 순서 `3-4` → `5-6`, 더미 안은 데이터 파일 순서 — 같은 rng면 같은 결과가 나오게).
+   - `R`이 비었으면: `used`가 풀 전체인 더미를 모두 새 바퀴(`used = []`)로 하고 다시 되풀이. 새 바퀴로 할 더미가 없으면(풀 전체가 n보다 작음 — 지금 데이터에서는 일어나지 않음, 작은 테스트 풀용) 멈추고 뽑은 만큼만 돌려준다.
+   - `cool` = 쓰는 더미들의 `recent`를 합친 집합. **`R` 중 `cool`에 없는 것을 섞은 것 + `cool`에 있는 것을 섞은 것**을 이어 붙여 앞에서부터 모자란 만큼 가져온다. 가져온 문항은 `chosen`에 넣고 **제 더미의 `used` 끝에 더한다.**
+3. 끝나면 각 더미의 `recent` = (이번 판에 그 더미에서 뽑은 id, 나중에 뽑은 것이 앞) + 예전 `recent`, 겹침 없이 30개까지.
+4. 돌려줌: `{ answers: Question[] (chosen 순서 = 문제 1~10 순서), states: Record<BagName, BagState> }`.
+
+**④ 바퀴 경계 규칙(위 2의 결과)** — 예: 5~6 더미(87문항), 처음부터 혼자 놀 때
+- 1~8판: 남은 문항에서만 뽑으므로 **80개 모두 다름**.
+- 9판: 남은 7개를 **먼저 모두** 넣고(`R`이 7개뿐), `R`이 비면 새 바퀴를 열어 3개를 채운다. 3개는 **같은 판의 7개가 아니고**(`chosen` 제외), **최근 30개(6~8판 정답)도 아니다**(`cool`을 뒤로 미룸 — 새 바퀴 87 − 7 − 30 = 50개 중에서). 9판이 끝나면 `used`에는 새 바퀴의 3개만 남는다.
+- 10~12판: 새 바퀴에서 뽑되, 아직 `recent`에 있는 옛 바퀴 끝 문항(10판에서는 7~9판 정답, 11판에서는 8~9판, 12판에서는 9판의 옛 바퀴 7개)은 뒤로 미룬다(`R`에서 미루지 않은 것이 57개 이상이라 실제로는 뽑히지 않음). 그래서 **같은 단어가 다시 나오려면 적어도 3판이 사이에 있다**(Plan 흉내: 더미 4가지 × 씨앗 300 × 60판, 학년군을 무작위로 섞은 80판 × 씨앗 300 — 같은 단어 두 번 사이 최소 4판 차, 한 판 안 중복 0, 혼자 놀 때 87·143·94개마다 끊은 구간이 모두 풀 전체 한 번씩).
+- 판 수로 보면: 3~4 더미 143 → 14판 + 3개, 5~6 87 → 8판 + 7개, Very Hard 94 → 9판 + 4개마다 한 바퀴. "모두"(두 더미 합 230)는 약 23판.
+- 미루기(`cool`)는 **바퀴가 바뀐 뒤 처음 3판 동안만** 실제로 작동한다(바퀴 안에서는 최근 문항이 모두 `used`라 `R`에 없다). 그래서 바퀴마다 모든 문항이 꼭 한 번씩 나온다는 성질은 깨지지 않는다.
+
+**⑤ 언제 저장하고, 끝까지 하지 않은 판은**
+- **판을 시작할 때**(`startGame`에서 계획을 만들 때) 뽑은 결과(10개 모두 "낸 것")를 바로 저장한다. 그래서 놀다가 탭을 닫거나 새로고침해도 그 판의 문제는 "낸 것"으로 남는다.
+- **[처음으로] 등으로 끝나지 않은 판을 버릴 때**(일시정지의 [처음으로], 놀이 중 오류 화면 등 `session.phase !== 'finished'`인 판을 `endSession`으로 버리는 모든 곳, 한 판에 한 번만): **아직 화면에 나오지 않은 문제**(`plans.slice(session.index + 1)` — 설명 띠에 한 번이라도 나온 문제는 "나온 것")를 `returnUnshown(states, ids)`로 되돌려 저장한다 — 그 id를 `used`와 `recent`에서 뺀다. [추천 — Plan 결정] 이유: 화면에 나온 문제는 아이가 설명을 읽었으니 "나온 것"이 맞고, 나오지 않은 문제까지 "낸 것"으로 치면 그 바퀴에서 아예 못 보고 넘어가 "모두 한 번씩"이 깨진다. 결과 화면까지 간 판은 되돌릴 것이 없다.
+- 경계 판에서 되돌리는 문항이 옛 바퀴 것이면 새 바퀴의 `used`에는 없으므로 `recent`에서만 빠지고, 새 바퀴의 아직 안 낸 문항으로 남는다(옳은 결과).
+
+**⑥ 저장소(`src/platform/bagStore.ts`)** — `BagStore`(App이 하나 만듦)
+- `load(name)`: 이 페이지에서 이미 읽은 더미면 메모리 값을, 아니면 `localStorage`에서 읽어 `sanitizeBag` 뒤 메모리에 둔다. `save(name, state)`: 메모리에 두고 `localStorage`에 쓴다(try/catch).
+- **`localStorage`가 막혔을 때**(사생활 모드, 읽기·쓰기 예외): 읽기는 빈 더미, 쓰기는 조용히 건너뛰고 **그 페이지 동안 메모리 더미로 이어 간다**(같은 페이지에서 여러 판은 중복 없음, 새로고침하면 처음부터). 오류 화면·문구 없음.
+- 탭 두 개를 같은 기기에서 동시에 열면 각 탭이 자기 메모리 값을 쓰므로 마지막에 저장한 탭의 더미가 남는다(교실에서 드묾, 해 없음 — 따로 막지 않음).
+- **seed 모드**(`?test=1&seed=…`, 아래 ⑧)에서는 `BagStore({ persist: false })`: `localStorage`를 **읽지도 쓰지도 않고** 빈 메모리 더미에서 시작한다.
+
+**⑦ 옛 키 `catchword.recent`·`catchword.recent.veryhard` (v4) — 한 번 옮기고 지운다** [추천 — Plan 결정]
+- 앱을 열 때 한 번(`migrateRecentToBags(questions)`, `migrateBest()` 옆, persist 모드에서만): 옛 키가 있으면 그 단어 목록을 id로 바꿔 **아직 키가 없는 더미**의 새 상태 `{v:1, used: <그 더미 풀에 속한 id들>, recent: <같은 id들>}`로 저장한다 — `catchword.recent` → `3-4`·`5-6` 더미(단어의 band로 나눔), `catchword.recent.veryhard` → `veryhard` 더미. 이미 `catchword.bag.*` 키가 있는 더미는 건드리지 않는다. 그다음 옛 키 두 개를 **지운다**(`removeItem`, try/catch).
+- 이유: 업데이트 직후 첫 판에 방금 2판 동안 본 단어가 다시 나오지 않게 하고(최근 20개를 "이번 바퀴에 낸 것"으로 시작), 더는 읽지 않는 키를 남겨 헷갈리지 않게 한다. (최고 점수의 v1 키를 남긴 것(5.5)과 다른 이유: 최고 점수는 기록이라 남겼고, 최근 목록은 기록이 아니다.)
+- 그 뒤로 `loadRecent`·`saveRecent`·`updateRecent`·`pickAnswers`·`GAME.RECENT_MAX`·`STORAGE_KEYS.recent*`는 쓰지 않는다(Build가 지우고, 옮기기에 필요한 옛 키 이름만 `STORAGE_KEYS.legacyRecent`·`legacyRecentVeryHard`로 남긴다).
+
+**⑧ seed와 더미(11·12.2)**
+- `?seed=N`은 **`?test=1`이 함께 있을 때만** 쓴다. 없으면 무시하고 판마다 무작위 씨앗(`randomSeed()`)이다 — `?clock=manual`과 같은 방식(11절, Review v1 R1). 이유: 보통 사용자가 seed 붙은 주소를 공유받으면 모든 판이 같은 순서로 고정되어 v8의 목적이 깨진다.
+- seed를 쓰는 판(테스트 모드)에서는 **저장된 더미를 읽지도 쓰지도 않고**(⑥ `persist: false`, ⑦ 옮기기도 안 함) **페이지를 열 때마다 빈 메모리 더미**에서 시작한다. 뽑기는 그 판의 seed rng(`mulberry32(seedBase + gameCount × 7919)`)로 한다. 그래서 같은 주소는 언제나 같은 판들이 나오고(앞선 테스트가 남긴 저장에 흔들리지 않음), 한 페이지에서 여러 판을 하면 더미 규칙(중복 없음)도 그대로 확인된다.
+- `?test=1`만 있고 seed가 없으면 보통처럼 저장된 더미를 쓴다(E10이 저장·새로고침 이어짐을 이렇게 확인).
+- 같은 seed라도 v8 뒤에는 v7과 다른 정답 순서가 나온다(rng를 쓰는 차례가 바뀜). E2E는 특정 단어에 기대지 않는다(13절 W3 원칙) — 기대는 곳이 있으면 B3에서 고친다.
+
+**⑨ 바뀌지 않는 것** — 판 구성(문제 번호별 카드 수·같은 주제 오답 수·출발 지연, 5.3.2), 떨어지는 시간·공정성 바닥(5.3.3 — 정답 문항으로 계산하므로 어떤 문항이 뽑혀도 같은 식), 점수·배율·감점·콤보·최고 점수(5.5), 오답 카드 고르기(5.6), 결과 화면·복습표·모든 화면 문구(5.8·6.2). 결과 화면에 새 문구 없음. `?debug=1` 디버그 화면에만 한 줄: `문제 더미: 5-6 57/87 남음`("모두"면 `3-4 120/143 · 5-6 57/87 남음`, seed 모드면 끝에 ` · 저장 안 함`).
 
 ### 5.7 일시정지·끝내기
 - 설명 띠 오른쪽의 일시정지 버튼(터치) → "잠깐 멈췄어요" 판: [계속하기] [처음으로].
@@ -692,7 +769,7 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 
 ## 9. 개인정보
 - 카메라 영상은 **이 기기 브라우저 안에서만** 손 위치를 찾는 데 쓰고, **저장하지 않고 어디에도 보내지 않는다.** 화면을 캡처하거나 녹화하는 코드가 없다. 서버·분석 도구·광고·외부 글꼴·외부 CDN 호출 없음.
-- `localStorage`에는 학년군별 최고 점수, 최근 정답 단어, 소리 설정만 둔다(개인을 알아볼 정보 없음).
+- `localStorage`에는 학년군별 최고 점수, 최근 정답 단어(v8부터: 풀마다 이번 바퀴에 낸 문항 id — 문제 더미 `catchword.bag.*`, 5.6.1), 소리 설정, 마지막 난이도만 둔다(개인을 알아볼 정보 없음).
 - 시작 화면 안내(항상 보임, 앞에 SVG 카메라 아이콘): **"카메라 영상은 이 태블릿 안에서 손 위치를 찾는 데만 쓰여요. 저장하거나 다른 곳으로 보내지 않아요."**
 - **영어 읽어 주기와 인터넷 목소리(v7)**: 읽어 주기는 브라우저에 들어 있는 목소리를 쓴다(5.9). 그중 **인터넷 목소리**(`localService === false` — Chrome의 Google 목소리, Edge의 Microsoft Online (Natural) 목소리)를 고르면 **브라우저가 읽을 문장(영어 설명·정답 단어)만** 그 회사 서버로 보내 소리를 받아 온다 [확인: MDN `localService` = 원격 합성 여부. 실제로 무엇이 오가는지는 브라우저 몫이라 확인하지 못함 — 추정]. 카메라 영상·손 좌표·점수·저장값은 보내지 않는다. 소리를 끄면 읽어 주기를 하지 않으므로 아무것도 가지 않는다. 사용자는 이 점을 듣고 "Google 음성 우선"을 골랐다(15절).
   - 시작 화면 안내 둘째 줄(v7, 항상 보임, 첫 줄 바로 아래, 같은 글자 크기 또는 한 단계 작게, 앞에 SVG 스피커 아이콘): **"영어 읽어 주기는 인터넷 목소리(Google 등)를 쓸 수 있어요. 이때 영어 문제 문장만 보내져요."** (`strings.ts`의 `PRIVACY_VOICE_NOTICE`. 첫 줄 `PRIVACY_NOTICE`는 바꾸지 않는다.) "쓸 수 있어요"라고 쓴 이유: Safari처럼 인터넷 목소리가 없는 기기, 인터넷 목소리를 끈 뒤(5.9.2)에도 문장이 틀리지 않게.
@@ -747,10 +824,10 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 │  └─ serve-dist.mjs               dist/를 /english1/ 아래로 주는 작은 정적 서버(E2E용, .wasm은 application/wasm)
 ├─ src/
 │  ├─ main.ts                      시작점: URL 매개변수 읽고 App 만들기
-│  ├─ config.ts                    HAND(4.6)·GAME(5.3~5.5)·PERF(10절)·SPEECH(5.9.2, v7) 상수 전부 — v2: GAME.DIFFICULTIES{easy,normal,hard}{stages, scoreMultiplier}, GAME.FALL_FLOOR{BASE_MS 300, WORD_MS {"3-4":400,"5-6":350}, MOVE_MS 1000, GRAB_MS 400, COMFORT_P 0.85}, GAME.DEFAULT_DIFFICULTY 'normal'(모두 깊게 얼림)
+│  ├─ config.ts                    HAND(4.6)·GAME(5.3~5.5)·PERF(10절)·SPEECH(5.9.2, v7) 상수 전부 — v2: GAME.DIFFICULTIES{easy,normal,hard}{stages, scoreMultiplier}, GAME.FALL_FLOOR{BASE_MS 300, WORD_MS {"3-4":400,"5-6":350}, MOVE_MS 1000, GRAB_MS 400, COMFORT_P 0.85}, GAME.DEFAULT_DIFFICULTY 'normal'(모두 깊게 얼림) — v8: `GAME.BAG_COOLDOWN` 30(`RECENT_MAX` 없앰), `STORAGE_KEYS.bagPrefix` 'catchword.bag.'·`legacyRecent` 'catchword.recent'·`legacyRecentVeryHard` 'catchword.recent.veryhard'(옮기기용)
 │  ├─ styles.css
 │  ├─ app/App.ts                   화면 상태 기계(start→loading→handcheck→playing⇄paused→result, error), 한 개의 rAF 루프
-│  ├─ app/params.ts                ?input=camera|pointer|replay, ?band, ?seed, ?debug=1, ?test=1, ?delegate=CPU|GPU, ?clock=manual(`?test=1`이 함께 있을 때만 켜짐 — 없으면 무시), ?difficulty=easy|normal|hard(v2)
+│  ├─ app/params.ts                ?input=camera|pointer|replay, ?band, ?seed(**v8: `?test=1`이 함께 있을 때만 — 없으면 null**), ?debug=1, ?test=1, ?delegate=CPU|GPU, ?clock=manual(`?test=1`이 함께 있을 때만 켜짐 — 없으면 무시), ?difficulty=easy|normal|hard|veryhard(v2·v4)
 │  ├─ camera/camera.ts             getUserMedia 열기·닫기, 오류 → ErrorKind
 │  ├─ camera/errors.ts             ErrorKind → 한국어 문구(8.2)
 │  ├─ hand/tracker.ts              HandFrame·HandSource 타입
@@ -763,7 +840,8 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 │  ├─ hand/mapping.ts              3.3·3.4 (순수)
 │  ├─ game/types.ts
 │  ├─ game/rng.ts                  mulberry32 씨앗 난수
-│  ├─ game/questions.ts            5.6 정답·오답 고르기 (순수)
+│  ├─ game/questions.ts            5.6 오답 고르기·한 판 계획 (순수) — v8: 정답은 bag.ts가 뽑아 넘겨줌(`pickAnswers`·`updateRecent` 없앰)
+│  ├─ game/bag.ts                  (v8) 5.6.1 섞은 카드 더미 (순수): BagName, BagState, bagsFor, sanitizeBag, drawAnswers, returnUnshown, remainingCount
 │  ├─ game/layout.ts               5.4 (순수)
 │  ├─ game/hitTest.ts              4.5 (순수)
 │  ├─ game/session.ts              한 판 진행·채점·결과 (순수, 시간은 update(dt)로만)
@@ -778,7 +856,8 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 │  ├─ audio/speech.ts              영어 읽어 주기(v5: voiceschanged 듣기, chooseVoice 결과 적용 · v7: 5.9.2 기다렸다 말하기, 인터넷 목소리 감시·기기 안 목소리로 다시 말하기)
 │  ├─ audio/voicePick.ts           5.9.1 목소리 고르기(순수, v5 · v7: 등급 A/N/G/B/C/D, wait/skip, excludeRemote)
 │  ├─ platform/wakeLock.ts
-│  ├─ platform/storage.ts          localStorage try/catch 감싸기
+│  ├─ platform/storage.ts          localStorage try/catch 감싸기 — v8: recent 함수 없앰, `remove(key)`·`migrateRecentToBags()` 더함
+│  ├─ platform/bagStore.ts         (v8) 5.6.1 ⑥ 더미 저장(메모리 + localStorage, persist 끄기), 키 `catchword.bag.<3-4|5-6|veryhard>`
 │  ├─ debug/debugOverlay.ts        ?debug=1: 21점 뼈대, 손가락별 c_f·C·상태, fps(그리기·인식), 검사 ms, 영상 크기, delegate, 고른 목소리(v5)
 │  ├─ debug/testHooks.ts           ?test=1: window.__eg (12.2)
 │  ├─ debug/recorder.ts            ?debug=1&record=1: 손 좌표 JSON 내려받기
@@ -805,7 +884,10 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 | `mapping.test.ts` | 4:3 영상 → 16:10·4:3·3:4 화면에서 (0.5,0.5)→화면 중심, (0,v)→오른쪽 끝(거울), 잘린 영역 → offscreen, 손바닥 중심 계산 |
 | `layout.test.ts` | 씨앗 1000개 × 화면 5종(1024×768, 1180×820, 1280×800, 768×1024, 820×1180) × 카드 3·4장: 카드끼리 가로로 겹치지 않음, 모두 `[0.06W, 0.94W]` 안, 같은 씨앗 = 같은 결과, 화면 크기 바뀌면 xFrac·p 유지 |
 | `hitTest.test.ts` | 여유 m 경계 안/밖, 두 카드 겹침 시 가까운 쪽, 띠 뒤 카드 제외, 이전 OPEN 위치(②) 사용 |
-| `questions.test.ts` | (v2) 난이도별 문제 번호마다 카드 수·같은 주제 오답 수가 5.3.2대로(같은 주제 후보가 모자라면 다른 주제로 채움), 한 판 10문제 중복 없음, 오답에 avoid(양방향)·설명 속 단어 없음, 학년군 필터, 같은 주제 오답 수 5.3대로, 최근 단어 피하기 |
+| `questions.test.ts` | (v2) 난이도별 문제 번호마다 카드 수·같은 주제 오답 수가 5.3.2대로(같은 주제 후보가 모자라면 다른 주제로 채움), 한 판 10문제 중복 없음, 오답에 avoid(양방향)·설명 속 단어 없음, 학년군 필터, 같은 주제 오답 수 5.3대로, ~~최근 단어 피하기~~(v8: `pickAnswers`·`updateRecent` 테스트는 `bag.test.ts`로 옮겨 지움 — `buildPlans`/`buildGamePlans`는 뽑힌 정답 목록을 받는다) |
+| `params.test.ts`(v8 덧붙임) | `?seed=7` → `seed` null, `?test=1&seed=7`·`?seed=7&test=1` → 7, `?test=1&seed=abc` → null(기존 입력·학년군 테스트의 seed 기대는 `test=1`을 붙여 고침) |
+| `storage.test.ts`(v8 덧붙임) | `BagStore`: persist 모드 → `catchword.bag.5-6`에 `{"v":1,…}` 저장·새 `BagStore`가 다시 읽음, persist 끔 → `localStorage`에 `catchword.bag.*` 쓰기 0·읽기 0(미리 넣어 둔 값이 있어도 빈 더미로 시작), `getItem`/`setItem`이 예외를 던질 때 → 오류 없이 메모리로 이어짐(두 판 뽑기 중복 0). `migrateRecentToBags`: 옛 `catchword.recent`(3~4·5~6 단어 섞임)·`catchword.recent.veryhard` → 각 더미의 `used`·`recent`로, 옛 키 둘 지움, 이미 있는 `catchword.bag.*`는 그대로, 모르는 단어는 버림. 기존 recent 테스트는 지움 |
+| `bag.test.ts`(v8, 5.6.1) | 실제 데이터(`questions.json` 3~4 143·5~6 87, `veryhard.json` 94)와 `mulberry32`로, 씨앗 1~200: ① **5~6 경계**: 빈 더미에서 8판 → 정답 80개 모두 다름, 9판 → 10개 서로 다름 + 남았던 7개가 모두 들어 있음 + 나머지 3개는 6~8판 정답(30개)에 없음, 9판 뒤 `used`는 그 3개뿐, `recent`는 9판 정답 10개 + 7·8판 20개 ② **바퀴 성질**: 혼자 노는 더미 3종(3-4·5-6·veryhard) × 60판 — 뽑힌 순서를 풀 크기(143·87·94)씩 끊으면 각 구간이 풀 전체를 정확히 한 번씩 ③ **간격**: ②와, 판마다 학년군(3-4·5-6·all)을 무작위로 바꾸는 80판 — 같은 id가 두 번 나온 판 번호 차가 늘 4 이상, 한 판 안 중복 0 ④ **"모두" 공유**: 3-4로 5판 뒤 `all` 1판 → 정답 중 3-4 `used`에 있던 id 0개, 뽑힌 3~4·5~6 문항이 각자 더미의 `used`에 더해짐 ⑤ **맞추기(`sanitizeBag`)**: 깨진 JSON·`v:2`·배열 아님·숫자 섞인 배열 → 빈 더미, 풀에 없는 id·중복 id 버림, `recent` 30개로 자름, 풀에 새 id를 더하면(가짜 풀 88개, `used` 80) 남은 8개에 새 id 포함, 풀에서 id를 지우면 남은 수가 그만큼 줄고 오류 없음, 문항의 band를 5-6→3-4로 바꾸면 5-6 `used`에서 빠지고 3-4에서는 남은 문항 ⑥ 시작 때 다 쓴 더미(`used` = 풀 전체) → 새 바퀴로 시작, `recent` 30개는 그 판에서 뽑히지 않음 ⑦ `returnUnshown`: 4~10번 id를 되돌리면 `used`·`recent`에서 빠지고 1~3번은 남음, 경계 판(옛 바퀴 7 + 새 바퀴 3)에서 되돌려도 새 바퀴 `used`가 맞음 ⑧ 같은 상태 + 같은 씨앗 = 같은 결과, `drawAnswers`가 입력 상태를 바꾸지 않음 ⑨ 작은 풀: 풀 6개·n 10 → 6개만 돌려주고 끝남(무한 반복 없음), 풀 15개 → 매 판 10개 서로 다름(미룬 문항도 모자라면 씀) ⑩ `bagsFor`: veryhard → `['veryhard']`(band 무시), all → `['3-4','5-6']` |
 | `difficulty.test.ts`(v2) | ① 세 난이도의 단계 값·카드 수·같은 주제 수·배율·오답 감점이 5.3.2 표와 같음 ② 바닥 식: 낱말 3~10 × 학년군 2종이 5.3.3 표 값(ms)과 같음(테스트 안에서 식을 따로 계산) ③ **Hard 보장**: `questions.json` 161문항 × 3난이도 × 3단계 모두 `fallMsFor ≥ 단계 값`, `fallMsFor ≥ 바닥`, `0.85 × fallMsFor ≥ T_need`, 그리고 Hard 전체 최소값 ≥ 4500ms ④ Easy는 161문항 모두 `fallMsFor = 단계 값`(v1과 같음) ⑤ 화면 5종에서 p = 0.85일 때 카드 중심이 화면 안(≤ H)이고 H의 88~93% ⑥ 이상한 난이도 이름 → normal |
 | `session.test.ts` | 가짜 시계로 한 판: 정답·오답·놓침 점수(5.5, v2 배율 포함 — 세 난이도 각각), v2 감점: 오답 1·2·3번 뒤 정답 = 깎인 합 + 오답 뒤 정답 점수, 점수 0에서 오답 → 0 유지·깎인 양 0, 점수 15에서 Normal 오답 → 0·깎인 양 15, 오답 뒤 놓침 = 감점만, 오답이 콤보를 끊음, START·AGAIN 카드는 감점 없음, 문제별 기록(얻은 점수·깎인 점수·오답 단어), 문제별 실제 떨어지는 시간 = fallMsFor, 콤보, 3초 손 없음 → 자동 일시정지, dt 100ms 자르기, 10문제 뒤 결과 |
 | `data.test.ts` | `validate.ts`가 V1~V9 위반 0, **부록 A와 JSON이 같음**(테스트가 `spec.md`의 부록 A 표를 직접 읽어 230문항(v3)의 모든 칸을 JSON과 비교), 위반 예시(정답이 든 설명, 11낱말 설명 등)를 일부러 넣으면 잡아냄 |
@@ -817,6 +899,7 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 ### 12.2 자동 — 브라우저 테스트(Playwright, chromium)
 - 설정: `webServer`가 `node scripts/serve-dist.mjs --dir dist --prefix /english1/ --port ${E2E_PORT:-4173} --host 127.0.0.1`(`reuseExistingServer: false`). `baseURL = http://127.0.0.1:4173/english1/`. 프로젝트: `tablet-landscape`(1180×820, hasTouch), `tablet-portrait`(820×1180, hasTouch), `small-landscape`(1024×768).
 - **테스트 훅** `?test=1`일 때만 `window.__eg`: `state()`(화면 이름, 문제 번호, 점수, 설명, 카드 목록 `{word, correct, rect, alive}`, v2: `difficulty`, 이번 문제의 `fallMs`), `loadReplay(frames)`, `clock.step(ms)`(`?test=1&clock=manual`일 때 rAF 시간 대신 수동 진행. `?clock=manual`만 있고 `?test=1`이 없으면 무시하고 보통 시계로 돈다 — Review v1 R1), `forceError(kind)`. 훅은 게임 규칙을 바꾸지 못한다(읽기·입력·시계만).
+- **v8**: `state()`에 `bag: { names: BagName[], remaining: Record<BagName, number>, sizes: Record<BagName, number>, persist: boolean }`(이번 판이 쓰는 더미, 남은 수, 풀 크기, 저장 여부)를 더한다. `?seed=`는 `?test=1`이 있을 때만 쓰이고, seed가 있으면 `persist: false`(5.6.1 ⑧). 기존 E2·E3·E6·E8·E9는 이미 `seed`와 `test=1`을 함께 쓰므로 주소는 그대로다(정답 단어가 바뀌어도 통과해야 함).
 
 | ID | 내용 |
 |---|---|
@@ -828,6 +911,7 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 | E6 | 배치: 세 화면 크기에서 가장 긴 설명(10낱말)·가장 긴 단어(10자)가 넘치지 않음(설명 띠 두 줄 이내, 카드 글자 폭 ≤ 카드 폭 − 24). v2: 시작 화면이 1024×768·1180×820·768×1024·820×1180에서 스크롤 없이 들어가고(문서 높이 ≤ 창 높이), 난이도 버튼 세 개가 모두 보이고 높이 ≥ 56px, 한국어 글자가 낱말 중간에서 줄바꿈되지 않음. |
 | E7 | 개인정보 문구가 시작 화면에 보임(v7: 둘째 줄 `PRIVACY_VOICE_NOTICE`도), 터치 모드에서 `getUserMedia`가 불리지 않음. |
 | E9(v5 → v7) | 목소리: `addInitScript`로 `speechSynthesis.getVoices`가 정한 목록을 돌려주고, `speak`가 넘겨받은 `{text, voice?.name, lang, rate, pitch}`를 기록하며, 발화의 `onstart`·`onend`를 흉내(local은 바로, remote는 설정에 따라 "바로 시작" 또는 "시작 안 함")하게 바꾼 뒤 터치 모드 한 판(`?input=pointer&seed=7&test=1&clock=manual&difficulty=easy&debug=1`). **모든 경우에 공통: 소리가 있는(빈 글자가 아닌) 발화 중 `voice`가 null이거나 ko-*인 것 0개, Albert 0회.** ① **맥 Safari 목록**(voicePick ①, Google 없음) → 설명·단어 읽기 모두 Samantha(v5 E9 그대로) ② **맥 Chrome 목록**(voicePick ⑫, remote 바로 시작) → 모두 Google US English, `state().voice` = `Google US English (en-US, remote, G) · voice` ③ **맥 Chrome 목록 + 인터넷 끊김**(remote는 시작 안 함) → 첫 설명은 Google US English로 한 번, 약 1.5초 뒤(실제 시간, `expect.poll`) 같은 문장을 Samantha로 다시, 그 뒤 모든 발화가 Samantha, `state().voice`가 `· 인터넷 목소리 끔`으로 끝남, 게임은 10문제 끝까지(소리와 상관없이 문제가 진행됨) ④ 처음 빈 목록 → 0.5초 뒤 `voiceschanged`로 맥 Chrome 목록 → 첫 설명이 건너뛰어지지 않고 Google US English로(목소리 null 발화 0 — v5의 lang-only 기대를 바꿈) ⑤ 목록이 끝내 빈 채 → 소리가 있는 발화 0개, 결과 화면까지 한 판이 정상으로 끝남, 콘솔 오류 0 ⑥ **윈도 Chrome 목록**(voicePick ⑦, remote 바로 시작) → 모두 Microsoft David, Google 0회(U1 "윈도는 지금 그대로") |
+| E10(v8) | 섞은 카드 더미(터치 모드, `?input=pointer&test=1&clock=manual&difficulty=easy`, 정답은 문제마다 `state()`의 정답 카드로 읽어 모음 — 정답만 눌러 빨리 끝냄): ① **이어짐**: seed 없이 `&band=5-6`으로 2판(결과 화면 AGAIN/[다시 하기]) → 정답 20개 모두 다름, `localStorage` `catchword.bag.5-6`의 `used`가 그 20개 id와 같음(순서대로), `state().bag.remaining['5-6']` = 67 → **새로고침** → 1판 → 앞 20개와 겹침 0, `used` 30개 ② **경계**: `addInitScript`로 `catchword.bag.5-6` = `used` 80개(테스트가 `questions.json`에서 5~6 id를 읽어 앞 80개)·`recent` 그중 마지막 30개를 넣고 `&band=5-6`으로 1판 → 남았던 7개 id가 모두 정답에 있고, 나머지 3개는 7개도 `recent`도 아님, 판 뒤 `used`는 3개 ③ **버린 판 되돌리기**: 빈 상태에서 `&band=3-4` 한 판을 3번 문제가 나온 뒤 일시정지 → [처음으로] → `used` = 1~3번 정답 id 3개(4~10번 없음), `recent`도 3개 ④ **"모두" 공유**: `&band=3-4` 1판 뒤 시작 화면에서 [모두]로 1판 → 두 판 정답 겹침 0, `catchword.bag.3-4`·`catchword.bag.5-6`의 `used` 합이 20 ⑤ **seed는 테스트 모드에서만**: `?input=pointer&seed=7&band=5-6`(test=1 없음 — 훅이 없으므로 `#btn-touch` → `#start-card`를 누르고 보통 시계로 3·2·1이 지나기를 `expect.poll`로 기다림) → 판이 시작되면 `catchword.bag.5-6`이 `used` 10개로 저장돼 있음(seed를 무시한 보통 모드라서 저장함). `?input=pointer&test=1&clock=manual&seed=7&band=5-6`을 두 번(새 페이지) 열어 첫 판 정답 10개가 서로 같고, 미리 넣어 둔 `catchword.bag.5-6` 값이 한 판 뒤에도 바뀌지 않고 다른 `catchword.bag.*` 키도 생기지 않음, `state().bag.persist === false` ⑥ **저장 막힘**: `addInitScript`로 `Storage.prototype.getItem`·`setItem`·`removeItem`이 예외를 던지게 → 2판 정답 20개 모두 다름, 콘솔 오류 0, 결과 화면 정상 ⑦ **옛 키 옮기기**: `catchword.recent` = `["cat","dog"]`(3~4 단어) 넣고 열기 → `catchword.recent` 없어짐, `catchword.bag.3-4`의 `used`에 두 단어의 id, 그 판 정답에 cat·dog 없음 |
 | E8(v2) | 난이도: ① 시작 화면에서 Hard를 누르고 새로고침 → Hard가 선택돼 있음(`catchword.difficulty`) ② `?difficulty=easy`가 기억한 값보다 우선 ③ 설명 띠 배지·결과 화면에 고른 난이도 표시 ④ Hard·Normal·Easy 각각 터치 모드 한 판(`seed` 고정, 문제마다 오답 0~2번 섞어 누름): 점수 = 독립 계산(배율·감점·0점 바닥 포함), `state()`의 문제별 `fallMs`·카드 수가 5.3.2·5.3.3 식과 같음 ⑤ 최고 점수가 `catchword.best.<band>.<difficulty>`에 저장되고, v1 키만 있는 상태로 열면 Easy 최고 점수로 옮겨짐 ⑥ 첫 시도 8/10 이상이면 도전 권유 문구 |
 
 ### 12.3 실제 손 녹화 재생(선택, S7)
@@ -848,6 +932,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 11. (v2) 학생 3~5명이 Easy·Normal·Hard를 각각 2판: 첫 시도 정답률이 5.3.5 목표 근처인지, Hard에서 "너무 빨라 손이 못 따라간다"는 문제가 없는지, 긴 설명 문제(8~10낱말)에서 읽고 잡을 시간이 되는지. `?debug=1` 결과 화면의 문제별 잡은 시각을 사진으로 남긴다.
 12. (v5) 영어 읽어 주기 목소리: iPad Safari·맥 Safari·맥 크롬·안드로이드 크롬에서 각각 한 판 들어 보고, 쉰 목소리·노래·로봇 소리가 아닌 자연스러운 성인 목소리인지 확인한다. `?debug=1` 화면의 "고른 목소리"를 사진으로 남긴다(예: iPad → Samantha 또는 내려받은 고품질 목소리). 이상하면 그 기기의 목소리 이름을 알려 주면 Plan이 5.9.1 목록을 고친다.
 13. (v7) 맥 발음 확인 — ① 맥 Chrome `?debug=1`: 고른 목소리 `Google US English (en-US, remote, G)`, 한 판 들어 보고 윈도 PC와 비슷한 원어민 억양인지(한국어 억양·콩글리쉬가 아닌지) ② 같은 맥 Chrome에서 와이파이를 끈 채 새로고침 → 첫 설명이 약 1.5초 안에 Samantha로 들리고 디버그에 `인터넷 목소리 끔`, 그 뒤 문제는 바로 Samantha ③ 맥 Safari: Samantha(또는 내려받은 고품질 목소리) — 5.9.3 경로로 Samantha 고품질(또는 Ava)을 내려받고 Safari를 다시 연 뒤 디버그에 `(Enhanced)`/`(Premium)`·등급 A가 나오는지(나오지 않으면 Safari가 고품질 목소리를 페이지에 주지 않는 것 — 보고) ④ iPad Safari: 같은 확인 + 5.9.3 iPad 경로가 맞는지 ⑤ 윈도 Chrome: `Microsoft David`(U1 — 이전과 같음), 윈도 Edge: Aria — 둘 다 이전과 같은 목소리·소리인지 ⑥ 학교 와이파이에서 Google 시작이 1.5초 안에 되는지(디버그에 `인터넷 목소리 끔`이 뜨지 않는지 — 뜨면 그 망에서 늦은 것, `REMOTE_START_TIMEOUT_MS` 조정 근거) ⑦ 어느 기기에서도 한국어 목소리(유나 등)로 영어를 읽는 일이 없는지.
+14. (v8) 문제 순서 — 배포 주소에서 ① 5~6학년·Easy로 3판 연속: 같은 정답 단어가 다시 나오지 않음(결과 복습표 사진) ② 새로고침 뒤 1판: 앞 3판 단어가 나오지 않음 ③ `?debug=1`의 `문제 더미: 5-6 …/87 남음`이 판마다 10씩 줄어듦 ④ `?seed=7&debug=1`로 열어 한 판: 디버그 더미 줄에 `저장 안 함`이 없고 남은 수가 10 줄어듦(seed가 무시되고 보통처럼 더미를 씀) ⑤ iPad Safari 사생활 보기에서도 한 판이 정상으로 끝남.
 
 ---
 
@@ -893,6 +978,15 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | Z3 개인정보 문구 | `strings.ts` `PRIVACY_VOICE_NOTICE`(9절 문장 그대로), 시작 화면 개인정보 안내 둘째 줄(스피커 SVG 아이콘, `keepWords`), `styles.css` 줄 간격·크기 | `strings.test` 통과, E6(화면 4종 스크롤 없음·어절 끊김 없음)·E7(둘째 줄 보임)·E1 통과, 시작 화면 4종 스크린샷을 보고에 첨부 |
 | Z4 디버그·안내·E9 | `?debug=1` 목소리 줄(등급 글자, `인터넷 목소리 끔`, 애플 보통 목소리일 때 고품질 안내 한 줄 — 5.9.1 디버그), (U2 결정) `README.md` "영어 목소리" 절(5.9.3 경로, Chrome은 Google 목소리를 자동으로 씀, 인터넷 목소리와 9절 개인정보, 소리 끔이면 보내지 않음), E9 ①~⑤ | `npm run check` 전부 통과. 사용자의 실제 맥 Chrome에서 배포 전 로컬 빌드(`?debug=1`)의 고른 목소리가 `Google US English (en-US, remote, G)`인지 확인할 수 있으면 확인(못 하면 보고) |
 | Z5 사람 확인 | 12.4-13(맥 Chrome 소리·와이파이 끊고 대체, 맥·iPad Safari 고품질 목소리, 윈도 Chrome·Edge, 학교 와이파이 시작 시간) | 기기별 고른 목소리 이름·들은 느낌 보고 → 이상하면 Plan이 5.9.1·5.9.2 값을 고침 |
+
+- **v8(문제 순서 — 섞은 카드 더미, seed는 테스트 모드에서만) Build 단계** — 사용자 "고치기"(2026-11-26), 14.5 더 물을 것 없음, **바로 Build 가능**. 각 단계 끝에 `npm run typecheck && npm test`, 마지막에 `npm run check`. 화면 문구·결과 화면·판 구성 값은 바꾸지 않는다(바꿔야 하면 멈추고 보고).
+
+| 단계 | 할 일 | 완료 기준 |
+|---|---|---|
+| B1 더미 순수 함수 | `config.ts` `GAME.BAG_COOLDOWN = 30`(`RECENT_MAX` 지움), `STORAGE_KEYS.bagPrefix`·`legacyRecent`·`legacyRecentVeryHard`(`recent`·`recentVeryHard` 지움). `src/game/bag.ts`: `BagName`(`'3-4'|'5-6'|'veryhard'`), `BagState {used: string[]; recent: string[]}`, `bagsFor(band, difficulty)`, `bagPool(name, pools)`, `sanitizeBag(raw, poolIds)`, `drawAnswers(bags, n, rng)`(5.6.1 ③ 그대로), `returnUnshown(states, ids)`, `remainingCount(pool, state)`. `questions.ts`: `pickAnswers`·`updateRecent` 지우고 `buildPlans(all, band, difficulty, rng, answers)`·`buildGamePlans(pools, band, difficulty, rng, answers)`가 뽑힌 정답을 받음(오답 고르기·카드·지연·`fallMs`는 그대로, 정답 다음에 같은 rng로 이어서 씀) | `bag.test.ts` ①~⑩ 통과, `questions.test.ts`(최근 단어 테스트를 지우고 정답을 넘겨받게 고침) 통과, 다른 단위 테스트 그대로 통과 |
+| B2 저장·seed·App 연결 | `params.ts`: `seed`는 `test === true`일 때만. `src/platform/bagStore.ts`(5.6.1 ⑥, `persist` 인자). `storage.ts`: `loadRecent`·`saveRecent` 지우고 `remove(key)`·`migrateRecentToBags(pools)`(5.6.1 ⑦). `App.ts`: 생성자에서 `persist = params.seed === null`로 `BagStore` 만들기, persist면 `migrateRecentToBags` 한 번, `startGame`에서 `bagsFor` → `load` → `drawAnswers(…, rng)` → 바로 `save` → `buildGamePlans(…, answers)`, 이번 판의 더미 이름을 기억. `endSession`에서 끝나지 않은 판이면(`phase !== 'finished'`, 한 번만) `returnUnshown(plans.slice(index + 1))` 저장. `finish()`의 `saveRecent` 줄 지움. `testHooks` `state().bag`, `debugOverlay` 더미 줄(5.6.1 ⑨) | `params.test`·`storage.test`(v8 항목) 통과. 터치 모드로 5~6 두 판 + 새로고침 한 판 손으로 해 보고 `localStorage` 값을 보고에 붙임 |
+| B3 브라우저 테스트 | E10 ①~⑦ 새로(`tests/e2e/e10-bag.spec.ts`). 기존 E2·E3·E6·E8·E9가 바뀐 정답 순서에서도 통과하는지 확인 — 특정 정답 단어·순서에 기대던 곳이 있으면 `state()`로 읽게 고침(기대값 자체는 바꾸지 않음) | `npm run check` 전부 통과(E1~E10) |
+| B4 사람 확인 | 12.4-14 | 배포 뒤 결과 보고 |
 
 - **v4(Very Hard·전체 난이도) Build 단계는 16.8의 X1~X6**(Plan 몫 X1·X2·X5는 2026-11-26 완료, Build 몫이 남음).
 
@@ -979,6 +1073,19 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | U2 | Safari·iPad 고품질 목소리 안내를 어디에 | ① `?debug=1` 화면 한 줄 + 저장소 `README.md` 교사용 "영어 목소리" 절 ② ① + 시작 화면에도 한 줄 ③ `?debug=1`만 | ① | **① "디버그 화면 + 안내 문서"**(추천안) — 시작 화면에는 새 문구 없음(개인정보 둘째 줄만) |
 
 - 더 물을 갈림길 없음 — **바로 Build(13절 Z1~Z5) 가능.**
+
+### 14.5 v8(문제 순서) — 더 물을 갈림길 없음, 바로 Build(13절 B1~B4) 가능
+(사용자는 "고치기"로 두 가지 — ① 고른 풀을 모두 한 번씩 낸 뒤에만 다시 섞어 반복, 기기에 저장 ② seed는 `?test=1`일 때만 — 를 이미 정했다. 아래는 그 결정 안의 세부로, Plan이 근거와 함께 정했다. 화면·문구·점수에 닿는 것이 없어 사용자에게 다시 묻지 않는다. 바꾸고 싶으면 알려 주면 Plan이 5.6.1을 고친다.)
+
+| # | 세부 | Plan이 정한 것 | 근거(5.6.1) |
+|---|---|---|---|
+| B-a | "모두"와 학년군 더미 | 따로 두지 않고 3~4·5~6 더미를 **함께** 씀 | 같은 문항이라 따로 세면 학년군을 바꾸자마자 방금 본 단어가 다시 나옴 ① |
+| B-b | Easy/Normal/Hard | 더미 **공유**(Very Hard만 따로) | 같은 풀·같은 설명 → 정답 짝. v4의 최근 목록도 공유였음 ① |
+| B-c | 바퀴 경계 | 남은 것 먼저 + 새 바퀴에서 채움, 같은 판 중복 없음, 최근 30개(3판) 뒤로 미룸 → 같은 단어는 적어도 3판 사이 | ③④, Plan 흉내로 확인 |
+| B-d | 끝까지 하지 않은 판 | 화면에 나온 문제만 "낸 것", 나오지 않은 문제는 되돌림(탭을 닫으면 10개 모두 낸 것) | ⑤ |
+| B-e | 옛 `catchword.recent*` | 한 번 더미로 옮기고 지움 | ⑦ |
+| B-f | 오답 카드 | 지금 그대로(문제마다 무작위) | 5.6 |
+| B-g | seed 모드 저장 | 읽지도 쓰지도 않음, 페이지마다 빈 메모리 더미 | 테스트 결정성 ⑧ |
 ---
 
 ## 15. 결정 기록
@@ -1125,6 +1232,13 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 - 2026-11-26 **Plan v5(영어 목소리)**: 사용자 원문 "영어 스피킹이 목이 쉬고 뭔가 이상한 느낌의 목소리인데 목소리 점검해줘" → 코디네이터 점검(원인: en-US 첫 목소리 = macOS·iPadOS 장난용 "Albert") → 사용자 **"고치기"**(자동으로 자연스러운 목소리 고르기 안. 목소리 직접 선택 기능은 고르지 않음). Plan이 고른 것: 5.9.1(장난용 제외 목록, 맨 뒤 목록, 좋은 목소리 등급, 언어·등급·default·local 순서, 빈 목록·`voiceschanged` 처리, `rate 0.9`·`pitch 1` 그대로). 더 물을 갈림길 없음 — 바로 Build(Y1~Y4).
 - 2026-11-26 **Plan v7(맥 영어 발음 — Google 음성 우선)**: 사용자 원문 "윈도우pc에서는 원어민 느낌으로 발음이 좋은데, 애플기기(맥북)에서는 발음이 콩글리쉬 느낌으로 엄청 안좋아. 이유가 뭐야? 윈도우pc의 발음 처럼 되도록 해줘" → 코디네이터 점검(원인 ① 맥 Chrome에 Google US English(인터넷 음성)가 있는데 v5 규칙이 같은 등급이면 기기 안 목소리를 먼저 골라 오래된 Samantha를 씀 ② 이 맥의 기본 목소리가 한국어 "유나"라 목소리 없이 `lang`만 주고 말하면 콩글리쉬가 될 수 있음) → 퀴즈 문장이 Google 서버로 간다는 점을 듣고 사용자 **"Google 음성 우선"**. Plan이 고른 것: 5.9.1 등급 A(애플 고품질) → N(Microsoft Natural) → G(Google) → B → C → D, `lang-only` 없앰(`wait` 1초 → 없으면 건너뜀, 장난용뿐도 건너뜀), 5.9.2 인터넷 목소리 1.5초 감시 → 기기 안 목소리로 같은 문장 다시 + 그 페이지에서 인터넷 목소리 끔, 9절 시작 화면 둘째 줄 "영어 읽어 주기는 인터넷 목소리(Google 등)를 쓸 수 있어요. 이때 영어 문제 문장만 보내져요.", 5.9.3 Safari·iPad 고품질 목소리 안내. 사용자 확인 2개(14.4 U1 윈도 Chrome 적용, U2 안내 위치).
 - 2026-11-26 **사용자 결정(14.4)**: U1 원문 **"윈도는 지금 그대로"**(Plan 추천 ①이 아님) → 윈도에서는 Microsoft 목소리를 계속 씀(Chrome → David, Edge → Aria), Google 우선은 맥 등 비윈도에만. Plan이 고른 판별 방법: UA·platform이 아닌 **목록 기반**(목록에 `Microsoft `로 시작하는 목소리가 하나라도 있으면 등급 순서 A → N → B → G → C — 근거 5.9.1). U2 원문 **"디버그 화면 + 안내 문서"**(추천안) → `?debug=1` 한 줄 + `README.md` 교사용 "영어 목소리" 절. 더 물을 것 없음 — 바로 Build(Z1~Z5).
+- 2026-11-26 **Plan v8(문제 순서 — 섞은 카드 더미, seed는 테스트 모드에서만)**(지침 `docs/briefs/plan-brief-v8-shuffle.md`):
+  - **사용자 요청 원문**: "문제를 난이도마다 100문제 정도 만들어놓은거 맞지? 그런데 문제 나오는 순서가 똑같으니 몇번 도전하면 답을 외우게 돼. 무작위로 문제가 나오게 수정해줘"
+  - 코디네이터 점검(2026-11-26): 문제 풀 3~4학년 143·5~6학년 87·모두 230·Very Hard 94. 순서는 이미 판마다 무작위(`App.ts` `seedBase = params.seed ?? randomSeed()`, 판마다 `mulberry32(seedBase + gameCount × 7919)`, 배포 사이트에서 새로 연 판 10개의 첫 정답이 모두 다름). 외우게 되는 이유: ① `pickAnswers`가 최근 정답 20개(2판)만 피해 3판째부터 같은 단어(= 같은 설명)가 다시 나옴 ② `?seed=`가 `?test=1` 없이도 순서를 고정.
+  - **사용자 결정 원문**: **"고치기"** — 코디네이터의 추천 두 가지를 받아들임: ① 고른 풀의 문제를 모두 한 번씩 낸 뒤에만 다시 섞어 반복(섞은 카드 더미, 기기에 저장) ② seed는 `?test=1`일 때만.
+  - Plan이 정한 세부(14.5 B-a~B-g, 근거 5.6.1): "모두"는 3~4·5~6 더미 함께, 세 난이도 더미 공유, 경계에서 최근 30개(3판) 미루기(`GAME.BAG_COOLDOWN`), 화면에 나오지 않은 문제는 되돌림, 저장은 판 시작 때, 낸 id 목록(`used`) 저장 + 읽을 때 지금 풀로 맞추기, 저장 막히면 메모리, 옛 `catchword.recent*`는 옮기고 지움, 오답 고르기 그대로, seed 모드는 저장을 읽지도 쓰지도 않음.
+  - Plan 확인(2026-11-26, 저장소 데이터로 따로 흉내 — 코드는 바꾸지 않음): 문항 id 324개·낱말 모두 서로 다름(부록 A와 부록 D 사이 겹침 0). 5.6.1 ③ 알고리즘을 더미 4가지(3-4·5-6·all·veryhard) × 씨앗 300 × 60판, 그리고 판마다 학년군을 무작위로 바꾸는 80판 × 씨앗 300으로 돌림: 한 판 안 중복 0, 같은 단어가 다시 나온 판 차 최소 4(사이에 3판), 혼자 노는 더미는 풀 크기마다 끊은 구간이 모두 풀 전체 한 번씩, 3-4로 5판 뒤 "모두" 판에서 3-4 `used` 문항이 다시 나온 것 0.
+  - 더 물을 것 없음 — 바로 Build(13절 B1~B4).
 
 
 ---
@@ -1175,7 +1289,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 - 한 줄 설명(Very Hard): "중학교 단어가 아주 빠르게 떨어져요. 최고의 도전!"
 - Very Hard를 고르면 학년 줄이 흐려지고(투명도 0.4) 그 아래 "Very Hard는 학년과 상관없이 중학 단어로 나와요". 다른 난이도로 바꾸면 원래대로.
 - 설명 띠 배지 `Very Hard`, 결과 화면 머리 "Very Hard · 중학 단어".
-- **최고 점수**: Very Hard는 학년과 상관없이 한 칸 `catchword.best.veryhard`. 최근 정답 기억도 따로 `catchword.recent.veryhard`(다른 난이도의 최근 목록과 섞이지 않게). `catchword.difficulty`에 `veryhard` 값 추가, URL `?difficulty=veryhard`.
+- **최고 점수**: Very Hard는 학년과 상관없이 한 칸 `catchword.best.veryhard`. 최근 정답 기억도 따로 `catchword.recent.veryhard`(다른 난이도의 최근 목록과 섞이지 않게) — v8에서 Very Hard 더미 `catchword.bag.veryhard`로 바뀜(5.6.1). `catchword.difficulty`에 `veryhard` 값 추가, URL `?difficulty=veryhard`.
 - **도전 권유 바뀜**: Hard에서 첫 시도 8개 이상 → "다음엔 Very Hard에 도전해 볼까요?"(전: "Hard도 거뜬해요! 최고 점수에 도전해 봐요."). Very Hard에서 8개 이상 → "Very Hard도 거뜬해요! 최고 점수에 도전해 봐요."
 
 ### 16.4 데이터·검사(Very Hard)
@@ -1194,7 +1308,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 ### 16.6 바뀌는 기존 테스트
 - `difficulty.test.ts`: 5.3.2 표 값(전 → 후), 바닥 표 값(계수 변경), Very Hard 행 추가, Hard·Very Hard 최소 시간 보장(`0.85 × fall ≥ T_need`, Very Hard ≥ 3,500ms), Easy가 바닥에 걸리는 문항 0 유지.
 - `session.test.ts`·`scoring`: Very Hard 배율 ×2.0·감점 40, 0점 바닥.
-- `questions.test.ts`: Very Hard는 학년과 상관없이 Very Hard 풀만, 같은 주제 2/3/3, `recent.veryhard` 분리.
+- `questions.test.ts`: Very Hard는 학년과 상관없이 Very Hard 풀만, 같은 주제 2/3/3, `recent.veryhard` 분리(v8: `bag.test.ts`의 veryhard 더미로 바뀜).
 - `data.test.ts`: Very Hard 파일 검사(VH-V1~V10), 부록 D ↔ `veryhard.json` 모든 칸, V5b 위반 예시.
 - e2e: E2(Easy 점수 독립 계산은 새 단계 값으로), E6(버튼 4개 스크롤 없음, 11자 낱말 카드), E8(Very Hard 기억·URL·배지·학년 줄 흐림·최고 점수 키·Hard → Very Hard 권유).
 

@@ -1,9 +1,10 @@
 // localStorage를 try/catch로 감싼다(사생활 모드 등에서 막혀 있으면 저장만 건너뜀, spec 5.5).
-import { DIFFICULTY_NAMES, STORAGE_KEYS, type Difficulty } from '../config.ts';
-import type { BandChoice } from '../game/types.ts';
+import { DIFFICULTY_NAMES, GAME, STORAGE_KEYS, type Difficulty } from '../config.ts';
+import type { BandChoice, Question } from '../game/types.ts';
+import { bagPool, serializeBag, type BagName } from '../game/bag.ts';
 import { parseDifficulty } from '../game/difficulty.ts';
 
-function get(key: string): string | null {
+export function get(key: string): string | null {
   try {
     return window.localStorage.getItem(key);
   } catch {
@@ -11,7 +12,7 @@ function get(key: string): string | null {
   }
 }
 
-function set(key: string, value: string): void {
+export function set(key: string, value: string): void {
   try {
     window.localStorage.setItem(key, value);
   } catch {
@@ -58,22 +59,53 @@ export function saveDifficulty(d: Difficulty): void {
   if ((DIFFICULTY_NAMES as readonly string[]).includes(d)) set(STORAGE_KEYS.difficulty, d);
 }
 
-/** 최근 정답 목록. Very Hard는 따로(catchword.recent.veryhard, spec 5.5·5.6 v4) */
-function recentKey(d?: Difficulty): string {
-  return d === 'veryhard' ? STORAGE_KEYS.recentVeryHard : STORAGE_KEYS.recent;
+/** 키 지우기(try/catch, spec 5.6.1 ⑦ v8) */
+export function remove(key: string): void {
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // 막혀 있으면 건너뜀
+  }
 }
 
-export function loadRecent(d?: Difficulty): string[] {
+/** 옛 v4 최근 정답 목록(단어 배열). 깨졌으면 [] */
+function readLegacyWords(raw: string): string[] {
   try {
-    const v = JSON.parse(get(recentKey(d)) ?? '[]');
+    const v: unknown = JSON.parse(raw);
     return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
   } catch {
     return [];
   }
 }
 
-export function saveRecent(words: readonly string[], d?: Difficulty): void {
-  set(recentKey(d), JSON.stringify(words));
+/**
+ * v4의 catchword.recent·catchword.recent.veryhard를 섞은 카드 더미로 한 번 옮기고 지운다(spec 5.6.1 ⑦ v8).
+ * 단어를 id로 바꿔 아직 키가 없는 더미에만 {v:1, used, recent}로 저장(모르는 단어는 버림). 이미 있는 catchword.bag.*는 그대로.
+ */
+export function migrateRecentToBags(pools: { main: readonly Question[]; veryhard: readonly Question[] }): void {
+  const jobs: { key: string; names: BagName[] }[] = [
+    { key: STORAGE_KEYS.legacyRecent, names: ['3-4', '5-6'] },
+    { key: STORAGE_KEYS.legacyRecentVeryHard, names: ['veryhard'] },
+  ];
+  for (const job of jobs) {
+    const raw = get(job.key);
+    if (raw === null) continue;
+    const words = readLegacyWords(raw); // 새것이 앞
+    for (const name of job.names) {
+      const bagKey = STORAGE_KEYS.bagPrefix + name;
+      if (get(bagKey) !== null) continue;
+      const byWord = new Map(bagPool(name, pools).map((q) => [q.word, q.id]));
+      const recent: string[] = [];
+      for (const w of words) {
+        const id = byWord.get(w);
+        if (id !== undefined && !recent.includes(id)) recent.push(id);
+      }
+      if (recent.length === 0) continue;
+      // used는 낸 순서(오래된 것이 앞), recent는 새것이 앞
+      set(bagKey, serializeBag({ used: recent.slice().reverse(), recent: recent.slice(0, GAME.BAG_COOLDOWN) }));
+    }
+    remove(job.key);
+  }
 }
 
 export function loadSound(): boolean {

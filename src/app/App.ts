@@ -4,7 +4,8 @@ import questionsData from '../data/questions.json';
 import veryhardData from '../data/veryhard.json';
 import { Camera } from '../camera/camera.ts';
 import { classifyCameraError, type AppError, type ErrorKind } from '../camera/errors.ts';
-import { buildGamePlans, updateRecent } from '../game/questions.ts';
+import { buildGamePlans } from '../game/questions.ts';
+import { BAG_NAMES, bagsFor, drawAnswers, remainingCount, returnUnshown, type BagName, type BagState } from '../game/bag.ts';
 import { mulberry32, randomSeed } from '../game/rng.ts';
 import { Session, type SessionEvent } from '../game/session.ts';
 import { cardMetrics } from '../game/layout.ts';
@@ -28,14 +29,14 @@ import { acquireWakeLock, releaseWakeLock } from '../platform/wakeLock.ts';
 import {
   loadBest,
   loadDifficulty,
-  loadRecent,
   loadSound,
   migrateBest,
+  migrateRecentToBags,
   saveBest,
   saveDifficulty,
-  saveRecent,
   saveSound,
 } from '../platform/storage.ts';
+import { BagStore } from '../platform/bagStore.ts';
 import { blockedRequestCount } from '../platform/networkGuard.ts';
 import { DebugOverlay } from '../debug/debugOverlay.ts';
 import { Recorder } from '../debug/recorder.ts';
@@ -48,6 +49,7 @@ export type Mode = 'camera' | 'pointer' | 'replay';
 const ALL_QUESTIONS = (questionsData as QuestionsFile).questions;
 /** v4: Very Hard 전용 풀(부록 D) */
 const VERYHARD_QUESTIONS = (veryhardData as QuestionsFile).questions;
+const POOLS = { main: ALL_QUESTIONS, veryhard: VERYHARD_QUESTIONS };
 const STEP_MS = 1000 / 60;
 
 interface Els {
@@ -111,6 +113,10 @@ export class App {
   private countdownDone: (() => void) | null = null;
   private gameCount = 0;
   private seedBase: number;
+  /** v8: 섞은 카드 더미(spec 5.6.1). seed 모드(?test=1&seed=)면 저장하지 않음 */
+  private readonly bags: BagStore;
+  /** 이번 판이 쓰는 더미 이름 */
+  private gameBags: BagName[] | null = null;
   private lastResult: { best: number; newRecord: boolean } | null = null;
   private lastError: AppError | null = null;
   private grabCount = 0;
@@ -130,6 +136,10 @@ export class App {
     this.band = params.band ?? GAME.DEFAULT_BAND;
     // 난이도: URL ?difficulty=가 있으면 그것(저장도 함), 없으면 기억한 값, 그것도 없으면 normal(spec 6.2 v2)
     migrateBest();
+    // v8: seed 모드는 저장된 더미를 읽지도 쓰지도 않는다(옛 키 옮기기도 안 함, spec 5.6.1 ⑥⑦⑧)
+    const persist = params.seed === null;
+    if (persist) migrateRecentToBags(POOLS);
+    this.bags = new BagStore(POOLS, { persist });
     if (params.difficulty) saveDifficulty(params.difficulty);
     this.difficulty = params.difficulty ?? loadDifficulty();
     this.sound = loadSound();
@@ -335,14 +345,21 @@ export class App {
   private startGame(): void {
     const rng = mulberry32((this.seedBase + this.gameCount * 7919) >>> 0);
     this.gameCount += 1;
-    // Very Hard면 학년 무시하고 Very Hard 풀만, 최근 목록도 따로(spec 5.6 v4)
-    const plans = buildGamePlans(
-      { main: ALL_QUESTIONS, veryhard: VERYHARD_QUESTIONS },
-      this.band,
-      this.difficulty,
+    // v8: 정답은 섞은 카드 더미에서(spec 5.6.1). Very Hard면 학년 무시하고 Very Hard 더미, "모두"는 3-4·5-6 더미 함께.
+    // 뽑은 결과는 판을 시작할 때 바로 저장한다(탭을 닫아도 이 판의 문제는 "낸 것").
+    const names = bagsFor(this.band, this.difficulty);
+    const drawn = drawAnswers(
+      names.map((name) => ({ name, pool: this.bags.pool(name), state: this.bags.load(name) })),
+      GAME.QUESTIONS_PER_GAME,
       rng,
-      loadRecent(this.difficulty),
     );
+    for (const name of names) {
+      const st = drawn.states[name];
+      if (st) this.bags.save(name, st);
+    }
+    this.gameBags = names;
+    // Very Hard면 학년 무시하고 Very Hard 풀에서만 오답(spec 5.6 v4). 오답 고르기는 같은 rng로 이어서
+    const plans = buildGamePlans(POOLS, this.band, this.difficulty, rng, drawn.answers);
     this.session = new Session({ plans, rng, viewport: this.vp, camera: this.mode !== 'pointer', difficulty: this.difficulty });
     this.hud.setDifficulty(DIFFICULTY_LABELS[this.difficulty].en, this.difficulty);
     this.effects.clear();
@@ -354,11 +371,45 @@ export class App {
   }
 
   private endSession(): void {
+    this.returnUnshownQuestions();
     this.session = null;
     this.countdownDone = null;
     releaseWakeLock();
     this.speech.cancel();
     this.hud.clearTransient();
+  }
+
+  /**
+   * 끝나지 않은 판을 버릴 때 아직 화면에 나오지 않은 문제를 더미로 되돌린다(spec 5.6.1 ⑤, 한 판에 한 번).
+   * 설명 띠에 한 번이라도 나온 문제(index까지)는 "나온 것".
+   */
+  private returnUnshownQuestions(): void {
+    const s = this.session;
+    const names = this.gameBags;
+    if (!s || !names || s.phase === 'finished') return;
+    this.gameBags = null;
+    const ids = s.plans.slice(s.index + 1).map((p) => p.answer.id);
+    if (ids.length === 0) return;
+    const states: Partial<Record<BagName, BagState>> = {};
+    for (const name of names) states[name] = this.bags.load(name);
+    const back = returnUnshown(states, ids);
+    for (const name of names) {
+      const st = back[name];
+      if (st) this.bags.save(name, st);
+    }
+  }
+
+  /** 테스트 훅·디버그용 더미 요약: 이번 판(없으면 지금 고른 학년군·난이도)이 쓰는 더미, 남은 수, 풀 크기 */
+  private bagInfo(): { names: BagName[]; remaining: Record<BagName, number>; sizes: Record<BagName, number>; persist: boolean } {
+    const remaining = {} as Record<BagName, number>;
+    const sizes = {} as Record<BagName, number>;
+    for (const name of BAG_NAMES) {
+      const pool = this.bags.pool(name);
+      sizes[name] = pool.length;
+      remaining[name] = remainingCount(pool, this.bags.load(name));
+    }
+    const names = this.session && this.gameBags ? this.gameBags : bagsFor(this.band, this.difficulty);
+    return { names, remaining, sizes, persist: this.bags.persist };
   }
 
   private userPause(): void {
@@ -414,7 +465,6 @@ export class App {
     const newRecord = s.score > best;
     if (newRecord) saveBest(this.band, d, s.score);
     const wrong = s.wrongSummary;
-    saveRecent(updateRecent(loadRecent(d), s.plans.map((p) => p.answer.word)), d);
     this.lastResult = { best: Math.max(best, s.score), newRecord };
     releaseWakeLock();
     this.hud.clearTransient();
@@ -751,6 +801,7 @@ export class App {
         blocked: blockedRequestCount(),
         voice: this.speech.describe(),
         voiceHint: this.speech.qualityHint(),
+        bag: this.bagInfo(),
       });
     }
     if (this.screen !== 'start' && this.screen !== 'loading' && this.screen !== 'error') drawCursors(cctx, cursors);
@@ -826,6 +877,7 @@ export class App {
       blockedRequests: blockedRequestCount(),
       cameraActive: this.camera.active,
       clueInfo: this.hud.clueInfo(),
+      bag: this.bagInfo(),
     };
   }
 
