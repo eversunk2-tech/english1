@@ -1,8 +1,8 @@
 // spec 5.2~5.7: 한 판 진행·채점·결과. 순수 — 시간은 update(dt)로만 흐른다.
-import { GAME } from '../config.ts';
+import { GAME, type Difficulty } from '../config.ts';
 import { cardMetrics, cardRect, placeCards } from './layout.ts';
 import type { Rng } from './rng.ts';
-import { correctScore } from './scoring.ts';
+import { applyPenalty, correctScore } from './scoring.ts';
 import type { Question, QuestionPlan, Rect, Viewport } from './types.ts';
 
 export type CardStatus = 'falling' | 'wrong' | 'caught' | 'fading' | 'gone';
@@ -26,7 +26,16 @@ export type Mark = 'first' | 'retry' | 'miss';
 export interface QuestionResult {
   q: Question;
   mark: Mark;
+  /** 정답으로 얻은 점수(배율 포함, 놓침이면 0) */
   score: number;
+  /** 이 문제에서 오답으로 실제로 깎인 점수 합(0 바닥 때문에 감점보다 작을 수 있음) */
+  deducted: number;
+  /** 잡은 오답 단어(잡은 차례대로) */
+  wrongs: string[];
+  /** 정답을 잡은 시각(문제 시작부터 ms, 놓침이면 null) — ?debug=1 결과 화면용 */
+  grabMs: number | null;
+  /** 이 문제의 실제 떨어지는 시간(ms) */
+  fallMs: number;
 }
 
 export type SessionPhase = 'falling' | 'correct' | 'missed' | 'finished';
@@ -35,13 +44,15 @@ export type PauseReason = 'user' | 'nohand' | 'hidden';
 export type SessionEvent =
   | { type: 'question'; index: number; q: Question }
   | { type: 'correct'; cardId: number; q: Question; firstTry: boolean; score: number; combo: number; comboBonus: number }
-  | { type: 'wrong'; cardId: number; q: Question }
+  | { type: 'wrong'; cardId: number; q: Question; deducted: number }
   | { type: 'miss'; q: Question }
   | { type: 'autopause' }
   | { type: 'finished' };
 
 export interface SessionOptions {
   plans: QuestionPlan[];
+  /** 난이도(배율·감점). 단계·카드 수·떨어지는 시간은 plans에 이미 들어 있다 */
+  difficulty: Difficulty;
   rng: Rng;
   viewport: Viewport;
   /** 카메라 모드면 손이 3초 넘게 안 보일 때 자동 일시정지 */
@@ -50,6 +61,7 @@ export interface SessionOptions {
 
 export class Session {
   readonly plans: QuestionPlan[];
+  readonly difficulty: Difficulty;
   private readonly rng: Rng;
   private readonly camera: boolean;
   viewport: Viewport;
@@ -64,6 +76,9 @@ export class Session {
   combo = 0;
   maxCombo = 0;
   firstTry = true;
+  /** 이번 문제에서 깎인 점수 합과 잡은 오답 단어 */
+  private qDeducted = 0;
+  private qWrongs: string[] = [];
   paused: PauseReason | null = null;
   noHandMs = 0;
   cards: SessionCard[] = [];
@@ -75,6 +90,7 @@ export class Session {
 
   constructor(opts: SessionOptions) {
     this.plans = opts.plans;
+    this.difficulty = opts.difficulty;
     this.rng = opts.rng;
     this.camera = opts.camera;
     this.viewport = opts.viewport;
@@ -91,6 +107,22 @@ export class Session {
 
   get correctCount(): number {
     return this.results.filter((r) => r.mark !== 'miss').length;
+  }
+
+  /** 첫 시도 정답 수 */
+  get firstTryCount(): number {
+    return this.results.filter((r) => r.mark === 'first').length;
+  }
+
+  /** 판 전체 오답 수와 깎인 점수 합 */
+  get wrongSummary(): { count: number; deducted: number } {
+    let count = 0;
+    let deducted = 0;
+    for (const r of this.results) {
+      count += r.wrongs.length;
+      deducted += r.deducted;
+    }
+    return { count, deducted };
   }
 
   setViewport(vp: Viewport): void {
@@ -126,6 +158,8 @@ export class Session {
     this.elapsedMs = 0;
     this.phaseMs = 0;
     this.firstTry = true;
+    this.qDeducted = 0;
+    this.qWrongs = [];
     this.lastCorrect = null;
     const placements = placeCards(plan.options.length, this.viewport, this.rng);
     this.cards = plan.options.map((q, k) => {
@@ -181,7 +215,7 @@ export class Session {
       this.elapsedMs += dt;
       for (const c of this.cards) {
         if (c.status === 'falling') {
-          c.p = Math.max(0, (this.elapsedMs - c.delayMs) / plan.stage.fallMs);
+          c.p = Math.max(0, (this.elapsedMs - c.delayMs) / plan.fallMs);
           if (!c.correct && c.p >= 1) this.setStatus(c, 'gone');
         } else if (c.status === 'wrong' && c.statusMs >= GAME.WRONG_SHAKE_MS) {
           this.setStatus(c, 'gone');
@@ -192,7 +226,15 @@ export class Session {
         // 놓침(spec 5.2-4)
         answer.p = 1;
         this.combo = 0;
-        this.results.push({ q: answer.q, mark: 'miss', score: 0 });
+        this.results.push({
+          q: answer.q,
+          mark: 'miss',
+          score: 0,
+          deducted: this.qDeducted,
+          wrongs: this.qWrongs.slice(),
+          grabMs: null,
+          fallMs: plan.fallMs,
+        });
         for (const c of this.cards) if (c.status === 'falling' || c.status === 'wrong') this.setStatus(c, 'fading');
         this.phase = 'missed';
         this.phaseMs = 0;
@@ -225,18 +267,32 @@ export class Session {
   grab(cardId: number): 'correct' | 'wrong' | 'ignored' {
     const card = this.cards.find((c) => c.id === cardId);
     if (!card || !this.grabbable(card)) return 'ignored';
+    const rule = GAME.DIFFICULTIES[this.difficulty];
     if (!card.correct) {
+      // 오답 감점(spec 5.2-3·5.5 v2): 0 아래로 내려가지 않음
+      const pen = applyPenalty(this.score, rule.wrongPenalty);
+      this.score = pen.score;
+      this.qDeducted += pen.deducted;
+      this.qWrongs.push(card.q.word);
       this.setStatus(card, 'wrong');
       this.combo = 0;
       this.firstTry = false;
-      this.events.push({ type: 'wrong', cardId: card.id, q: card.q });
+      this.events.push({ type: 'wrong', cardId: card.id, q: card.q, deducted: pen.deducted });
       return 'wrong';
     }
     this.combo += 1;
     this.maxCombo = Math.max(this.maxCombo, this.combo);
-    const sc = correctScore(this.firstTry, card.p, this.combo);
+    const sc = correctScore(this.firstTry, card.p, this.combo, rule.scoreMultiplier);
     this.score += sc.total;
-    this.results.push({ q: card.q, mark: this.firstTry ? 'first' : 'retry', score: sc.total });
+    this.results.push({
+      q: card.q,
+      mark: this.firstTry ? 'first' : 'retry',
+      score: sc.total,
+      deducted: this.qDeducted,
+      wrongs: this.qWrongs.slice(),
+      grabMs: this.elapsedMs,
+      fallMs: this.current?.fallMs ?? 0,
+    });
     this.setStatus(card, 'caught');
     for (const c of this.cards) if (c !== card && (c.status === 'falling' || c.status === 'wrong')) this.setStatus(c, 'fading');
     this.phase = 'correct';

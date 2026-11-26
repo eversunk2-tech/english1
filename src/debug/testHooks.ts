@@ -33,7 +33,10 @@ export interface TestState {
   bandH: number;
   viewport: { W: number; H: number };
   cards: TestCard[];
-  results: { word: string; mark: string; score: number }[];
+  results: { word: string; mark: string; score: number; deducted: number; wrongs: string[]; fallMs: number }[];
+  /** v2: 고른 난이도, 이번 문제의 실제 떨어지는 시간 */
+  difficulty: string;
+  fallMs: number | null;
   tracks: { id: number; x: number; y: number; state: string; C: number | null; offscreen: boolean }[];
   grabCount: number;
   lastGrab: { pos: Point2; target: string | null; t: number } | null;

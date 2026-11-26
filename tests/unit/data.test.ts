@@ -13,12 +13,17 @@ const extra = extraJson as ClueExtra;
 const vocab = readFileSync(resolve(root, 'src/data/vocab/elementary-2022.txt'), 'utf8').split('\n');
 const spec = readFileSync(resolve(root, 'spec.md'), 'utf8');
 
+/** spec.md에서 제목이 정확히 heading으로 시작하는 절 하나만(다음 '## ' 제목 전까지) 잘라 낸다 — '## 부록 A-v3' 같은 다른 절은 들어가지 않는다 */
+function section(heading: string): string {
+  const a = spec.indexOf(`\n${heading}`);
+  expect(a).toBeGreaterThan(0);
+  const next = spec.indexOf('\n## ', a + 1);
+  return spec.slice(a, next < 0 ? undefined : next);
+}
+
 /** spec.md 부록 A 표를 직접 읽는다 */
 function specRows(): string[][] {
-  const a = spec.indexOf('## 부록 A.');
-  const b = spec.indexOf('## 부록 B.');
-  return spec
-    .slice(a, b)
+  return section('## 부록 A.')
     .split('\n')
     .filter((l) => /^\| [a-z]+-\d{2} \|/.test(l))
     .map((l) => l.split('|').slice(1, -1).map((s) => s.trim()));
@@ -65,10 +70,7 @@ describe('data (spec 7)', () => {
   });
 
   it('부록 B 단어 목록(819개)이 vocab 파일과 같다', () => {
-    const b = spec.indexOf('## 부록 B.');
-    const c = spec.indexOf('## 부록 C.');
-    const line = spec
-      .slice(b, c)
+    const line = section('## 부록 B.')
       .split('\n')
       .find((l) => l.startsWith('a, about,'))!;
     const words = line.split(',').map((s) => s.trim()).filter(Boolean);

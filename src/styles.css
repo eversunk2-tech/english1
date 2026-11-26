@@ -122,8 +122,10 @@ body {
   display: none;
 }
 
-/* 한국어 문구는 낱말(어절) 가운데서 끊지 않는다(review N1). 띄어쓰기에서만 줄을 바꾸고,
-   한 낱말이 줄보다 길 때만 그 안에서 끊는다. 영어 설명 띠(.clue)와 캔버스 카드 글자는 여기에 들지 않는다. */
+/* 한국어 줄바꿈(review N1·N3): 화면의 한국어 문장은 src/ui/dom.ts keepWords()가 어절(띄어쓰기로 나뉜 덩어리)마다
+   <span class="kw">(white-space: nowrap)로 감싸, 줄은 띄어쓰기에서만 바뀌고 어절 안에서는 끊기지 않는다(어절이 줄보다 길어도 끊지 않음).
+   감싸지 않은 한국어(복습표·안내 등)는 아래 keep-all로 한글 낱말 가운데 줄바꿈을 막는다.
+   영어 설명 띠(.clue)와 캔버스 카드 글자는 여기에 들지 않는다. */
 .screen,
 .hint,
 .reveal,
@@ -677,4 +679,189 @@ body {
   right: 12px;
   top: 50%;
   z-index: 7;
+}
+
+/* ───── v2 난이도 (spec 6.2·5.2·5.8) ───── */
+.diff-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.seg-diff {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 108px;
+  min-height: 60px;
+  padding: 6px 16px;
+  line-height: 1.1;
+}
+
+.diff-en {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.diff-ko {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.seg-diff .icon.star {
+  color: var(--yellow);
+}
+
+.seg-diff[aria-pressed='true'] .icon.star {
+  color: #d97706;
+}
+
+.diff-desc {
+  margin: 0;
+  min-height: 1.3em;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.diff-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--ink);
+  background: #bae6fd;
+  white-space: nowrap;
+}
+
+.diff-badge.diff-easy {
+  background: #bbf7d0;
+}
+
+.diff-badge.diff-hard {
+  background: #fecaca;
+}
+
+.diff-badge:empty {
+  display: none;
+}
+
+.pops {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.score-pop {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 34px;
+  font-weight: 900;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 var(--navy-900), 0 -2px 0 var(--navy-900), 2px 0 0 var(--navy-900), -2px 0 0 var(--navy-900);
+  animation: pop-up 0.8s ease-out forwards;
+}
+
+.penalty-pop {
+  color: #f87171;
+}
+
+.gain-pop {
+  color: #4ade80;
+}
+
+@keyframes pop-up {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -100%);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 60px));
+  }
+}
+
+.result-combo {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.challenge {
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(250, 204, 21, 0.15);
+  color: var(--yellow);
+  font-weight: 800;
+}
+
+.wrong-summary {
+  margin: 0;
+  padding: 8px 10px 0;
+  font-weight: 700;
+  color: #fca5a5;
+  text-align: left;
+}
+
+.row-score {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.net {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.net.pos {
+  color: #4ade80;
+}
+
+.net.neg {
+  color: #f87171;
+}
+
+.net.zero {
+  color: var(--muted);
+}
+
+.wrong-note {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #f87171;
+}
+
+.debug-row {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #a7f3d0;
+}
+
+/* 시작 화면이 낮은 가로 화면(1024×768 등)에서도 스크롤 없이 들어가게(spec 6.2 v2) */
+@media (max-height: 800px) {
+  .screen-start {
+    gap: 10px;
+    padding: 12px 24px;
+  }
+  .screen-start .title {
+    font-size: clamp(40px, 7vh, 72px);
+  }
+  .screen-start .subtitle {
+    font-size: 18px;
+  }
+  .screen-start .btn-big {
+    min-height: 64px;
+  }
+  .screen-start .stand-hint,
+  .screen-start .privacy {
+    font-size: 14px;
+  }
 }

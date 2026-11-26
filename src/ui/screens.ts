@@ -1,14 +1,18 @@
 // 시작·준비·손 확인·카운트다운·일시정지·결과·오류 DOM 화면(spec 6.2).
 import type { BandChoice } from '../game/types.ts';
 import type { QuestionResult } from '../game/session.ts';
+import { DIFFICULTY_NAMES, type Difficulty } from '../config.ts';
+import { tokenize } from '../data/words.ts';
 import { h, ICONS, keepWords, svg } from './dom.ts';
 import { errorMessage, type AppError } from '../camera/errors.ts';
-import { MARKS, S } from './strings.ts';
+import { DIFFICULTY_DESCS, DIFFICULTY_LABELS, MARKS, S, V2, signed } from './strings.ts';
 
 export interface StartHandlers {
   band: BandChoice;
+  difficulty: Difficulty;
   sound: boolean;
   onBand: (b: BandChoice) => void;
+  onDifficulty: (d: Difficulty) => void;
   onSound: (on: boolean) => void;
   onCamera: () => void;
   onTouch: () => void;
@@ -59,6 +63,25 @@ export class Screens {
           }
         },
       }, label);
+    // 난이도 줄(spec 6.2 v2): 큰 영어 + 작은 한국어, Hard에는 별 아이콘
+    const descEl = h('p', { class: 'diff-desc', id: 'difficulty-desc', 'aria-live': 'polite' }, keepWords(DIFFICULTY_DESCS[o.difficulty]));
+    const diffBtn = (d: Difficulty): HTMLButtonElement =>
+      h('button', {
+        type: 'button',
+        class: `seg seg-diff diff-${d}`,
+        'data-difficulty': d,
+        'aria-pressed': String(o.difficulty === d),
+        onclick: () => {
+          o.onDifficulty(d);
+          for (const el of this.root.querySelectorAll<HTMLButtonElement>('[data-difficulty]')) {
+            el.setAttribute('aria-pressed', String(el.dataset.difficulty === d));
+          }
+          descEl.replaceChildren(...keepWords(DIFFICULTY_DESCS[d]));
+        },
+      },
+        h('span', { class: 'diff-en', lang: 'en' }, DIFFICULTY_LABELS[d].en, d === 'hard' ? svg(ICONS.star, 'icon star') : null),
+        h('span', { class: 'diff-ko' }, DIFFICULTY_LABELS[d].ko),
+      );
     this.set(
       'start',
       h('h1', { class: 'title', lang: 'en' }, S.title),
@@ -77,6 +100,13 @@ export class Screens {
           soundBtn(true, S.soundOn),
           soundBtn(false, S.soundOff),
         ),
+      ),
+      h('div', { class: 'diff-block' },
+        h('div', { class: 'opt-row', role: 'group', 'aria-label': V2.difficultyLabel, id: 'difficulty-row' },
+          h('span', { class: 'opt-label' }, V2.difficultyLabel),
+          ...DIFFICULTY_NAMES.map((d) => diffBtn(d)),
+        ),
+        descEl,
       ),
       h('div', { class: 'start-actions' },
         h('button', { type: 'button', class: 'btn btn-primary btn-big', id: 'btn-camera', onclick: () => o.onCamera() }, svg(ICONS.camera), S.startCamera),
@@ -149,26 +179,50 @@ export class Screens {
     newRecord: boolean;
     results: QuestionResult[];
     showGrabCard: boolean;
+    /** v2: 고른 조합, 도전 권유, 판 전체 오답 요약, 디버그(문제별 잡은 시각) */
+    band: BandChoice;
+    difficulty: Difficulty;
+    challenge: string | null;
+    wrongCount: number;
+    wrongDeducted: number;
+    debug: boolean;
     onAgain: () => void;
     onHome: () => void;
     onWord: (word: string) => void;
   }): void {
-    const rows = o.results.map((r) =>
-      h('tr', {},
+    const rows = o.results.map((r, i) => {
+      const net = r.score - r.deducted;
+      return h('tr', { 'data-row': i },
         h('td', {}, h('button', { type: 'button', class: 'word-btn', lang: 'en', onclick: () => o.onWord(r.q.word) }, r.q.word)),
         h('td', {}, r.q.ko),
-        h('td', { lang: 'en', class: 'clue-cell' }, r.q.clue),
+        h('td', { lang: 'en', class: 'clue-cell' },
+          r.q.clue,
+          o.debug
+            ? h('div', { class: 'debug-row', lang: 'ko' }, V2.debugRow(r.grabMs === null ? null : r.grabMs / 1000, tokenize(r.q.clue).length, r.fallMs / 1000))
+            : null,
+        ),
         h('td', { class: `mark mark-${r.mark}`, 'aria-label': r.mark }, MARKS[r.mark]),
-      ),
-    );
+        h('td', { class: 'row-score' },
+          h('b', { class: `net ${net > 0 ? 'pos' : net < 0 ? 'neg' : 'zero'}`, lang: 'en' }, signed(net)),
+          r.wrongs.length > 0
+            ? h('div', { class: 'wrong-note' },
+                h('div', {}, keepWords(V2.wrongRow(r.wrongs.length, r.deducted))),
+                h('div', { lang: 'en' }, V2.wrongWords(r.wrongs)),
+              )
+            : null,
+        ),
+      );
+    });
     this.set(
       'result',
       h('div', { class: 'result-grid' },
         h('div', { class: 'result-summary' },
+          h('div', { class: 'result-combo', id: 'result-combo' }, V2.resultCombo(o.band, o.difficulty)),
           h('div', { class: 'big-score', id: 'result-score' }, h('span', { lang: 'en' }, S.score), h('b', {}, String(o.score))),
           h('div', { class: 'result-line', id: 'result-correct' }, `${S.resultCorrectLabel} `, h('b', {}, S.resultCorrect(o.correct, o.total))),
           h('div', { class: 'result-line', id: 'result-best' }, `${S.resultBest} `, h('b', {}, String(o.best))),
           o.newRecord ? h('div', { class: 'new-record', id: 'new-record', lang: 'en' }, S.newRecord) : h('span', {}),
+          o.challenge ? h('p', { class: 'challenge', id: 'challenge' }, keepWords(o.challenge)) : h('span', {}),
           o.showGrabCard ? h('button', { type: 'button', class: 'grab-card small', id: 'again-card', lang: 'en', onclick: () => o.onAgain() }, S.playAgainCard) : h('span', {}),
           h('div', { class: 'row' },
             h('button', { type: 'button', class: 'btn btn-primary', id: 'btn-again', onclick: () => o.onAgain() }, S.playAgain),
@@ -177,8 +231,9 @@ export class Screens {
           h('p', { class: 'muted rest' }, S.restArm),
         ),
         h('div', { class: 'result-table-wrap' },
+          h('p', { class: 'wrong-summary', id: 'wrong-summary' }, V2.wrongSummary(o.wrongCount, o.wrongDeducted)),
           h('table', { class: 'review', id: 'review' },
-            h('thead', {}, h('tr', {}, h('th', {}, S.reviewWord), h('th', {}, S.reviewKo), h('th', {}, S.reviewClue), h('th', {}, S.reviewMark))),
+            h('thead', {}, h('tr', {}, h('th', {}, S.reviewWord), h('th', {}, S.reviewKo), h('th', {}, S.reviewClue), h('th', {}, S.reviewMark), h('th', {}, V2.reviewScore))),
             h('tbody', {}, rows),
           ),
         ),

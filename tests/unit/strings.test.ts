@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { ERROR_MESSAGES, PRIVACY_NOTICE, S } from '../../src/ui/strings.ts';
+import { CHALLENGE_LINES, DIFFICULTY_DESCS, DIFFICULTY_LABELS, ERROR_MESSAGES, PRIVACY_NOTICE, S, V2, signed } from '../../src/ui/strings.ts';
 
 const spec = readFileSync(resolve(__dirname, '..', '..', 'spec.md'), 'utf8');
 
@@ -51,6 +51,28 @@ describe('strings (spec 6·8.2·9)', () => {
     expect(S.errorTitle).toBe('시작하지 못했어요');
     for (const t of [S.handcheckTouch, S.pausedNoHandResume, S.errorTitle]) expect(spec.includes(`"${t}"`)).toBe(true);
     expect(spec.includes('`AGAIN`')).toBe(true);
+  });
+
+  it('v2 난이도 문구가 spec 5.8·6.2와 글자 그대로 같다', () => {
+    for (const d of ['easy', 'normal', 'hard'] as const) {
+      expect(spec.includes(`"${DIFFICULTY_DESCS[d]}"`), DIFFICULTY_DESCS[d]).toBe(true);
+      expect(spec.includes(`"${CHALLENGE_LINES[d]}"`), CHALLENGE_LINES[d]).toBe(true);
+      expect(spec.includes(`\`${DIFFICULTY_LABELS[d].en}\`/`) || spec.includes(`/\`${DIFFICULTY_LABELS[d].en}\``)).toBe(true);
+      expect(spec.includes(`[${DIFFICULTY_LABELS[d].en} ${DIFFICULTY_LABELS[d].ko}]`)).toBe(true);
+    }
+    expect(V2.penalty(20)).toBe('\u221220');
+    expect(signed(142)).toBe('+142');
+    expect(signed(0)).toBe('0');
+    expect(signed(-20)).toBe('\u221220');
+    expect(V2.wrongSummary(0, 0)).toBe('오답 0번');
+    expect(V2.wrongSummary(3, 60)).toBe('오답 3번 (\u221260)');
+    expect(spec.includes('"오답 3번 (−60)"')).toBe(true);
+    expect(V2.wrongRow(1, 20)).toBe('오답 1번 \u221220');
+    expect(spec.includes('"오답 1번 −20"')).toBe(true);
+    expect(V2.wrongWords(['cat'])).toBe('오답: cat');
+    expect(spec.includes('"오답: cat"')).toBe(true);
+    expect(V2.resultCombo('5-6', 'hard')).toBe('5~6학년 · Hard');
+    expect(spec.includes('"5~6학년 · Hard"')).toBe(true);
     expect([S.great, S.goodJob, S.tryAgain, S.newRecord, S.startCard, S.score]).toEqual([
       'Great!', 'Good job!', 'Try again!', 'New record!', 'START', 'Score',
     ]);

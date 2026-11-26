@@ -19,11 +19,22 @@ import { CanvasLayer, cachedCardFontSize, drawCards, drawCursors, makeMeasure, t
 import { Effects } from '../render/effects.ts';
 import { Hud } from '../ui/hud.ts';
 import { Screens } from '../ui/screens.ts';
-import { S } from '../ui/strings.ts';
+import { CHALLENGE_LINES, DIFFICULTY_LABELS, S, V2 } from '../ui/strings.ts';
+import type { Difficulty } from '../config.ts';
 import { Sfx } from '../audio/sfx.ts';
 import { Speech } from '../audio/speech.ts';
 import { acquireWakeLock, releaseWakeLock } from '../platform/wakeLock.ts';
-import { loadBest, loadRecent, loadSound, saveBest, saveRecent, saveSound } from '../platform/storage.ts';
+import {
+  loadBest,
+  loadDifficulty,
+  loadRecent,
+  loadSound,
+  migrateBest,
+  saveBest,
+  saveDifficulty,
+  saveRecent,
+  saveSound,
+} from '../platform/storage.ts';
 import { blockedRequestCount } from '../platform/networkGuard.ts';
 import { DebugOverlay } from '../debug/debugOverlay.ts';
 import { Recorder } from '../debug/recorder.ts';
@@ -83,6 +94,7 @@ export class App {
   screen: ScreenName = 'start';
   mode: Mode = 'pointer';
   band: BandChoice;
+  difficulty: Difficulty;
   sound: boolean;
   session: Session | null = null;
   private tracks: TracksState = initialTracks();
@@ -113,6 +125,10 @@ export class App {
     this.pointer = new PointerInput(this.els.app, () => this.processPointer());
     this.camera = new Camera(this.els.video);
     this.band = params.band ?? GAME.DEFAULT_BAND;
+    // 난이도: URL ?difficulty=가 있으면 그것(저장도 함), 없으면 기억한 값, 그것도 없으면 normal(spec 6.2 v2)
+    migrateBest();
+    if (params.difficulty) saveDifficulty(params.difficulty);
+    this.difficulty = params.difficulty ?? loadDifficulty();
     this.sound = loadSound();
     this.applySound();
     this.seedBase = params.seed ?? randomSeed();
@@ -183,9 +199,14 @@ export class App {
     this.setMode(this.params.input === 'pointer' ? 'pointer' : 'camera');
     this.screens.start({
       band: this.band,
+      difficulty: this.difficulty,
       sound: this.sound,
       onBand: (b) => {
         this.band = b;
+      },
+      onDifficulty: (d) => {
+        this.difficulty = d;
+        saveDifficulty(d);
       },
       onSound: (on) => {
         this.sound = on;
@@ -311,8 +332,9 @@ export class App {
   private startGame(): void {
     const rng = mulberry32((this.seedBase + this.gameCount * 7919) >>> 0);
     this.gameCount += 1;
-    const plans = buildPlans(ALL_QUESTIONS, this.band, rng, loadRecent());
-    this.session = new Session({ plans, rng, viewport: this.vp, camera: this.mode !== 'pointer' });
+    const plans = buildPlans(ALL_QUESTIONS, this.band, this.difficulty, rng, loadRecent());
+    this.session = new Session({ plans, rng, viewport: this.vp, camera: this.mode !== 'pointer', difficulty: this.difficulty });
+    this.hud.setDifficulty(DIFFICULTY_LABELS[this.difficulty].en, this.difficulty);
     this.effects.clear();
     this.hud.clearTransient();
     this.screens.clear();
@@ -377,9 +399,11 @@ export class App {
   private finish(): void {
     const s = this.session;
     if (!s) return;
-    const best = loadBest(this.band);
+    const d = s.difficulty;
+    const best = loadBest(this.band, d);
     const newRecord = s.score > best;
-    if (newRecord) saveBest(this.band, s.score);
+    if (newRecord) saveBest(this.band, d, s.score);
+    const wrong = s.wrongSummary;
     saveRecent(updateRecent(loadRecent(), s.plans.map((p) => p.answer.word)));
     this.lastResult = { best: Math.max(best, s.score), newRecord };
     releaseWakeLock();
@@ -392,6 +416,12 @@ export class App {
       newRecord,
       results: s.results,
       showGrabCard: this.mode !== 'pointer',
+      band: this.band,
+      difficulty: d,
+      challenge: s.firstTryCount >= 8 ? CHALLENGE_LINES[d] : null,
+      wrongCount: wrong.count,
+      wrongDeducted: wrong.deducted,
+      debug: this.params.debug,
       onAgain: () => {
         this.primeAudio();
         this.againFromResult();
@@ -610,6 +640,7 @@ export class App {
           if (card) {
             const r = s.rectOf(card);
             this.effects.burst(r.x + r.w / 2, r.y + r.h / 2);
+            this.hud.popScore(V2.gain(e.score), r.x + r.w / 2, r.y, 'gain');
           }
           this.sfx.correct();
           this.speech.say(e.q.word);
@@ -618,10 +649,18 @@ export class App {
           this.hud.setProgress(s.index + 1, s.total, s.score);
           break;
         }
-        case 'wrong':
+        case 'wrong': {
           this.sfx.wrong();
           this.hud.flash(S.tryAgain, 'bad', 700);
+          // 실제로 깎인 점수가 있을 때만 빨간 "−20"(spec 5.2-3 v2)
+          const card = s.cards.find((c) => c.id === e.cardId);
+          if (card && e.deducted > 0) {
+            const r = s.rectOf(card);
+            this.hud.popScore(V2.penalty(e.deducted), r.x + r.w / 2, r.y, 'loss');
+          }
+          this.hud.setProgress(s.index + 1, s.total, s.score);
           break;
+        }
         case 'miss':
           this.hud.showReveal(e.q.word, e.q.ko);
           break;
@@ -729,6 +768,8 @@ export class App {
       phase: s ? s.phase : null,
       paused: s ? s.paused : null,
       clue: s?.current?.answer.clue ?? null,
+      difficulty: s ? s.difficulty : this.difficulty,
+      fallMs: s?.current?.fallMs ?? null,
       answer: s?.current?.answer.word ?? null,
       bandH: s ? s.bandH() : cardMetrics(this.vp, 3).bandH,
       viewport: { ...this.vp },
@@ -750,7 +791,9 @@ export class App {
             };
           })
         : [],
-      results: s ? s.results.map((r) => ({ word: r.q.word, mark: r.mark, score: r.score })) : [],
+      results: s
+        ? s.results.map((r) => ({ word: r.q.word, mark: r.mark, score: r.score, deducted: r.deducted, wrongs: r.wrongs.slice(), fallMs: r.fallMs }))
+        : [],
       tracks: this.tracks.tracks.map((t) => ({
         id: t.id,
         x: t.pos.x,

@@ -1,5 +1,6 @@
 // spec 7.4: 문항 기계 검사 V1~V9. 순수 — 단위 테스트와 scripts/check-data.mjs가 함께 쓴다.
-import { buildPlans, pickDistractors, avoidIndex, distractorPool, stageFor } from '../game/questions.ts';
+import { buildPlans, pickDistractors, avoidIndex, distractorPool } from '../game/questions.ts';
+import { DIFFICULTY_NAMES, GAME } from '../config.ts';
 import { mulberry32 } from '../game/rng.ts';
 import { TOPICS, type BandChoice, type Question, type QuestionsFile } from '../game/types.ts';
 import { clueMentions, lemmas, tokenize } from './words.ts';
@@ -132,7 +133,7 @@ export function validateQuestions(
   if (band34 < 50) errors.push(`V9 3~4학년군 ${band34} < 50`);
   if (band56 < 50) errors.push(`V9 5~6학년군 ${band56} < 50`);
   const avoid = avoidIndex(qs);
-  const maxCards = Math.max(...[1, 4, 7].map((n) => stageFor(n).cards));
+  const maxCards = Math.max(...DIFFICULTY_NAMES.flatMap((d) => GAME.DIFFICULTIES[d].stages.map((s) => s.cards)));
   for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
     const dPool = distractorPool(qs, band);
     const answers = band === 'all' ? qs : qs.filter((q) => q.band === band);
@@ -141,11 +142,13 @@ export function validateQuestions(
       const d = pickDistractors(q, dPool, maxCards - 1, 2, rng, avoid);
       if (!d) errors.push(`V9 [${q.id}] 학년군 ${band}에서 오답 ${maxCards - 1}개를 고를 수 없음`);
     }
-    // 한 판을 실제로 만들 수 있는가
-    try {
-      buildPlans(qs, band, mulberry32(7));
-    } catch (e) {
-      errors.push(`V9 학년군 ${band}에서 한 판을 만들 수 없음: ${String(e)}`);
+    // 한 판을 실제로 만들 수 있는가(난이도 3종)
+    for (const d of DIFFICULTY_NAMES) {
+      try {
+        buildPlans(qs, band, d, mulberry32(7));
+      } catch (e) {
+        errors.push(`V9 학년군 ${band}·난이도 ${d}에서 한 판을 만들 수 없음: ${String(e)}`);
+      }
     }
   }
 

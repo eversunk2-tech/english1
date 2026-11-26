@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { tokenize } from '../../src/data/words.ts';
 import type { QuestionsFile } from '../../src/game/types.ts';
-import { startTouchGame } from './helpers.ts';
+import { lineBreaks, startTouchGame } from './helpers.ts';
 
 const qs = (JSON.parse(readFileSync(new URL('../../src/data/questions.json', import.meta.url), 'utf8')) as QuestionsFile).questions;
 const maxTokens = Math.max(...qs.map((q) => tokenize(q.clue).length));
@@ -35,4 +35,44 @@ test('E6 배치: 가장 긴 설명·가장 긴 단어가 넘치지 않음(설명
   // 놀이 중 실제 카드도 넘치지 않음
   const st = await page.evaluate(() => window.__eg!.state());
   for (const c of st.cards) expect(c.textW).toBeLessThanOrEqual(c.rect.w - 24);
+});
+
+test('E6 v2: 시작 화면이 4종 화면에서 스크롤 없이 들어가고, 난이도 버튼 3개가 보이며 높이 ≥ 56px, 한국어가 낱말 가운데서 끊기지 않음', async ({ page }) => {
+  await page.goto('./?test=1');
+  for (const size of [{ width: 1024, height: 768 }, { width: 1180, height: 820 }, { width: 768, height: 1024 }, { width: 820, height: 1180 }]) {
+    await page.setViewportSize(size);
+    for (const d of ['easy', 'normal', 'hard']) {
+      await page.click(`[data-difficulty="${d}"]`);
+      const m = await page.evaluate(() => {
+        const sc = document.querySelector('.screen-start') as HTMLElement;
+        const kids = [...sc.children].map((c) => c.getBoundingClientRect());
+        return {
+          scrollH: sc.scrollHeight,
+          clientH: sc.clientHeight,
+          docH: document.documentElement.scrollHeight,
+          top: Math.min(...kids.map((r) => r.top)),
+          bottom: Math.max(...kids.map((r) => r.bottom)),
+          winH: window.innerHeight,
+        };
+      });
+      const tag = `${size.width}×${size.height} ${d}`;
+      expect(m.scrollH, tag).toBeLessThanOrEqual(m.clientH);
+      expect(m.docH, tag).toBeLessThanOrEqual(m.winH);
+      expect(m.top, tag).toBeGreaterThanOrEqual(0);
+      expect(m.bottom, tag).toBeLessThanOrEqual(m.winH);
+      for (const b of ['easy', 'normal', 'hard']) {
+        const box = await page.locator(`[data-difficulty="${b}"]`).boundingBox();
+        expect(box, tag).not.toBeNull();
+        expect(box!.height, `${tag} ${b}`).toBeGreaterThanOrEqual(56);
+        expect(box!.y + box!.height).toBeLessThanOrEqual(size.height);
+        expect(box!.x).toBeGreaterThanOrEqual(0);
+        expect(box!.x + box!.width).toBeLessThanOrEqual(size.width);
+      }
+      for (const sel of ['.subtitle', '#difficulty-desc', '.stand-hint', '#privacy']) {
+        for (const [before, after] of await lineBreaks(page, sel)) {
+          expect(/\s/.test(before), `${tag} ${sel}: "${before}" | "${after}"`).toBe(true);
+        }
+      }
+    }
+  }
 });

@@ -1,4 +1,6 @@
 // 화면 문구 전부(spec 6.1). 안내·버튼·오류는 한국어, 게임 이름·설명·단어·짧은 반응은 영어.
+import type { Difficulty } from '../config.ts';
+import type { BandChoice } from '../game/types.ts';
 
 export type ErrorKind =
   | 'insecure'
@@ -95,6 +97,59 @@ export const S = {
   // 디버그
   debugRecord: '녹화',
   debugStop: '저장',
+} as const;
+
+/** 난이도 이름(spec 6.2 v2): 큰 영어 + 작은 한국어 */
+export const DIFFICULTY_LABELS: Record<Difficulty, { en: string; ko: string }> = {
+  easy: { en: 'Easy', ko: '쉬움' },
+  normal: { en: 'Normal', ko: '보통' },
+  hard: { en: 'Hard', ko: '어려움' },
+};
+
+/** 고른 난이도의 한 줄 설명(spec 6.2 v2) */
+export const DIFFICULTY_DESCS: Record<Difficulty, string> = {
+  easy: '천천히 떨어져요. 처음 하는 친구에게 좋아요.',
+  normal: '조금 빨라요. 비슷한 단어가 섞여 나와요.',
+  hard: '빠르고 헷갈리는 단어가 많아요. 도전해 보세요!',
+};
+
+/** 결과 화면 도전 권유(spec 5.8 v2): 첫 시도 정답 8개 이상일 때 */
+export const CHALLENGE_LINES: Record<Difficulty, string> = {
+  easy: '다음엔 Normal에 도전해 볼까요?',
+  normal: '다음엔 Hard에 도전해 볼까요?',
+  hard: 'Hard도 거뜬해요! 최고 점수에 도전해 봐요.',
+};
+
+export const BAND_LABELS: Record<BandChoice, string> = {
+  '3-4': '3~4학년',
+  '5-6': '5~6학년',
+  all: '모두',
+};
+
+/** 점수 부호 표시: +142, 0, −20 (빼기는 U+2212) */
+export function signed(n: number): string {
+  if (n > 0) return `+${n}`;
+  if (n < 0) return `\u2212${-n}`;
+  return '0';
+}
+
+export const V2 = {
+  difficultyLabel: '난이도',
+  /** 감점 숫자(영어 쪽 짧은 반응, spec 6.1): −20 */
+  penalty: (n: number): string => `\u2212${n}`,
+  gain: (n: number): string => `+${n}`,
+  resultCombo: (band: BandChoice, d: Difficulty): string => `${BAND_LABELS[band]} · ${DIFFICULTY_LABELS[d].en}`,
+  reviewScore: '점수',
+  /** 표 위 요약 줄: "오답 3번 (−60)", 오답이 없으면 "오답 0번" */
+  wrongSummary: (count: number, deducted: number): string =>
+    count > 0 && deducted > 0 ? `오답 ${count}번 (\u2212${deducted})` : `오답 ${count}번`,
+  /** 복습 표 문제 칸 아래 작은 빨간 글씨: "오답 1번 −20" */
+  wrongRow: (count: number, deducted: number): string =>
+    deducted > 0 ? `오답 ${count}번 \u2212${deducted}` : `오답 ${count}번`,
+  wrongWords: (words: readonly string[]): string => `오답: ${words.join(', ')}`,
+  /** ?debug=1 결과 화면: 문제별 잡은 시각·설명 낱말 수·떨어지는 시간 */
+  debugRow: (grabSec: number | null, words: number, fallSec: number): string =>
+    `${grabSec === null ? '놓침' : `잡은 시각 ${grabSec.toFixed(1)}초`} · ${words}낱말 · 떨어지는 시간 ${fallSec.toFixed(2)}초`,
 } as const;
 
 /** 복습 표 표시 (spec 5.8): ○ 첫 시도 정답, △ 오답 뒤 정답, × 놓침 */

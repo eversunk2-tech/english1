@@ -21,6 +21,8 @@ export class Hud {
   private readonly combo: HTMLElement;
   private readonly reveal: HTMLElement;
   private readonly hint: HTMLElement;
+  private readonly badge: HTMLElement;
+  private readonly pops: HTMLElement;
   private feedbackTimer = 0;
   private comboTimer = 0;
   private W = 0;
@@ -30,19 +32,21 @@ export class Hud {
     this.root = root;
     this.clue = h('p', { class: 'clue', id: 'clue', lang: 'en' });
     this.qno = h('div', { class: 'qno', id: 'qno' });
+    this.badge = h('div', { class: 'diff-badge', id: 'diff-badge', lang: 'en' });
     this.score = h('div', { class: 'score', id: 'score' });
     const pauseBtn = h('button', { class: 'pause-btn', id: 'pause-btn', type: 'button', 'aria-label': S.pause, onclick: () => onPause() }, svg(ICONS.pause));
     this.band = h(
       'div',
       { class: 'band' },
       h('div', { class: 'clue-wrap' }, this.clue),
-      h('div', { class: 'band-side' }, this.qno, this.score, pauseBtn),
+      h('div', { class: 'band-side' }, this.badge, this.qno, this.score, pauseBtn),
     );
     this.feedback = h('div', { class: 'feedback', id: 'feedback', lang: 'en', 'aria-live': 'polite' });
     this.combo = h('div', { class: 'combo', id: 'combo', lang: 'en' });
     this.reveal = h('div', { class: 'reveal', id: 'reveal', hidden: true });
     this.hint = h('div', { class: 'hint', id: 'hint' });
-    root.replaceChildren(this.band, this.feedback, this.combo, this.reveal, this.hint);
+    this.pops = h('div', { class: 'pops', id: 'pops', 'aria-hidden': 'true' });
+    root.replaceChildren(this.band, this.feedback, this.combo, this.reveal, this.hint, this.pops);
   }
 
   show(on: boolean): void {
@@ -94,6 +98,23 @@ export class Hud {
     this.score.replaceChildren(h('span', { lang: 'en' }, S.score), ' ', h('b', {}, String(score)));
   }
 
+  /** 설명 띠의 난이도 배지(spec 6.2 v2) */
+  setDifficulty(label: string, kind: string): void {
+    this.badge.textContent = label;
+    this.badge.className = `diff-badge diff-${kind}`;
+  }
+
+  /**
+   * 잡은 자리에서 점수가 0.8초 동안 위로 떠오르며 사라진다(spec 5.2-3 v2): 감점은 빨간 "−20", 정답은 초록 "+142".
+   */
+  popScore(text: string, x: number, y: number, kind: 'gain' | 'loss'): void {
+    const el = h('div', { class: `score-pop ${kind === 'loss' ? 'penalty-pop' : 'gain-pop'}`, lang: 'en' }, text);
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+    this.pops.append(el);
+    window.setTimeout(() => el.remove(), 800);
+  }
+
   flash(text: string, kind: 'good' | 'bad', ms = 900): void {
     this.feedback.textContent = text;
     this.feedback.className = `feedback show ${kind}`;
@@ -134,5 +155,6 @@ export class Hud {
     this.combo.className = 'combo';
     this.hideReveal();
     this.setHint(null);
+    this.pops.replaceChildren();
   }
 }

@@ -128,7 +128,9 @@ test('E3 재생 모드: 합성 손으로 잡기 규칙·거울 변환', async ({
   s = await state(page);
   expect(s.lastGrab?.target).toBe(wrong.word);
   expect(['wrong', 'gone']).toContain(s.cards.find((x) => x.id === wrong.id)!.status);
-  expect(s.score).toBe(before);
+  // v2: 기본 난이도 Normal → 오답 −20(0 아래로는 안 감, spec 5.5)
+  expect(s.difficulty).toBe('normal');
+  expect(s.score).toBe(before - Math.min(before, 20));
   expect(s.combo).toBe(0);
 
   // ⑤ 손 3초 사라짐 → 일시정지 화면

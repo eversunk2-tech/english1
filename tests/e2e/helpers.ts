@@ -105,3 +105,36 @@ export async function startTouchGame(page: Page): Promise<void> {
   await step(page, 3100);
   expect((await state(page)).screen).toBe('playing');
 }
+
+/** 요소 안 글자의 줄바꿈 위치마다 [앞 글자, 뒤 글자]를 돌려준다(Range로 글자마다 위치를 잰다) */
+export async function lineBreaks(page: Page, selector: string): Promise<[string, string][]> {
+  return page.evaluate((sel) => {
+    const el = document.querySelector(sel)!;
+    const chars: { ch: string; top: number }[] = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const t = n.textContent ?? '';
+      for (let i = 0; i < t.length; i++) {
+        const r = document.createRange();
+        r.setStart(n, i);
+        r.setEnd(n, i + 1);
+        const rect = r.getClientRects()[0];
+        chars.push({ ch: t[i]!, top: rect ? rect.top : NaN });
+      }
+    }
+    const out: [string, string][] = [];
+    let lastTop = NaN;
+    let prev = '';
+    for (const c of chars) {
+      if (/\s/.test(c.ch) || Number.isNaN(c.top)) {
+        prev = c.ch;
+        continue;
+      }
+      if (!Number.isNaN(lastTop) && c.top > lastTop + 2) out.push([prev, c.ch]);
+      lastTop = c.top;
+      prev = c.ch;
+    }
+    return out;
+  }, selector);
+}
+

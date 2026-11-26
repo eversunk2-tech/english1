@@ -1,15 +1,11 @@
 // spec 5.6: 한 판의 정답 고르기, 문제마다 오답 카드 고르기. 순수.
-import { GAME, type StageConfig } from '../config.ts';
+import { GAME } from '../config.ts';
 import { clueMentions } from '../data/words.ts';
+import { fallMsFor, stageFor, type Difficulty } from './difficulty.ts';
 import { shuffle, type Rng } from './rng.ts';
 import type { BandChoice, Question, QuestionPlan } from './types.ts';
 
-/** 문제 번호(1부터)의 단계(spec 5.3) */
-export function stageFor(questionNo: number): StageConfig {
-  let found: StageConfig | undefined;
-  for (const s of GAME.STAGES) if (questionNo >= s.fromQuestion) found = s;
-  return found ?? (GAME.STAGES[0] as StageConfig);
-}
+export { stageFor };
 
 /** 정답 풀: 학년군에 맞는 문항 */
 export function answerPool(all: readonly Question[], band: BandChoice): Question[] {
@@ -126,10 +122,11 @@ export function pickAnswers(pool: readonly Question[], n: number, rng: Rng, rece
   return fresh.concat(old).slice(0, n);
 }
 
-/** 한 판의 계획(정답 n개 + 문제마다 카드·지연) */
+/** 한 판의 계획(정답 n개 + 문제마다 카드·지연·떨어지는 시간). 난이도가 단계(카드 수·같은 주제 수·시간)를 정한다(spec 5.3) */
 export function buildPlans(
   all: readonly Question[],
   band: BandChoice,
+  difficulty: Difficulty,
   rng: Rng,
   recent: readonly string[] = [],
   n: number = GAME.QUESTIONS_PER_GAME,
@@ -138,12 +135,12 @@ export function buildPlans(
   const answers = pickAnswers(answerPool(all, band), n, rng, recent);
   const dPool = distractorPool(all, band);
   return answers.map((answer, i) => {
-    const stage = stageFor(i + 1);
+    const stage = stageFor(i + 1, difficulty);
     const distractors = pickDistractors(answer, dPool, stage.cards - 1, stage.sameTopicDistractors, rng, avoid);
     if (!distractors) throw new Error(`not enough distractors for ${answer.word}`);
     const options = shuffle(rng, [answer, ...distractors]);
     const delaysMs = shuffle(rng, GAME.START_DELAYS_MS.slice(0, stage.cards));
-    return { answer, options, stage, delaysMs };
+    return { answer, options, stage, delaysMs, fallMs: fallMsFor(answer, stage) };
   });
 }
 

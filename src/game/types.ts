@@ -47,6 +47,8 @@ export interface QuestionPlan {
   options: Question[];
   stage: StageConfig;
   delaysMs: number[];
+  /** 이 문제의 실제 떨어지는 시간(ms) = max(단계 값, 공정성 바닥) (spec 5.3.3) */
+  fallMs: number;
 }
 
 export interface Rect {

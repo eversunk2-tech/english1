@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { clickAt, startTouchGame, state, step, stepUntil, watchPage } from './helpers.ts';
 
-test('E2 터치 모드 한 판: 정답 누르기 ×10 → 10/10, 점수 = 독립 계산, 오답은 사라지고 점수 그대로', async ({ page, baseURL }, info) => {
+test('E2 터치 모드 한 판(Easy): 정답 누르기 ×10 → 10/10, 점수 = 독립 계산, 오답은 사라지고 −10 감점', async ({ page, baseURL }, info) => {
   const touch = info.project.use.hasTouch === true;
   const w = watchPage(page, new URL(baseURL!).origin);
-  await page.goto('./?input=pointer&seed=7&test=1&clock=manual');
+  // v2: &difficulty=easy로 v1과 같은 속도(단 오답 −10, spec 12.2 E2)
+  await page.goto('./?input=pointer&seed=7&test=1&clock=manual&difficulty=easy');
   await startTouchGame(page);
 
   let expected = 0;
@@ -22,12 +23,18 @@ test('E2 터치 모드 한 판: 정답 누르기 ×10 → 10/10, 점수 = 독립
       const before = (await state(page)).score;
       await clickAt(page, wrong.rect.x + wrong.rect.w / 2, wrong.rect.y + wrong.rect.h / 2, touch);
       s = await state(page);
-      expect(s.score).toBe(before);
+      // Easy 오답 −10(0 아래로는 안 감)
+      const pen = Math.min(before, 10);
+      expect(pen).toBe(10);
+      expect(s.score).toBe(before - pen);
+      expected -= pen;
+      await expect(page.locator('.penalty-pop')).toHaveText('\u221210');
+      await expect(page.locator('#score b')).toHaveText(String(before - pen));
       expect(s.cards.find((c) => c.id === wrong.id)!.status).toBe('wrong');
       await step(page, 400);
       s = await state(page);
       expect(s.cards.find((c) => c.id === wrong.id)!.status).toBe('gone');
-      expect(s.score).toBe(before);
+      expect(s.score).toBe(before - pen);
       combo = 0;
       firstTry = false;
       wrongTested = true;
@@ -52,6 +59,13 @@ test('E2 터치 모드 한 판: 정답 누르기 ×10 → 10/10, 점수 = 독립
   await expect(page.locator('#result-score b')).toHaveText(String(expected));
   await expect(page.locator('#new-record')).toHaveText('New record!');
   await expect(page.locator('#review tbody tr')).toHaveCount(10);
+  // 결과 복습표: 2번 문제 점수 칸 = 얻은 점수 − 깎인 점수, 오답 1번 −10, 요약 "오답 1번 (−10)"
+  expect(s.results[1]!.deducted).toBe(10);
+  await expect(page.locator('#wrong-summary')).toHaveText('오답 1번 (\u221210)');
+  await expect(page.locator('#review tbody tr').nth(1).locator('.wrong-note')).toContainText('오답 1번 \u221210');
+  await expect(page.locator('#review tbody tr').nth(1).locator('.net')).toHaveText(`+${s.results[1]!.score - 10}`);
+  await expect(page.locator('#review tbody tr').nth(0).locator('.wrong-note')).toHaveCount(0);
+  await expect(page.locator('#result-combo')).toHaveText('3~4학년 · Easy');
   expect(w.errors, w.errors.join('\n')).toEqual([]);
   expect(w.external).toEqual([]);
 
@@ -66,7 +80,7 @@ test('E2 터치 모드 한 판: 정답 누르기 ×10 → 10/10, 점수 = 독립
 });
 
 test('E2 놓침: 정답 카드가 아래로 빠지면 정답 공개 후 다음 문제', async ({ page }) => {
-  await page.goto('./?input=pointer&seed=3&test=1&clock=manual');
+  await page.goto('./?input=pointer&seed=3&test=1&clock=manual&difficulty=easy');
   await startTouchGame(page);
   const s = await stepUntil(page, (st) => st.phase === 'missed', { chunk: 250 });
   expect(s.results[0]!.mark).toBe('miss');
@@ -99,7 +113,7 @@ async function setHidden(page: import('@playwright/test').Page, hidden: boolean)
 
 test('E2 M1: 결과 화면 [다시 하기] 3·2·1 중 탭이 숨겨져도 멈추지 않고 새 판을 시작할 수 있다', async ({ page }, info) => {
   const touch = info.project.use.hasTouch === true;
-  await page.goto('./?input=pointer&seed=7&test=1&clock=manual');
+  await page.goto('./?input=pointer&seed=7&test=1&clock=manual&difficulty=easy');
   await startTouchGame(page);
   await finishGame(page, touch);
   await page.click('#btn-again');
@@ -127,7 +141,7 @@ test('E2 M1: 결과 화면 [다시 하기] 3·2·1 중 탭이 숨겨져도 멈�
 
 test('E2 M2: 테스트 훅으로 규칙 값을 바꿀 수 없다', async ({ page }, info) => {
   const touch = info.project.use.hasTouch === true;
-  await page.goto('./?input=pointer&seed=7&test=1&clock=manual');
+  await page.goto('./?input=pointer&seed=7&test=1&clock=manual&difficulty=easy');
   const tamper = await page.evaluate(() => {
     const eg = window.__eg as unknown as Record<string, unknown>;
     const out: string[] = [];

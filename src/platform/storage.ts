@@ -1,6 +1,7 @@
 // localStorage를 try/catch로 감싼다(사생활 모드 등에서 막혀 있으면 저장만 건너뜀, spec 5.5).
-import { STORAGE_KEYS } from '../config.ts';
+import { DIFFICULTY_NAMES, STORAGE_KEYS, type Difficulty } from '../config.ts';
 import type { BandChoice } from '../game/types.ts';
+import { parseDifficulty } from '../game/difficulty.ts';
 
 function get(key: string): string | null {
   try {
@@ -18,13 +19,41 @@ function set(key: string, value: string): void {
   }
 }
 
-export function loadBest(band: BandChoice): number {
-  const v = Number(get(STORAGE_KEYS.bestPrefix + band));
+/** 최고 점수 키: catchword.best.<band>.<difficulty> (spec 5.5 v2) */
+export function bestKey(band: BandChoice, d: Difficulty): string {
+  return `${STORAGE_KEYS.bestPrefix}${band}.${d}`;
+}
+
+/**
+ * v1 키 catchword.best.<band>가 있고 새 ….easy 키가 없으면 그 값을 ….easy로 한 번 옮긴다(옛 키는 지우지 않음).
+ * v1 기록은 Easy와 같은 규칙으로 낸 것이다.
+ */
+export function migrateBest(): void {
+  for (const band of ['3-4', '5-6', 'all'] as BandChoice[]) {
+    const old = get(STORAGE_KEYS.bestPrefix + band);
+    if (old === null) continue;
+    if (get(bestKey(band, 'easy')) !== null) continue;
+    const v = Number(old);
+    if (Number.isFinite(v) && v > 0) set(bestKey(band, 'easy'), String(Math.round(v)));
+  }
+}
+
+export function loadBest(band: BandChoice, d: Difficulty): number {
+  const v = Number(get(bestKey(band, d)));
   return Number.isFinite(v) && v > 0 ? v : 0;
 }
 
-export function saveBest(band: BandChoice, score: number): void {
-  set(STORAGE_KEYS.bestPrefix + band, String(Math.round(score)));
+export function saveBest(band: BandChoice, d: Difficulty, score: number): void {
+  set(bestKey(band, d), String(Math.round(score)));
+}
+
+/** 마지막으로 고른 난이도(없거나 이상한 값이면 normal) */
+export function loadDifficulty(): Difficulty {
+  return parseDifficulty(get(STORAGE_KEYS.difficulty));
+}
+
+export function saveDifficulty(d: Difficulty): void {
+  if ((DIFFICULTY_NAMES as readonly string[]).includes(d)) set(STORAGE_KEYS.difficulty, d);
 }
 
 export function loadRecent(): string[] {
