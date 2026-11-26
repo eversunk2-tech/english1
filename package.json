@@ -1,0 +1,38 @@
+{
+  "name": "catch-the-word",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Catch the Word! — 초등 영어 단어 손으로 잡기 게임",
+  "scripts": {
+    "prepare-assets": "node scripts/copy-mediapipe.mjs",
+    "predev": "npm run prepare-assets",
+    "dev": "vite",
+    "predev:https": "npm run prepare-assets",
+    "dev:https": "HTTPS=1 vite --host",
+    "prebuild": "npm run prepare-assets",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
+    "test": "vitest run",
+    "check:data": "node scripts/check-data.mjs",
+    "fetch-model": "node scripts/fetch-model.mjs",
+    "pretest:e2e": "npm run prepare-assets",
+    "test:e2e": "npm run build && playwright test",
+    "check": "npm run typecheck && npm test && npm run check:data && npm run test:e2e"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "1.2.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "24.19.4",
+    "@vitejs/plugin-basic-ssl": "2.3.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.8",
+    "vitest": "5.1.1"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}

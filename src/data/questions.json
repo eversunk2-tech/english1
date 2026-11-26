@@ -1,0 +1,1742 @@
+{
+  "version": 1,
+  "source": "2022 개정 영어과 교육과정 [별표 3] 기본 어휘(초등 *)",
+  "questions": [
+    {
+      "id": "animal-01",
+      "word": "cat",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "고양이",
+      "clue": "A small pet. It says meow.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-02",
+      "word": "dog",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "개",
+      "clue": "A pet animal. It says woof.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-03",
+      "word": "cow",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "소",
+      "clue": "A farm animal. It gives us milk.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-04",
+      "word": "pig",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "돼지",
+      "clue": "A pink farm animal. It says oink.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-05",
+      "word": "duck",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "오리",
+      "clue": "A bird that can swim. It says quack.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-06",
+      "word": "rabbit",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "토끼",
+      "clue": "It has long ears. It likes carrots.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-07",
+      "word": "monkey",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "원숭이",
+      "clue": "It climbs trees and loves bananas.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-08",
+      "word": "fish",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "물고기",
+      "clue": "It lives in water and swims all day.",
+      "avoid": [
+        "duck"
+      ],
+      "base": null
+    },
+    {
+      "id": "animal-09",
+      "word": "bird",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "새",
+      "clue": "It has two wings and can fly.",
+      "avoid": [
+        "bee",
+        "airplane",
+        "duck"
+      ],
+      "base": null
+    },
+    {
+      "id": "animal-10",
+      "word": "elephant",
+      "band": "3-4",
+      "topic": "animal",
+      "ko": "코끼리",
+      "clue": "A very big animal with a long nose.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-11",
+      "word": "lion",
+      "band": "5-6",
+      "topic": "animal",
+      "ko": "사자",
+      "clue": "People call it the king of animals.",
+      "avoid": [
+        "tiger"
+      ],
+      "base": null
+    },
+    {
+      "id": "animal-12",
+      "word": "tiger",
+      "band": "5-6",
+      "topic": "animal",
+      "ko": "호랑이",
+      "clue": "This big orange animal has black lines.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-13",
+      "word": "bear",
+      "band": "5-6",
+      "topic": "animal",
+      "ko": "곰",
+      "clue": "A big animal. It sleeps all winter.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-14",
+      "word": "horse",
+      "band": "5-6",
+      "topic": "animal",
+      "ko": "말",
+      "clue": "People ride this animal. It runs fast.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-15",
+      "word": "mouse",
+      "band": "5-6",
+      "topic": "animal",
+      "ko": "쥐",
+      "clue": "A very small animal. It likes cheese.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "animal-16",
+      "word": "bee",
+      "band": "5-6",
+      "topic": "animal",
+      "ko": "벌",
+      "clue": "A small yellow and black bug. It makes honey.",
+      "avoid": [
+        "bird"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-01",
+      "word": "apple",
+      "band": "3-4",
+      "topic": "food",
+      "ko": "사과",
+      "clue": "A round red fruit. It grows on trees.",
+      "avoid": [
+        "tomato"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-02",
+      "word": "banana",
+      "band": "3-4",
+      "topic": "food",
+      "ko": "바나나",
+      "clue": "A long yellow fruit. Monkeys love it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "food-03",
+      "word": "milk",
+      "band": "3-4",
+      "topic": "food",
+      "ko": "우유",
+      "clue": "A white drink. Cows give it to us.",
+      "avoid": [
+        "juice"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-04",
+      "word": "egg",
+      "band": "3-4",
+      "topic": "food",
+      "ko": "달걀",
+      "clue": "Chickens lay this. We eat it for breakfast.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "food-05",
+      "word": "juice",
+      "band": "3-4",
+      "topic": "food",
+      "ko": "주스",
+      "clue": "A drink made from fruit.",
+      "avoid": [
+        "milk"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-06",
+      "word": "pizza",
+      "band": "3-4",
+      "topic": "food",
+      "ko": "피자",
+      "clue": "Round food with cheese and tomato on top.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "food-07",
+      "word": "carrot",
+      "band": "3-4",
+      "topic": "food",
+      "ko": "당근",
+      "clue": "An orange vegetable. Rabbits like it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "food-08",
+      "word": "bread",
+      "band": "5-6",
+      "topic": "food",
+      "ko": "빵",
+      "clue": "We bake it and make sandwiches with it.",
+      "avoid": [
+        "cake"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-09",
+      "word": "cake",
+      "band": "5-6",
+      "topic": "food",
+      "ko": "케이크",
+      "clue": "A sweet food for birthday parties.",
+      "avoid": [
+        "bread",
+        "candy"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-10",
+      "word": "candy",
+      "band": "5-6",
+      "topic": "food",
+      "ko": "사탕",
+      "clue": "This small sweet food is bad for your teeth.",
+      "avoid": [
+        "cake"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-11",
+      "word": "cheese",
+      "band": "5-6",
+      "topic": "food",
+      "ko": "치즈",
+      "clue": "This yellow food is made from milk.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "food-12",
+      "word": "potato",
+      "band": "5-6",
+      "topic": "food",
+      "ko": "감자",
+      "clue": "This brown vegetable grows under the ground.",
+      "avoid": [
+        "carrot"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-13",
+      "word": "tomato",
+      "band": "5-6",
+      "topic": "food",
+      "ko": "토마토",
+      "clue": "A red vegetable. We put it in salad.",
+      "avoid": [
+        "apple"
+      ],
+      "base": null
+    },
+    {
+      "id": "food-14",
+      "word": "watermelon",
+      "band": "5-6",
+      "topic": "food",
+      "ko": "수박",
+      "clue": "A big green fruit. It is red inside.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "body-01",
+      "word": "eye",
+      "band": "3-4",
+      "topic": "body",
+      "ko": "눈",
+      "clue": "We see with it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "body-02",
+      "word": "ear",
+      "band": "3-4",
+      "topic": "body",
+      "ko": "귀",
+      "clue": "We listen with it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "body-03",
+      "word": "nose",
+      "band": "3-4",
+      "topic": "body",
+      "ko": "코",
+      "clue": "We smell with it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "body-04",
+      "word": "mouth",
+      "band": "3-4",
+      "topic": "body",
+      "ko": "입",
+      "clue": "We eat and speak with it.",
+      "avoid": [
+        "tooth"
+      ],
+      "base": null
+    },
+    {
+      "id": "body-05",
+      "word": "hand",
+      "band": "3-4",
+      "topic": "body",
+      "ko": "손",
+      "clue": "It has five fingers.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "body-06",
+      "word": "foot",
+      "band": "3-4",
+      "topic": "body",
+      "ko": "발",
+      "clue": "We put socks and shoes on it.",
+      "avoid": [
+        "leg"
+      ],
+      "base": null
+    },
+    {
+      "id": "body-07",
+      "word": "leg",
+      "band": "3-4",
+      "topic": "body",
+      "ko": "다리",
+      "clue": "It is between your body and your foot.",
+      "avoid": [
+        "foot"
+      ],
+      "base": null
+    },
+    {
+      "id": "body-08",
+      "word": "tooth",
+      "band": "5-6",
+      "topic": "body",
+      "ko": "이",
+      "clue": "It is white and hard. We brush it every day.",
+      "avoid": [
+        "hair"
+      ],
+      "base": null
+    },
+    {
+      "id": "body-09",
+      "word": "hair",
+      "band": "5-6",
+      "topic": "body",
+      "ko": "머리카락",
+      "clue": "It grows on your head. It can be long.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "body-10",
+      "word": "finger",
+      "band": "5-6",
+      "topic": "body",
+      "ko": "손가락",
+      "clue": "Your hand has five of these.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "body-11",
+      "word": "neck",
+      "band": "5-6",
+      "topic": "body",
+      "ko": "목",
+      "clue": "It is between your head and your body.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-01",
+      "word": "mother",
+      "band": "3-4",
+      "topic": "people",
+      "ko": "엄마",
+      "clue": "She is your father's wife.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-02",
+      "word": "father",
+      "band": "3-4",
+      "topic": "people",
+      "ko": "아빠",
+      "clue": "He is your mother's husband.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-03",
+      "word": "baby",
+      "band": "3-4",
+      "topic": "people",
+      "ko": "아기",
+      "clue": "A very young child. It cries a lot.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-04",
+      "word": "teacher",
+      "band": "3-4",
+      "topic": "people",
+      "ko": "선생님",
+      "clue": "This person helps students learn at school.",
+      "avoid": [],
+      "base": "teach"
+    },
+    {
+      "id": "people-05",
+      "word": "friend",
+      "band": "3-4",
+      "topic": "people",
+      "ko": "친구",
+      "clue": "A person you like and play with.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-06",
+      "word": "doctor",
+      "band": "3-4",
+      "topic": "people",
+      "ko": "의사",
+      "clue": "You see this person when you are sick.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-07",
+      "word": "sister",
+      "band": "5-6",
+      "topic": "people",
+      "ko": "언니, 누나, 여동생",
+      "clue": "A girl with the same mother and father as you.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-08",
+      "word": "aunt",
+      "band": "5-6",
+      "topic": "people",
+      "ko": "이모, 고모",
+      "clue": "Your mother's sister or your father's sister.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-09",
+      "word": "uncle",
+      "band": "5-6",
+      "topic": "people",
+      "ko": "삼촌",
+      "clue": "Your father's brother or your mother's brother.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-10",
+      "word": "cook",
+      "band": "5-6",
+      "topic": "people",
+      "ko": "요리사",
+      "clue": "This person makes food at a restaurant.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-11",
+      "word": "pilot",
+      "band": "5-6",
+      "topic": "people",
+      "ko": "조종사",
+      "clue": "This person flies an airplane.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "people-12",
+      "word": "police",
+      "band": "5-6",
+      "topic": "people",
+      "ko": "경찰",
+      "clue": "They catch bad people and keep us safe.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "school-01",
+      "word": "book",
+      "band": "3-4",
+      "topic": "school",
+      "ko": "책",
+      "clue": "We read it. It has many pages.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "school-02",
+      "word": "pencil",
+      "band": "3-4",
+      "topic": "school",
+      "ko": "연필",
+      "clue": "We write and draw with it.",
+      "avoid": [
+        "paper"
+      ],
+      "base": null
+    },
+    {
+      "id": "school-03",
+      "word": "desk",
+      "band": "3-4",
+      "topic": "school",
+      "ko": "책상",
+      "clue": "We sit at it to study at school.",
+      "avoid": [
+        "chair"
+      ],
+      "base": null
+    },
+    {
+      "id": "school-04",
+      "word": "chair",
+      "band": "3-4",
+      "topic": "school",
+      "ko": "의자",
+      "clue": "We sit on it at a desk.",
+      "avoid": [
+        "desk",
+        "bed"
+      ],
+      "base": null
+    },
+    {
+      "id": "school-05",
+      "word": "bag",
+      "band": "3-4",
+      "topic": "school",
+      "ko": "가방",
+      "clue": "We carry our books in it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "school-06",
+      "word": "clock",
+      "band": "3-4",
+      "topic": "school",
+      "ko": "시계",
+      "clue": "It tells us the time.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "school-07",
+      "word": "scissors",
+      "band": "5-6",
+      "topic": "school",
+      "ko": "가위",
+      "clue": "We cut paper with them.",
+      "avoid": [
+        "knife"
+      ],
+      "base": null
+    },
+    {
+      "id": "school-08",
+      "word": "homework",
+      "band": "5-6",
+      "topic": "school",
+      "ko": "숙제",
+      "clue": "Your teacher gives it. You do it after school.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "school-09",
+      "word": "map",
+      "band": "5-6",
+      "topic": "school",
+      "ko": "지도",
+      "clue": "A picture that shows where places are.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "school-10",
+      "word": "paper",
+      "band": "5-6",
+      "topic": "school",
+      "ko": "종이",
+      "clue": "We write and draw on it.",
+      "avoid": [
+        "pencil",
+        "book"
+      ],
+      "base": null
+    },
+    {
+      "id": "home-01",
+      "word": "bed",
+      "band": "3-4",
+      "topic": "home",
+      "ko": "침대",
+      "clue": "We sleep on it at night.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "home-02",
+      "word": "door",
+      "band": "3-4",
+      "topic": "home",
+      "ko": "문",
+      "clue": "We open it to go into a room.",
+      "avoid": [
+        "window"
+      ],
+      "base": null
+    },
+    {
+      "id": "home-03",
+      "word": "window",
+      "band": "3-4",
+      "topic": "home",
+      "ko": "창문",
+      "clue": "We look out through it. It is glass.",
+      "avoid": [
+        "door"
+      ],
+      "base": null
+    },
+    {
+      "id": "home-04",
+      "word": "spoon",
+      "band": "3-4",
+      "topic": "home",
+      "ko": "숟가락",
+      "clue": "We hold it and eat soup with it.",
+      "avoid": [
+        "mouth",
+        "cup"
+      ],
+      "base": null
+    },
+    {
+      "id": "home-05",
+      "word": "cup",
+      "band": "3-4",
+      "topic": "home",
+      "ko": "컵",
+      "clue": "We drink water from it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "home-06",
+      "word": "knife",
+      "band": "5-6",
+      "topic": "home",
+      "ko": "칼",
+      "clue": "We cut food with it in the kitchen.",
+      "avoid": [
+        "scissors",
+        "tooth"
+      ],
+      "base": null
+    },
+    {
+      "id": "home-07",
+      "word": "umbrella",
+      "band": "5-6",
+      "topic": "home",
+      "ko": "우산",
+      "clue": "We use it when it rains.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "home-08",
+      "word": "key",
+      "band": "5-6",
+      "topic": "home",
+      "ko": "열쇠",
+      "clue": "We put it in a door to open it.",
+      "avoid": [
+        "hand"
+      ],
+      "base": null
+    },
+    {
+      "id": "home-09",
+      "word": "kitchen",
+      "band": "5-6",
+      "topic": "home",
+      "ko": "부엌",
+      "clue": "We cook food in this room.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "home-10",
+      "word": "television",
+      "band": "5-6",
+      "topic": "home",
+      "ko": "텔레비전",
+      "clue": "We watch shows on it at home.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "home-11",
+      "word": "telephone",
+      "band": "5-6",
+      "topic": "home",
+      "ko": "전화기",
+      "clue": "We call our friends with it.",
+      "avoid": [
+        "camera"
+      ],
+      "base": null
+    },
+    {
+      "id": "home-12",
+      "word": "camera",
+      "band": "5-6",
+      "topic": "home",
+      "ko": "카메라",
+      "clue": "We take pictures with it.",
+      "avoid": [
+        "telephone"
+      ],
+      "base": null
+    },
+    {
+      "id": "clothes-01",
+      "word": "hat",
+      "band": "3-4",
+      "topic": "clothes",
+      "ko": "모자",
+      "clue": "We wear it on our head.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "clothes-02",
+      "word": "shoes",
+      "band": "3-4",
+      "topic": "clothes",
+      "ko": "신발",
+      "clue": "We wear them on our feet outside.",
+      "avoid": [
+        "socks"
+      ],
+      "base": "shoe"
+    },
+    {
+      "id": "clothes-03",
+      "word": "socks",
+      "band": "3-4",
+      "topic": "clothes",
+      "ko": "양말",
+      "clue": "We wear them under our shoes.",
+      "avoid": [
+        "shoes"
+      ],
+      "base": "sock"
+    },
+    {
+      "id": "clothes-04",
+      "word": "pants",
+      "band": "3-4",
+      "topic": "clothes",
+      "ko": "바지",
+      "clue": "We wear them on our legs.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "clothes-05",
+      "word": "coat",
+      "band": "5-6",
+      "topic": "clothes",
+      "ko": "외투, 코트",
+      "clue": "We wear it over our clothes when it is cold.",
+      "avoid": [
+        "shirt"
+      ],
+      "base": null
+    },
+    {
+      "id": "clothes-06",
+      "word": "shirt",
+      "band": "5-6",
+      "topic": "clothes",
+      "ko": "셔츠",
+      "clue": "We wear it under a coat. It has buttons.",
+      "avoid": [
+        "coat",
+        "dress",
+        "pants"
+      ],
+      "base": null
+    },
+    {
+      "id": "clothes-07",
+      "word": "dress",
+      "band": "5-6",
+      "topic": "clothes",
+      "ko": "원피스, 드레스",
+      "clue": "Girls wear it. It is a top and skirt together.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "clothes-08",
+      "word": "belt",
+      "band": "5-6",
+      "topic": "clothes",
+      "ko": "허리띠, 벨트",
+      "clue": "It holds up our pants.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "nature-01",
+      "word": "sun",
+      "band": "3-4",
+      "topic": "nature",
+      "ko": "해, 태양",
+      "clue": "It gives us light in the day.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "nature-02",
+      "word": "moon",
+      "band": "3-4",
+      "topic": "nature",
+      "ko": "달",
+      "clue": "It is round. We see it at night.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "nature-03",
+      "word": "rain",
+      "band": "3-4",
+      "topic": "nature",
+      "ko": "비",
+      "clue": "Water that falls from the clouds.",
+      "avoid": [
+        "snow"
+      ],
+      "base": null
+    },
+    {
+      "id": "nature-04",
+      "word": "snow",
+      "band": "3-4",
+      "topic": "nature",
+      "ko": "눈",
+      "clue": "White and cold, it falls in winter.",
+      "avoid": [
+        "rain"
+      ],
+      "base": null
+    },
+    {
+      "id": "nature-05",
+      "word": "tree",
+      "band": "3-4",
+      "topic": "nature",
+      "ko": "나무",
+      "clue": "A tall plant. Birds live in it.",
+      "avoid": [
+        "flower"
+      ],
+      "base": null
+    },
+    {
+      "id": "nature-06",
+      "word": "flower",
+      "band": "3-4",
+      "topic": "nature",
+      "ko": "꽃",
+      "clue": "A pretty plant. It smells good.",
+      "avoid": [
+        "tree"
+      ],
+      "base": null
+    },
+    {
+      "id": "nature-07",
+      "word": "cloud",
+      "band": "5-6",
+      "topic": "nature",
+      "ko": "구름",
+      "clue": "It is white or gray, up in the sky.",
+      "avoid": [
+        "snow",
+        "airplane"
+      ],
+      "base": null
+    },
+    {
+      "id": "nature-08",
+      "word": "river",
+      "band": "5-6",
+      "topic": "nature",
+      "ko": "강",
+      "clue": "Water that runs to the sea.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "nature-09",
+      "word": "sea",
+      "band": "5-6",
+      "topic": "nature",
+      "ko": "바다",
+      "clue": "Very big salty water. Ships go on it.",
+      "avoid": [
+        "river"
+      ],
+      "base": null
+    },
+    {
+      "id": "nature-10",
+      "word": "mountain",
+      "band": "5-6",
+      "topic": "nature",
+      "ko": "산",
+      "clue": "It is very high. People climb it.",
+      "avoid": [
+        "tree"
+      ],
+      "base": null
+    },
+    {
+      "id": "nature-11",
+      "word": "wind",
+      "band": "5-6",
+      "topic": "nature",
+      "ko": "바람",
+      "clue": "We cannot see it, but it moves the trees.",
+      "avoid": [
+        "cold"
+      ],
+      "base": null
+    },
+    {
+      "id": "place-01",
+      "word": "zoo",
+      "band": "3-4",
+      "topic": "place",
+      "ko": "동물원",
+      "clue": "We see lions and tigers here.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "place-02",
+      "word": "school",
+      "band": "3-4",
+      "topic": "place",
+      "ko": "학교",
+      "clue": "Students learn here with their teachers.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "place-03",
+      "word": "park",
+      "band": "3-4",
+      "topic": "place",
+      "ko": "공원",
+      "clue": "A green place to play and walk.",
+      "avoid": [
+        "beach",
+        "zoo"
+      ],
+      "base": null
+    },
+    {
+      "id": "place-04",
+      "word": "hospital",
+      "band": "3-4",
+      "topic": "place",
+      "ko": "병원",
+      "clue": "Sick people go here to get well.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "place-05",
+      "word": "library",
+      "band": "5-6",
+      "topic": "place",
+      "ko": "도서관",
+      "clue": "You can borrow books here.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "place-06",
+      "word": "farm",
+      "band": "5-6",
+      "topic": "place",
+      "ko": "농장",
+      "clue": "Cows and pigs live here.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "place-07",
+      "word": "restaurant",
+      "band": "5-6",
+      "topic": "place",
+      "ko": "식당",
+      "clue": "We go here to eat food. A cook makes it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "place-08",
+      "word": "bank",
+      "band": "5-6",
+      "topic": "place",
+      "ko": "은행",
+      "clue": "We keep our money here.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "place-09",
+      "word": "beach",
+      "band": "5-6",
+      "topic": "place",
+      "ko": "해변",
+      "clue": "We play in the sand here, by the sea.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "transport-01",
+      "word": "bus",
+      "band": "3-4",
+      "topic": "transport",
+      "ko": "버스",
+      "clue": "Many people ride it on the road.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "transport-02",
+      "word": "train",
+      "band": "3-4",
+      "topic": "transport",
+      "ko": "기차",
+      "clue": "It is long and runs on tracks.",
+      "avoid": [
+        "subway"
+      ],
+      "base": null
+    },
+    {
+      "id": "transport-03",
+      "word": "airplane",
+      "band": "3-4",
+      "topic": "transport",
+      "ko": "비행기",
+      "clue": "We ride in it to fly far away.",
+      "avoid": [
+        "pilot"
+      ],
+      "base": null
+    },
+    {
+      "id": "transport-04",
+      "word": "boat",
+      "band": "3-4",
+      "topic": "transport",
+      "ko": "배",
+      "clue": "It goes on the water.",
+      "avoid": [
+        "duck",
+        "fish"
+      ],
+      "base": null
+    },
+    {
+      "id": "transport-05",
+      "word": "bike",
+      "band": "3-4",
+      "topic": "transport",
+      "ko": "자전거",
+      "clue": "It has two wheels. You ride it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "transport-06",
+      "word": "taxi",
+      "band": "5-6",
+      "topic": "transport",
+      "ko": "택시",
+      "clue": "A car with a driver. You pay to ride it.",
+      "avoid": [
+        "bus"
+      ],
+      "base": null
+    },
+    {
+      "id": "transport-07",
+      "word": "truck",
+      "band": "5-6",
+      "topic": "transport",
+      "ko": "트럭",
+      "clue": "A big car that carries heavy things.",
+      "avoid": [
+        "bus"
+      ],
+      "base": null
+    },
+    {
+      "id": "transport-08",
+      "word": "subway",
+      "band": "5-6",
+      "topic": "transport",
+      "ko": "지하철",
+      "clue": "A train that runs under the city.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "music-01",
+      "word": "piano",
+      "band": "3-4",
+      "topic": "music",
+      "ko": "피아노",
+      "clue": "It has many black and white keys.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "music-02",
+      "word": "guitar",
+      "band": "3-4",
+      "topic": "music",
+      "ko": "기타",
+      "clue": "It has six strings. We play it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "music-03",
+      "word": "drum",
+      "band": "3-4",
+      "topic": "music",
+      "ko": "북, 드럼",
+      "clue": "We hit it to make music.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "music-04",
+      "word": "dance",
+      "band": "3-4",
+      "topic": "music",
+      "ko": "춤추다",
+      "clue": "We move our body to music.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "music-05",
+      "word": "sing",
+      "band": "3-4",
+      "topic": "music",
+      "ko": "노래하다",
+      "clue": "We do this with our voice and music.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "sports-01",
+      "word": "swim",
+      "band": "3-4",
+      "topic": "sports",
+      "ko": "수영하다",
+      "clue": "We move our arms and legs in water.",
+      "avoid": [
+        "fish",
+        "duck",
+        "boat"
+      ],
+      "base": null
+    },
+    {
+      "id": "sports-02",
+      "word": "soccer",
+      "band": "5-6",
+      "topic": "sports",
+      "ko": "축구",
+      "clue": "Players kick a ball into a goal.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "sports-03",
+      "word": "basketball",
+      "band": "5-6",
+      "topic": "sports",
+      "ko": "농구",
+      "clue": "In this sport, players shoot at a high ring.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "sports-04",
+      "word": "baseball",
+      "band": "5-6",
+      "topic": "sports",
+      "ko": "야구",
+      "clue": "In this sport, players hit with a bat and run.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "sports-05",
+      "word": "tennis",
+      "band": "5-6",
+      "topic": "sports",
+      "ko": "테니스",
+      "clue": "Two players hit a small ball over a net.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "sports-06",
+      "word": "ski",
+      "band": "5-6",
+      "topic": "sports",
+      "ko": "스키를 타다",
+      "clue": "We do this on snow. We go down mountains.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-01",
+      "word": "morning",
+      "band": "3-4",
+      "topic": "time",
+      "ko": "아침",
+      "clue": "The time when the sun comes up.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-02",
+      "word": "night",
+      "band": "3-4",
+      "topic": "time",
+      "ko": "밤",
+      "clue": "It is dark. We sleep at this time.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-03",
+      "word": "winter",
+      "band": "3-4",
+      "topic": "time",
+      "ko": "겨울",
+      "clue": "The cold season with snow.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-04",
+      "word": "summer",
+      "band": "3-4",
+      "topic": "time",
+      "ko": "여름",
+      "clue": "The hottest season of the year.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-05",
+      "word": "spring",
+      "band": "5-6",
+      "topic": "time",
+      "ko": "봄",
+      "clue": "The season when flowers start to grow.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-06",
+      "word": "autumn",
+      "band": "5-6",
+      "topic": "time",
+      "ko": "가을",
+      "clue": "The season between summer and winter.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-07",
+      "word": "weekend",
+      "band": "5-6",
+      "topic": "time",
+      "ko": "주말",
+      "clue": "Saturday and Sunday.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-08",
+      "word": "birthday",
+      "band": "5-6",
+      "topic": "time",
+      "ko": "생일",
+      "clue": "A party with cake and presents, once a year.",
+      "avoid": [],
+      "base": "birth+day"
+    },
+    {
+      "id": "time-09",
+      "word": "tomorrow",
+      "band": "5-6",
+      "topic": "time",
+      "ko": "내일",
+      "clue": "Today is Monday, so Tuesday will be this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "time-10",
+      "word": "yesterday",
+      "band": "5-6",
+      "topic": "time",
+      "ko": "어제",
+      "clue": "Today is Tuesday, so Monday was this.",
+      "avoid": [
+        "weekend"
+      ],
+      "base": null
+    },
+    {
+      "id": "feeling-01",
+      "word": "happy",
+      "band": "3-4",
+      "topic": "feeling",
+      "ko": "행복한",
+      "clue": "You feel this when you smile.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-02",
+      "word": "sad",
+      "band": "3-4",
+      "topic": "feeling",
+      "ko": "슬픈",
+      "clue": "You feel this when you cry.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-03",
+      "word": "hot",
+      "band": "3-4",
+      "topic": "feeling",
+      "ko": "뜨거운, 더운",
+      "clue": "Fire and the summer sun are this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-04",
+      "word": "cold",
+      "band": "3-4",
+      "topic": "feeling",
+      "ko": "차가운, 추운",
+      "clue": "Ice and snow are this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-05",
+      "word": "big",
+      "band": "3-4",
+      "topic": "feeling",
+      "ko": "큰",
+      "clue": "An elephant is this. A mouse is not.",
+      "avoid": [
+        "tall",
+        "heavy"
+      ],
+      "base": null
+    },
+    {
+      "id": "feeling-06",
+      "word": "small",
+      "band": "3-4",
+      "topic": "feeling",
+      "ko": "작은",
+      "clue": "A mouse is this. An elephant is not.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-07",
+      "word": "fast",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "빠른",
+      "clue": "It is not slow.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-08",
+      "word": "slow",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "느린",
+      "clue": "It takes a long time. It is not fast.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-09",
+      "word": "sick",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "아픈",
+      "clue": "You feel this way, so you go to a doctor.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-10",
+      "word": "delicious",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "맛있는",
+      "clue": "Food that tastes very good is this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-11",
+      "word": "busy",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "바쁜",
+      "clue": "You have many things to do.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-12",
+      "word": "heavy",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "무거운",
+      "clue": "It is hard to carry, like a big rock.",
+      "avoid": [
+        "big"
+      ],
+      "base": null
+    },
+    {
+      "id": "feeling-13",
+      "word": "beautiful",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "아름다운",
+      "clue": "Very, very pretty.",
+      "avoid": [],
+      "base": "beauty"
+    },
+    {
+      "id": "feeling-14",
+      "word": "brave",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "용감한",
+      "clue": "Not afraid of danger.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "feeling-15",
+      "word": "tall",
+      "band": "5-6",
+      "topic": "feeling",
+      "ko": "키가 큰",
+      "clue": "Basketball players are often this.",
+      "avoid": [
+        "big"
+      ],
+      "base": null
+    },
+    {
+      "id": "action-01",
+      "word": "run",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "달리다",
+      "clue": "Move your legs very fast.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-02",
+      "word": "walk",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "걷다",
+      "clue": "Move on your feet, not fast.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-03",
+      "word": "jump",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "뛰어오르다",
+      "clue": "Go up into the air with your legs.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-04",
+      "word": "sleep",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "자다",
+      "clue": "We do this in bed at night.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-05",
+      "word": "eat",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "먹다",
+      "clue": "We do this with food in our mouth.",
+      "avoid": [
+        "drink",
+        "cook"
+      ],
+      "base": null
+    },
+    {
+      "id": "action-06",
+      "word": "drink",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "마시다",
+      "clue": "We do this with water and juice.",
+      "avoid": [
+        "eat"
+      ],
+      "base": null
+    },
+    {
+      "id": "action-07",
+      "word": "read",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "읽다",
+      "clue": "We do this with books.",
+      "avoid": [
+        "write"
+      ],
+      "base": null
+    },
+    {
+      "id": "action-08",
+      "word": "write",
+      "band": "3-4",
+      "topic": "action",
+      "ko": "쓰다",
+      "clue": "We do this with a pencil.",
+      "avoid": [
+        "read"
+      ],
+      "base": null
+    },
+    {
+      "id": "action-09",
+      "word": "cry",
+      "band": "5-6",
+      "topic": "action",
+      "ko": "울다",
+      "clue": "We do this when we are very sad.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-10",
+      "word": "climb",
+      "band": "5-6",
+      "topic": "action",
+      "ko": "오르다",
+      "clue": "We go up a mountain or a tree this way.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-11",
+      "word": "wash",
+      "band": "5-6",
+      "topic": "action",
+      "ko": "씻다",
+      "clue": "We do this to our hands before we eat.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-12",
+      "word": "buy",
+      "band": "5-6",
+      "topic": "action",
+      "ko": "사다",
+      "clue": "We pay money to get things.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-13",
+      "word": "listen",
+      "band": "5-6",
+      "topic": "action",
+      "ko": "듣다",
+      "clue": "We do this with our ears.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "action-14",
+      "word": "smile",
+      "band": "5-6",
+      "topic": "action",
+      "ko": "미소 짓다",
+      "clue": "Your mouth does this when you are happy.",
+      "avoid": [],
+      "base": null
+    }
+  ]
+}

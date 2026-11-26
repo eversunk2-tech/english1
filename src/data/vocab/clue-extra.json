@@ -1,0 +1,5 @@
+{
+  "secondary": ["pet", "wing", "ride", "bug", "honey", "round", "lay", "sweet", "lot", "person", "through", "plant", "other", "wheel", "string", "shoot", "net", "once"],
+  "interjection": ["meow", "woof", "oink", "quack"],
+  "proper": ["monday", "tuesday", "saturday", "sunday"]
+}

@@ -1,0 +1,10 @@
+{
+  // 테스트·설정·스크립트용(Node 타입 있음). src는 테스트가 불러 쓰므로 함께 검사된다. review R6
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vite/client", "node"],
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": ["tests", "vite.config.ts", "playwright.config.ts", "scripts"]
+}
