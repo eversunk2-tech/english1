@@ -11,6 +11,8 @@
 > 재검토(2026-11-26, 9절) 판정: **통과** — 반드시 수정 M1~M3이 모두 고쳐졌고, 새로 찾은 반드시 수정은 0건이다.
 > 재검토 2(2026-11-26, 10절) 판정: **통과** — N1·N2가 고쳐졌고, 새로 찾은 반드시 수정은 0건이다.
 > v2 난이도·감점 검증(2026-11-26, 11절) 판정: **통과** — 반드시 수정 0건, 권장 1건.
+> v3 단어 수준 검증(2026-11-26, 12절) 판정: **수정 필요** — 문항 1건(nature-14 forest에 함께 맞는 오답 mountain), 권장 7건.
+> 재검토 v3b(2026-11-26, 13절) 판정: **통과** — 12절 지적 모두 고쳐짐, 새 반드시 수정 0건, 새 권장 1건(scientist 설명).
 
 반드시 수정할 것은 3건이다(앱 버그 1, spec 12.2 위반 1, 문항 데이터 1). 나머지 동작(점수, 판정, 배치, 개인정보, 배포 설정)은 spec과 맞았다.
 
@@ -386,3 +388,187 @@ git diff로 본 변경 내용:
 5. [ ] 시작 화면 난이도 버튼을 아이가 혼자 고를 수 있는지, 마지막에 고른 난이도가 다음에 열 때 그대로인지 본다.
 6. [ ] 예전(v1)에 Easy로 하던 기기에서 v1 최고 점수가 Easy 칸에 그대로 보이는지 본다.
 7. [ ] 결과 화면의 "다음엔 Normal(Hard)에 도전해 볼까요?"가 첫 시도 8개 이상일 때만 나오는지 본다.
+
+---
+
+## 12. v3 단어 수준 검증 (2026-11-26)
+
+- 지침: `docs/briefs/review-brief-v3-words.md`. 기준은 승인된 spec v3(7.6, 13절 W1~W3, 15절)다. 변경 범위는 마지막 커밋 `0b6cfc7` 뒤의 `git diff`로 봤다. git은 읽기만 했다.
+- 임시 스크립트·스크린샷: `/private/tmp/claude-501/-Users-sungchul-Desktop-play2-----/7bd2217c-e14d-425c-9176-0b2e64f9c244/scratchpad/review-v3/`
+
+### 12.1 판정: **수정 필요**
+반드시 수정은 1건(문항 데이터 한 줄)이다. 코드·화면·검사 규칙은 spec과 맞았다.
+
+### 12.2 직접 돌린 명령과 결과
+
+| 명령 / 검사 | 결과 |
+|---|---|
+| `npm run check` | 종료 코드 0. 단위 **146 통과, 1 건너뜀**. 문항 **230개(3~4학년군 143, 5~6학년군 87) 위반 0건**. 5~6학년군 ** 정답 **16/87 = 18.4%**. 초등 어휘 비율 96.8%. e2e **102 통과**. Build 보고와 같다. |
+| `git diff --stat`(10개 파일) | `spec.md`: 부록 A 교체(230행), v2/v3 "승인 전" 표시 정리, 문항 수 기준 230, 15절 기록. 코드: `questions.json`(version 2), `clue-extra.json`, `validate.ts`(V7'·V10), `check-data.mjs`(** 줄), `screens.ts`·`strings.ts`(V2-R1). 테스트: `data.test.ts`, `difficulty.test.ts`, e8. **W2·W3·V2-R1 범위 안이다.** |
+| 부록 A ↔ `questions.json`(독립 Python) | 230행 8칸 모두 같음. 바뀐 내용은 새 69문항, 3~4학년군으로 옮긴 59문항(id·ko·topic은 그대로, 설명 다듬은 것 21개), avoid만 더한 옛 문항 4개(friend·cook·moon·brave), 지운 문항 0개. `clue-extra.json`은 7.6.5와 같다. |
+| V7'·V10에 일부러 어긴 예를 넣어 봄 | 3~4학년군 정답에 museum → V7' 두 줄로 잡힌다. 5~6학년군에서 일반 정답 8개를 빼 16/79 = 20.3% → V10이 잡는다. 7개를 빼 16/80 = 20% → V10 없음(spec "20% 이하"와 맞음). answerSecondary에 쓰지 않는 낱말(volcano) → V10이 잡는다. giraffe를 목록에서 빼면 → V7'가 잡는다. **spec 7.6.5 문장대로다.** |
+| 판 구성 흉내(학년군 3 × 난이도 3 × 씨앗 3,000, 현재 `buildPlans`) | 12.3 |
+| 떨어지는 시간 독립 계산 | 12.4 |
+| 화면 4종 5~6학년 Hard 한 판 | 12.5. 콘솔 오류 0, 사이트 밖 요청 0. |
+
+### 12.3 문항 검사 (새 69문항 + 다듬은 21문항을 모두 읽음, H1~H4)
+
+**5~6학년군이 정말 어려워졌는가** — 판단: **분명히 어려워졌다.**
+- 정답 87개 중 69개가 새 낱말이다. lion·bread·coat 같은 기초 낱말은 3~4학년군으로 옮겨졌다.
+- 영어는 5~6학년이 읽을 수 있는 수준이다. 설명 평균 7.54낱말, 10낱말 이하.
+
+| 비교(5~6학년군 정답) | v1 77개 | v3 87개 |
+|---|---|---|
+| 평균 글자 수 | 5.56 | **6.66** |
+| 7글자 이상 | 23% | **45%** |
+| 두 음절 이상 | 48% | **83%** |
+| 추상어(feeling·action·time) | 27% | **39%** |
+| 중학 권장(**) 정답 | 0 | **16 (18.4%)** |
+
+**같이 나오는 오답이 맞는 답이 되는가** — 씨앗 3,000 × 9조합 흉내에서 함께 나온 비율과 판단:
+
+| 짝(정답 / 함께 나온 오답) | 비율 | 판단 |
+|---|---|---|
+| nurse·dentist·doctor 서로, forest/park·zoo, holiday/weekend, angry/sad, hungry/thirsty, planet/earth·moon, desert/beach, bottle/cup, helmet/hat, violin/guitar, future/tomorrow, computer/telephone·television, village/farm, dolphin·whale/fish, spaghetti/pizza, calendar/clock | 0% | avoid가 잘 막는다 |
+| **forest / mountain** | **10.5%** | **반드시 수정(아래 M-v3-1)** |
+| coat / shoes·socks·pants | 27~29% | **권장 R-v3-1** |
+| hero / doctor·nurse | 5.0% / 7.1% | 권장 R-v3-2 |
+| lazy / sick·sad | 5.2% / 5.9% | 권장 R-v3-3 |
+| office / library | 9.6% | 권장 R-v3-4(약함) |
+| earth / moon, museum / library, island / beach, violin / drum, breakfast / bread·juice·milk, science·history·math 서로, whale·giraffe / elephant, careful / dangerous, quiet / shy, market / restaurant, choose·collect / buy, season / weather | 0.4~37% | 설명으로 갈린다. 답이 아니다. 예: "The planet we live on"은 moon이 아니고, "very old things and art"는 library가 아니고, "a bow"는 drum이 아니고, "first meal"은 bread가 아니다. |
+
+- 정답이나 그 변형이 설명에 들어간 문항은 없다(기계 검사 V5와 사람 눈 모두).
+- 문법·철자 오류는 없다. 한국어 뜻도 맞다. bridge "다리(건너는 다리)"는 몸의 다리(leg)와 헷갈리지 않게 한 것이라 좋다.
+- 거슬리는 내용은 없다.
+
+### 12.4 떨어지는 시간 독립 계산 (230문항 × 3난이도 × 3단계 = 2,070건)
+- spec 5.3.3 식만으로 계산한 값과 `fallMsFor`의 불일치 **0**.
+- `0.85 × 떨어지는 시간 ≥ T_need`가 어긋나는 건 **0**(최소 시간 보장 유지).
+- 바닥 때문에 늘어나는 문항은 spec v3 수치와 **모두 같다**.
+
+| 조건 | 늘어나는 문항 수 |
+|---|---|
+| Hard 1~3번 | 5~6학년군 12 |
+| Hard 4~6번 | 3~4학년군 91, 5~6학년군 46 |
+| Hard 7~10번 | 3~4학년군 121, 5~6학년군 65 |
+| Normal 7~10번 | 3~4학년군 47, 5~6학년군 28 |
+| Easy | 0 |
+
+- 7~10번 평균·최대도 spec과 같다.
+
+| 7~10번 | 평균 | 최대 |
+|---|---|---|
+| Normal 5~6학년군 | 5.62초 | 6.12초 |
+| Hard 5~6학년군 | 5.20초 | 6.12초 |
+| Hard 3~4학년군 | 5.23초 | 5.77초 |
+
+### 12.5 화면 (1180×820, 820×1180, 1024×768, 768×1024 — 스크린샷을 직접 열어 봄)
+- 230개 설명을 모두 `probeLayout`로 그려 봤다. 가장 긴 설명은 10낱말 12개, 글자로는 "This person helps doctors and takes care of sick people."이다.
+  - 4개 화면 모두 **두 줄 이내**, 설명 띠 밖으로 넘치지 않는다. 가장 작은 글자는 768×1024에서 24.6px.
+  - 가장 긴 낱말(10자: watermelon, television, restaurant, basketball)도 카드 폭 − 24px 안에 들어간다.
+- 5~6학년 Hard 한 판(forget, dangerous, difficult, church … hungry): 어려운 낱말 카드가 잘 읽힌다. "Look both ways. Be this when you cross the road."는 768×1024에서 두 줄이다.
+- 결과 표 V2-R1: `오답: <span lang="en">bread</span>`로 나뉘었다(한국어 머리말 + 영어 단어). **고쳐짐.**
+- `questions.json`의 `source` 문구("기본 어휘(초등 *)"): 코드 어디에서도 읽지 않는다(타입 정의에만 있음). 화면·동작에 영향이 없다. 다만 지금은 ** 정답이 섞여 있어 문구가 사실과 조금 다르다 → 권장 R-v3-6.
+
+### 12.6 반드시 수정 (1건)
+- **M-v3-1 `nature-14 forest`**: 설명이 "A place with many, many trees and wild animals."인데, 같은 주제의 **mountain**(산, 3~4학년군)이 5~6학년군·모두에서 forest 문제의 **10.5%**에 함께 나온다.
+  - 문제: 한국 아이에게 산은 "나무가 아주 많고 야생 동물이 사는 곳" 그 자체라서, mountain도 그대로 맞는 답이 된다. v1의 bird↔duck, dress↔hat과 같은 수준(설명을 글자 그대로 만족하는 다른 카드)이다.
+  - 재현: `buildPlans`를 학년군 5~6·all × 난이도 3종 × 씨앗 3,000으로 돌리면 forest 문제의 10.5%에 mountain 카드가 있다.
+  - 고치는 방향: Plan이 부록 A forest의 avoid에 `mountain`을 더하고(`park,zoo,mountain`), Build가 JSON에 반영한다. 데이터 한 줄이다.
+
+### 12.7 권장 (7건)
+- **R-v3-1 `clothes-05 coat`**(3~4학년군으로 옮기며 다듬음): "We wear it outside when it is cold."
+  - v1의 구별 열쇠 "over our clothes"가 빠졌다. 같은 주제 shoes·socks·pants가 27~29% 함께 나오는데, 이것들도 "추울 때 밖에서 입는" 것이 된다.
+  - 3학년은 it과 them의 차이로 가르지 못한다. → "We wear it over clothes when cold."(7낱말)처럼 되살리기를 권한다.
+- **R-v3-2 `people-21 hero`** "A brave person who saves people from danger.": doctor·nurse(5~7%)도 아이에게는 "사람을 구하는 사람"이다 → avoid에 `doctor,nurse`.
+- **R-v3-3 `feeling-19 lazy`** "You do not want to work or move.": 아플 때(sick)나 슬플 때(sad)도 그렇다(5~6%) → avoid에 `sick`(필요하면 `sad`도). 또는 설명에 "but you are not sick" 같은 구별을 넣는다.
+- **R-v3-4 `place-12 office`** "People work here at desks with computers.": library(9.6%)에도 책상과 컴퓨터가 있다. 약하지만 avoid에 `library`를 넣으면 안전하다.
+- **R-v3-5 영어 다듬기**: `body-13 fever` "your body gets so hot" → "gets very hot"이 더 자연스럽다. `people-14 scientist` "does science tests"는 통하지만 어색하다(experiment는 초등 어휘 밖이라 지금 표현을 이해함).
+- **R-v3-6 `questions.json` `source`**: 화면·동작에 영향이 없으므로 급하지 않다. 다음에 데이터를 고칠 때 "2022 개정 영어과 교육과정 [별표 3] 기본 어휘(초등 * 중심 + 5~6학년군 중학 ** 일부)"처럼 사실에 맞게 바꾼다. spec 7.3의 예시 문구도 함께 바꾼다.
+- **R-v3-7 떠오르는 점수 위치**(v2 화면): 카드가 아직 설명 띠 바로 아래에 있을 때 잡으면, "+243"·"−30"이 카드 위쪽에서 떠올라 0.8초 동안 설명 띠 글자 위에 겹친다(1024×768 스크린샷). → 떠오르는 숫자의 시작 y를 설명 띠 아래로 자른다.
+  - 덧붙임: 스크린샷에서 여러 숫자가 겹쳐 쌓인 것은 테스트용 수동 시계 탓이고, 실제 진행에서는 0.8초 뒤 사라진다.
+
+### 12.8 사용자 결정 필요
+- 부록 A는 사용자가 승인한 표다. 그래서 **M-v3-1(forest의 avoid에 mountain 추가)** 과, 원하면 **R-v3-1~R-v3-5 문항 다듬기**를 고칠지 정해 주셔야 Plan이 부록 A를 고칠 수 있다.
+- 권장안: M-v3-1과 R-v3-1~R-v3-4는 고치고, R-v3-5는 선택.
+
+### 12.9 남은 것
+- 교실 확인: 5~6학년 학생 몇 명이 5~6학년군 Normal·Hard를 했을 때 낱말을 "어렵지만 맞힐 만하다"고 느끼는지 본다(특히 ** 16개: giraffe, dolphin, whale, medicine, fever, dentist, calendar, island, desert, planet, airport, museum, village, hungry, angry, invent). 첫 시도 정답률이 11.9의 목표보다 크게 낮으면 낱말 수준이나 속도를 다시 본다.
+- 3~4학년 학생에게는 3~4학년군으로 옮겨 온 낱말(lion, bread, coat, river, taxi, sick 등)이 알맞은지 본다.
+- 실제 5~6학년 검정 교과서 낱말 목록과는 Plan도 Review도 하나하나 맞춰 보지 못했다(spec 7.6.1에 적힌 대로).
+
+---
+
+## 13. 재검토 v3b (2026-11-26)
+
+- 지침: `docs/briefs/review-fix-brief-v3b.md`. 기준은 고쳐진 spec(15절 v3b 표, 7.3·7.4 V5 보완·7.6.5 `source`, 13절 W4)이다.
+- 변경 범위는 `0b6cfc7` 뒤의 `git diff`로 봤다(v3 전체가 아직 커밋 전). git은 읽기만 했다.
+- 임시 스크립트·스크린샷: `/private/tmp/claude-501/-Users-sungchul-Desktop-play2-----/7bd2217c-e14d-425c-9176-0b2e64f9c244/scratchpad/review-v3b/`
+
+### 13.1 판정: **통과**
+반드시 수정 0건, 새 권장 1건이다.
+
+### 13.2 직접 돌린 명령과 결과
+
+| 명령 / 검사 | 결과 |
+|---|---|
+| `npm run check` | 종료 코드 0. 단위 **148 통과, 1 건너뜀**. 문항 230개 **위반 0건**. e2e **102 통과**. Build 보고와 같다. |
+| 이번 수정분 범위 | `questions.json`(6문항, `source`), `words.ts`·`validate.ts`(V5 보완), `hud.ts`(떠오르는 숫자 위치), `styles.css`(주석), `data.test.ts`·`e2-touch.spec.ts`. spec은 15절 v3b·7.3·7.4·7.6.5·13절 W4. **W4와 R-v3-7 범위 안이다.** |
+| 부록 A ↔ `questions.json`(독립 Python) | 230행 8칸 모두 같음. `version` 2. `source`는 "2022 개정 영어과 교육과정 [별표 3] 기본 어휘(초등 * 중심 + 5~6학년군 중학 ** 일부)"로 spec 7.3·7.6.5와 같다. |
+| 떨어지는 시간 다시 계산 | 2,070건 불일치 0. Hard 7~10번 5~6학년군 평균 5.20초, 최대 6.12초로 12.4와 같다. 고친 설명(coat, fever)은 낱말 수가 그대로다. 12.3의 "5~6학년군이 어려워졌다" 표도 정답이 바뀌지 않았으므로 그대로다. |
+| 화면 4종 | 13.4. 콘솔 오류 0, 사이트 밖 요청 0. |
+
+### 13.3 지난 지적별 결과 (판 구성 흉내: 학년군 3 × 난이도 3 × 씨앗 3,000)
+
+| 지적 | 결과 | 확인 |
+|---|---|---|
+| **M-v3-1** forest ↔ mountain | **고쳐짐** | 함께 나옴 10.5% → **0%**(park·zoo도 0%) |
+| R-v3-1 coat | **고쳐짐** | 새 설명 "We wear it over our clothes in winter." + avoid에 belt. belt·shirt·hat은 0%. shoes 33.5%, socks 36.7%, pants 36.2%, dress 34.6% 함께 나오지만 모두 "옷 **위에** 입는 것"이 아니어서 **답이 아니다**. Plan이 belt를 더한 것("옷 위에 두르는 것")도 타당하다. |
+| R-v3-2 hero ↔ doctor·nurse | 고쳐짐 | 0% |
+| R-v3-3 lazy ↔ sick·sad | 고쳐짐 | 0%. Plan이 sad도 더한 것은 Review의 "필요하면 sad도"와 맞다. |
+| R-v3-4 office ↔ library | 고쳐짐 | 0% |
+| R-v3-5 fever "very hot" | 고쳐짐 | 문장이 자연스러워졌다. fever↔medicine은 10% 함께 나오지만 답이 아니다. scientist 표현은 그대로 두었다(13.5에서 다시 봄). |
+| R-v3-6 `source` 문구 | 고쳐짐 | 위 표 |
+| R-v3-7 떠오르는 숫자 겹침 | 고쳐짐 | 13.4 |
+
+**V5 보완(spec 7.4 v3b) — 직접 계산**
+- 보완 전 `words.ts`(커밋 `0b6cfc7`)와 지금 `words.ts`를 같은 230문항에 돌려 비교했다. 실제 낱말 목록은 spec 문장대로 만들었다(토큰 자신, 부록 B, clue-extra의 목록, 문항 낱말).
+  - **V5 결과가 바뀐 문항은 fever 1개뿐**이다. 보완 전에는 "very → ver ⊂ fever"로 잘못 걸렸고, 보완 뒤에는 통과한다.
+- 진짜 노출은 그대로 잡는다(직접 만든 예):
+  - birthday 설명에 "day" → 걸림
+  - basketball에 "ball" → 걸림
+  - watermelon에 "melon"·"water" → 걸림
+  - weekend에 "week" → 걸림
+  - teacher에 "teaches" → 걸림
+  - dolphin에 "dolphin" → 걸림
+- 가짜 조각은 통과한다: fever "very"(ver ⊂ fever), thirsty "this"(thi ⊂ thirsty).
+- **오답 고르기는 그대로다**: 230 × 230 정답·후보 쌍 전부에서 오답 빼기 규칙(`clueMentions`를 실제 낱말 판별 없이 부름)의 결과가 보완 전과 같다(차이 0). 같은 씨앗이면 판 구성이 바뀌지 않는다.
+
+### 13.4 떠오르는 점수 숫자 (화면 4종, 스크린샷을 직접 열어 봄)
+- 정답 카드와 오답 카드를 **잡을 수 있게 된 첫 순간**(카드 중심이 띠 경계 바로 아래, 1180×820에서 y=132)에 눌렀다. 이때 숫자의 위 끝을 쟀다.
+
+| 화면 | 띠 아래 경계 | 숫자 위 끝(시작) | 숫자 위 끝(0.8초 뒤) |
+|---|---|---|---|
+| 1180×820 | 131 | 197 | 137 |
+| 820×1180 | 150 | 216 | 156 |
+| 1024×768 | 123 | 189 | 129 |
+| 768×1024 | 150 | 216 | 156 |
+
+- 정답 "+176"과 감점 "−20" 모두 **0.8초 내내 띠 아래에 있다**. 스크린샷에서도 설명 글자와 겹치지 않는다. 감점 숫자도 같은 함수(`popScore`)로 같은 규칙을 탄다(e2e는 정답 숫자만 보지만, 직접 재 보니 감점도 같다).
+- **"Try again!" 색**: 실제 시계로 오답 0.3초 뒤에 잰 값은 `rgb(248, 113, 113)`, 불투명도 1로 v1과 같다. 수동 시계 스크린샷에서 흐리거나 색이 달라 보이는 것은, 나타나는 0.15초 전환 도중에 찍혔기 때문이다. **문제 아님, 권장 없음.**
+
+### 13.5 새로 찾은 것
+- **반드시 수정: 없음.**
+- **권장 1건 — R-v3b-1 `people-14 scientist`** "This person does science tests to learn new things."
+  - 설명에 정답의 기본형 **science**가 그대로 들어 있다. spec 7.6.1도 scientist를 science의 파생어(같은 낱말)로 본다.
+  - 다른 답이 생기는 문제는 아니다(science 카드는 avoid로 빠져 있음). 하지만 "science"만 보고 바로 맞힐 수 있어 V5의 취지(정답이나 그 변형을 설명에 넣지 않음)와 어긋난다.
+  - 기계 검사 V5는 이것을 잡지 못한다. ③은 science의 어간 "scienc"로 scientist가 시작해야 걸리는데, 실제로는 "scient"라 맞지 않기 때문이다.
+  - **12.3에 "정답이나 그 변형이 설명에 들어간 문항은 없다"고 적은 것은 이 한 문항을 놓친 것이므로 여기서 바로잡는다.**
+  - 고치는 방향: 예를 들어 "This person studies nature and does tests."(7낱말, 모두 초등 어휘)로 바꾼다. 고칠 때 teacher·science avoid는 그대로 둔다.
+- 참고(권장 아님): `place-14 airport` "Airplanes take off and land here."는 정답과 "air"를 함께 쓰지만, 다른 낱말(airplane ≠ airport)이고 설명에 꼭 필요한 열쇠라 그대로 두어도 된다.
+
+### 13.6 사용자 결정 필요
+- R-v3b-1: scientist 설명을 바꿀지. 부록 A를 고치는 일이라 사용자 결정이 필요하다. 바꾸지 않아도 배포에 문제는 없다.
+
+### 13.7 남은 것
+- 12.9와 같다(교실에서 5~6학년이 새 낱말을 "어렵지만 맞힐 만하다"고 느끼는지, 3~4학년으로 옮긴 낱말이 알맞은지).

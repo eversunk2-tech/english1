@@ -11,8 +11,11 @@ const vocab = readFileSync(join(root, 'src/data/vocab/elementary-2022.txt'), 'ut
 const extra = JSON.parse(readFileSync(join(root, 'src/data/vocab/clue-extra.json'), 'utf8'));
 
 const { errors, stats } = validateQuestions(data, vocab, extra);
-console.log('문항 검사 (spec 7.4 V1~V9)');
+console.log("문항 검사 (spec 7.4 V1~V9, 7.6.5 V7'·V10)");
 console.log(`- 문항 ${stats.total}개 (3~4학년군 ${stats.band34}, 5~6학년군 ${stats.band56})`);
+console.log(
+  `- 5~6학년군 정답 중 중학 권장(**) 낱말 ${stats.answerSecondaryCount}/${stats.band56}개 = ${(stats.answerSecondaryRatio * 100).toFixed(1)}% (기준 20% 이하, V10)`,
+);
 console.log(`- 설명 낱말 ${stats.tokens}개, 초등 어휘(합성어·감탄사·요일 포함) 비율 ${(stats.coreRatio * 100).toFixed(1)}%, secondary ${stats.secondaryTokens}개`);
 if (errors.length === 0) {
   console.log('- 위반 0건');

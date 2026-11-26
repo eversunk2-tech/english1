@@ -12,19 +12,30 @@
   - 2026-11-26 Plan 수정 v1(Review v1 반영, 지침 `docs/briefs/plan-fix-brief-v1.md`): 부록 A 17문항의 설명·avoid 고침(사용자 결정 "15개 모두 고치기" + taxi·cannot), 임시 문구 3개 확정·오류 화면 제목 "시작하지 못했어요"(사용자 결정 "3개 승인 + 오류 제목 변경") — 5.1·5.7·5.8·6.2·8.2. 같은 날 덧붙임: time-09 tomorrow 설명 변경(사용자 결정 "바꾸기"). Review 권장 반영: `engines.node` `>=22.18`(2.3), `?clock=manual`은 `?test=1`일 때만(11·12.2), 카메라 트랙 `ended` → 오류 화면(3.1·8.2). 자세한 것은 15절.
   - 2026-11-26 Plan 수정 v2(Review 재검토 N2, 지침 `docs/briefs/plan-fix-brief-v2.md`): 부록 A transport-06 taxi의 avoid `bus` → `bus,subway,train`(사용자 결정 "고치기", 방법은 코디네이터 선택). 15절.
   - 2026-11-26 사용자가 14절 12개 항목을 모두 추천안대로 승인(15절).
-  - 2026-11-26 **Plan v2(난이도) — 사용자 승인 전** (지침 `docs/briefs/plan-brief-v2-difficulty.md`): 난이도 선택 Easy/Normal/Hard 추가 [추천]. 같은 날 덧붙임: 오답 감점(사용자 요청 "틀리게 단어를 잡으면 점수 깎이게 해줘" — 14절 4번 승인 내용을 바꿈, 크기 등은 [추천]). 바뀐 절: 0, 5.3(새로 씀), 5.5, 5.8, 6.2, 11, 12.1, 12.2, 12.4, 13(D1~D5), 14.1(새 갈림길), 15. 아래 "v2 변경 요약".
-  - 2026-11-26 **Plan v3(단어 수준) — 사용자 승인 전** (지침 `docs/briefs/plan-brief-v3-words.md`): 5~6학년군 낱말 수준을 높이는 기준과 새 문항 표 [추천]. 바뀐 절: 7.6(새), 13(W1~W3), 14.2(새 갈림길), 15, 부록 A-v3(새, 맨 끝). v2 내용과 부록 A 본표는 바꾸지 않았다.
+  - 2026-11-26 **Plan v2(난이도) — 사용자 승인(2026-11-26, "추천대로 승인")** (지침 `docs/briefs/plan-brief-v2-difficulty.md`): 난이도 선택 Easy/Normal/Hard 추가. 같은 날 덧붙임: 오답 감점(사용자 요청 "틀리게 단어를 잡으면 점수 깎이게 해줘" — 14절 4번 승인 내용을 바꿈, 크기 등은 [추천]). 바뀐 절: 0, 5.3(새로 씀), 5.5, 5.8, 6.2, 11, 12.1, 12.2, 12.4, 13(D1~D5), 14.1(새 갈림길), 15. 아래 "v2 변경 요약".
+  - 2026-11-26 **Plan v3(단어 수준) — 사용자 승인(2026-11-26, "추천대로 승인")** (지침 `docs/briefs/plan-brief-v3-words.md`): 5~6학년군 낱말 수준을 높이는 기준과 새 문항 표 [추천]. 바뀐 절: 7.6(새), 13(W1~W3), 14.2(새 갈림길), 15, 부록 A-v3(새, 맨 끝). v2 내용과 부록 A 본표는 바꾸지 않았다.
+  - 2026-11-26 **Plan 수정 v3b**(Review 12절 반영, 지침 `docs/briefs/plan-fix-brief-v3b.md`, 사용자 결정 "모두 고치기"): 부록 A 6문항(forest·coat·hero·lazy·office·fever), 7.3·7.6.5 `source` 문구, 7.4 V5 보완, 13절 W4. 15절.
+  - 2026-11-26 Plan v3 W1(지침 `docs/briefs/plan-fix-brief-v3.md`): 부록 A 본표를 v3 표(230행)로 바꿔 끼우고 부록 A-v3 절을 지움. v3 표시를 승인으로 정리, 문항 수 기준(0·1.2·5.3.3·7.2·12.1)을 230으로. 15절.
+  - 2026-11-26 **Plan v4(Very Hard) — 사용자 승인 전** (지침 `docs/briefs/plan-brief-v4-veryhard.md`와 그 덧붙임): Very Hard 모드, Easy/Normal/Hard 약간 빠르게, scientist 설명·V5b 제안 [추천]. 새 절 16, 부록 D(Very Hard 문항 94개)·부록 E(중학 권장 ** 낱말 목록). **기존 승인 값(5.3 표, 부록 A, 7.x 규칙)은 바꾸지 않았다** — 바꿀 값은 16절의 "전 → 후" 표에만 있다.
 
-### v3 변경 요약 — 5~6학년군 낱말 수준 높이기 (사용자 승인 전, 모두 [추천])
+### v4 변경 요약 — Very Hard 모드 + 전체 난이도 올리기 (사용자 승인 전, 모두 [추천], 자세한 것은 16절)
+- **사용자 요청(원문)**: "very hard 모드를 만들어서 단어의 수준(중학교 과정을 심화까지), 빠르기를 더 빠르게 해줘. hard도 쉽다고 하네. 그리고 전체적으로 모든 모드 난이도 조금씩 더 올려야 겠어. 빠르기를 약간 더 빠르게 하는 등"
+- **Very Hard 단어**: 학년 선택과 상관없는 **전용 문항 94개**(부록 D). 정답은 2022 개정 기본 어휘의 **중학 권장(**) 71개(76%)** + 그보다 높은 **기본 어휘 "그 외" 등급(고교 선택과목 권장, 이 문서에서 "심화") 23개(24%)**. 교육과정 목록 밖 낱말은 쓰지 않는다. 설명은 초등(*) 낱말 92% + 중학(**) 낱말(설명당 3개까지), 10낱말 이하.
+- **빠르기(전 → 후, 단계 값 1~3 / 4~6 / 7~10번)**: Easy 9.0/7.5/6.5 → **8.5/7.0/6.0**, Normal 7.5/6.5/5.5 → **7.0/6.0/5.0**, Hard 6.0/5.0/4.5 → **5.5/4.5/4.0**, **Very Hard(새) 5.0/4.0/3.5**(카드 4장, 같은 주제 오답 2/3/3, 배율 ×2.0, 감점 −40). 최소 시간 식의 읽기 계수도 낮춘다(3~4 0.40→0.35, 5~6 0.35→0.30, Very Hard 0.25초/낱말) — 계수를 그대로 두면 Hard는 최소 시간에 묶여 거의 빨라지지 않는다(7~10번 평균 5.20→5.14초). 바꾸면 Hard 7~10번 실제 평균 5.20→4.72초(5~6), Very Hard 4.36초.
+- **화면**: 시작 화면 난이도 줄에 4번째 버튼 `Very Hard`(매우 어려움, 별 두 개). Very Hard를 고르면 학년 줄을 흐리게 하고 "Very Hard는 학년과 상관없이 중학 단어로 나와요". 최고 점수는 Very Hard 한 칸 따로. Hard에서 첫 시도 8/10 이상이면 Very Hard 도전 권유.
+- **덧붙임**: people-14 scientist 설명에 어근 "science"가 들어 있다(Review 13절) → 설명 바꾸기 + V5가 파생 접사(-ist/-er 등)의 어근도 잡게 보완(V5b). 부록 A 본표는 승인 뒤 바꾼다.
+- 갈림길은 14.3, Build 순서는 16.8(X1~X6).
+
+### v3 변경 요약 — 5~6학년군 낱말 수준 높이기 (사용자 승인 2026-11-26, 14.2 W1~W6 모두 추천안대로)
 - **사용자 요청(원문)**: "5,6학년 아이들이 단어가 너무 쉽다는 피드백이 왔는데, 단어의 수준도 좀 더 높여줘. 지금은 너무 쉽다고 해"
 - **기준(7.6.1)**: 섞기 — 5~6학년군 정답의 **80% 이상은 초등 권장(*) 800 낱말 안의 더 어려운 낱말**(추상어·긴 낱말·덜 기초적인 낱말과 그 파생어: honest, dangerous, scientist, remember, calendar…), **20% 이하는 2022 개정 기본 어휘의 중학 권장(**) 낱말 중 초등 교과 주제와 맞는 구체적인 것**(museum, airport, island, dentist, medicine, invent…). 근거: 교육과정은 학습 어휘의 90% 이상을 기본 어휘 목록(3,000, ** 포함)에서 쓰라고 하고 * 800은 "권장"이며, 2022 개정은 "초등 어휘의 선택 범위가 너무 좁다"며 초등 학습 어휘를 늘렸다(7.6.1, 부록 C의 같은 PDF로 다시 확인).
-- **문항(부록 A-v3)**: 5~6학년군 77 → **87문항**. v1 5~6 낱말 중 기초 낱말 59개(lion, bread, coat, river, taxi, sick…)는 **3~4학년군으로 옮기고**(설명을 8낱말 이하로 다듬음), 비교적 어려운 18개(library, restaurant, delicious, yesterday…)는 남기고, **새 낱말 69개**를 넣었다(그중 ** 16개, 5~6학년군의 18%). 3~4학년군은 84 → 143(옮겨 온 것만). 모두 230문항.
+- **문항(부록 A, v3로 바꿔 끼움)**: 5~6학년군 77 → **87문항**. v1 5~6 낱말 중 기초 낱말 59개(lion, bread, coat, river, taxi, sick…)는 **3~4학년군으로 옮기고**(설명을 8낱말 이하로 다듬음), 비교적 어려운 18개(library, restaurant, delicious, yesterday…)는 남기고, **새 낱말 69개**를 넣었다(그중 ** 16개, 5~6학년군의 18%). 3~4학년군은 84 → 143(옮겨 온 것만). 모두 230문항.
 - **설명 문장**은 지금 규칙(V4~V6: 5~6은 10낱말 이하, 초등 어휘 중심, ** 낱말 2개까지)을 그대로 지킨다. 바뀌는 검사 규칙은 **정답**에 대한 것 하나: 5~6학년군 정답은 Plan이 확인한 ** 목록(`answerSecondary`, 16개)에 있으면 통과, 그 비율은 5~6학년군 정답의 20% 이하(V7'·V10).
 - **v2와 맞물림**: 새 5~6 설명 평균 7.5낱말(v1 7.4) — Hard 7~10번 실제 떨어지는 시간 평균 5.20초(v1 데이터 5.14초), 최대 6.12초로 거의 같다. 판 구성 흉내에서 오답 고르기 실패 0.
 - **학년군×난이도에서 보이는 수준(7.6.4)**: 3~4 = 기초 낱말만(143), 5~6 = 어려운 낱말만(87), 모두 = 230개 중 무작위(어려운 낱말 약 38%). 난이도는 속도·헷갈림만 바꾸고 낱말 수준은 학년군이 정한다.
 - 갈림길은 14.2, Build 순서는 13절 W1~W3.
 
-### v2 변경 요약 — 난이도 선택 (사용자 승인 전, 모두 [추천])
+### v2 변경 요약 — 난이도 선택 (사용자 승인 2026-11-26, 14.1 V1~V12 모두 추천안대로)
 - **사용자 요청(원문)**: "게임 난이도가 좀 쉬운거 같아. 학년별로 easy, normal, hard 로 해서 빠르기가 달라지는 등의 방식으로 난이도 차이를 두는거 어때? hard가 그렇다고 극악의 난이도이면 안돼. 학생들이 도전 의식을 가지고 할 수 있어야해"
 - **해석**: "학년별로" = 학년군(3~4 / 5~6 / 모두)을 고른 뒤 그 안에서 다시 Easy/Normal/Hard를 고른다(3×3 조합). 학년군은 **어떤 단어가 나오는지**, 난이도는 **얼마나 빠르고 헷갈리게 나오는지**를 정한다. 학년군마다 따로 속도표를 두지 않고, 설명이 길수록(5~6학년군 설명이 평균 7.4낱말로 3~4학년군 6.6낱말보다 길다) 시간을 더 주는 **공정성 바닥**(5.3.3)이 학년군 차이를 자연스럽게 맞춘다. 3~4학년군 문항은 한 낱말 읽기 시간을 더 길게 잡는다.
 - **값**(5.3.2): 지금 배포된 v1 속도(사용자가 "좀 쉽다"고 한 것)를 **Easy로 그대로** 두고, **Normal은 약 15~18% 빠르게**, **Hard는 약 30~33% 빠르게 + 처음부터 카드 4장 + 같은 주제 오답을 더 많이**. 기본 선택은 Normal.
@@ -48,9 +59,9 @@
 | 모델·wasm 파일 | **우리 사이트에 같이 올린다(자체 호스팅)**. wasm은 npm 패키지에서 빌드 때 복사, 모델(7.8MB)은 저장소에 넣고 SHA-256으로 검사. 외부 CDN 호출 0. [추천] |
 | 화면 | 가로 태블릿 기준(세로도 동작). 카메라 영상을 거울처럼 뒤집어 **화면 전체 배경으로 흐리게** 깔고, 손바닥 중심에 커서를 그린다. 영상과 커서가 같은 변환을 써서 "내 손이 보이는 곳 = 잡는 곳"이 된다. |
 | 잡기 판정 | 3D 손 좌표(worldLandmarks)로 네 손가락의 굽힘 정도를 0~1로 계산 → 히스테리시스(쥠 ≥0.70, 폄 ≤0.35) + 2회 연속 확인 → **펼침→쥠 전환 순간에만** 한 번 잡기. |
-| 게임 | 한 판 **10문제**(약 1분 40초). 문제마다 영어 설명 1개 + 떨어지는 단어 카드 3~4개 중 정답 1개. 오답은 그 카드만 사라짐(v1: 감점 없음 → v2 덧붙임: 오답마다 감점, 승인 전). 문제가 진행될수록 카드 수·속도 증가. [추천] |
-| 난이도(v2, 승인 전) | 시작 화면에서 **Easy / Normal / Hard**(기본 Normal). Easy = v1 속도, Normal 약 15% 빠르게, Hard 약 30% 빠르게 + 카드 4장 + 헷갈리는 오답. 설명 길이에 따른 공정성 바닥으로 Hard도 잡을 수 있는 시간을 보장. 점수 배율 ×1.0/×1.2/×1.5. 오답 감점 −10/−20/−30(0점 아래로는 안 내려감). [추천] (5.3, 5.5) |
-| 문항 | **이 문서 부록 A에 161문항을 확정해 둔다**(3~4학년군 84, 5~6학년군 77, 15개 주제). Build는 그대로 JSON으로 옮기고, 검사 스크립트로 기계 검사, Review는 사람 눈 검사. 근거: 2022 개정 영어과 교육과정 [별표 3] 기본 어휘 중 초등 권장(*) 800개. |
+| 게임 | 한 판 **10문제**(약 1분 40초). 문제마다 영어 설명 1개 + 떨어지는 단어 카드 3~4개 중 정답 1개. 오답은 그 카드만 사라짐(v1: 감점 없음 → v2 덧붙임: 오답마다 감점, 사용자 승인 2026-11-26). 문제가 진행될수록 카드 수·속도 증가. [추천] |
+| 난이도(v2, 사용자 승인 2026-11-26) | 시작 화면에서 **Easy / Normal / Hard**(기본 Normal). Easy = v1 속도, Normal 약 15% 빠르게, Hard 약 30% 빠르게 + 카드 4장 + 헷갈리는 오답. 설명 길이에 따른 공정성 바닥으로 Hard도 잡을 수 있는 시간을 보장. 점수 배율 ×1.0/×1.2/×1.5. 오답 감점 −10/−20/−30(0점 아래로는 안 내려감). [사용자 승인 2026-11-26] (5.3, 5.5) |
+| 문항 | **이 문서 부록 A에 230문항을 확정해 둔다**(3~4학년군 143, 5~6학년군 87, 15개 주제 — v3, 2026-11-26. v1은 161문항). Build는 그대로 JSON으로 옮기고, 검사 스크립트로 기계 검사, Review는 사람 눈 검사. 근거: 2022 개정 영어과 교육과정 [별표 3] 기본 어휘 중 초등 권장(*) 800개. |
 | 화면 문구 | 안내·버튼·오류는 **한국어**, 퀴즈(설명·단어)와 짧은 칭찬(Great! 등)은 **영어**. |
 | 카메라 대체 | 카메라가 없거나 거부되면 **터치/마우스로 하기**(같은 게임, 누르기 = 잡기). 개발·검증용 `?input=pointer`, `?input=replay`. |
 | 개인정보 | 영상은 기기 안에서만 처리, 저장·전송 없음. 사이트 밖으로 나가는 요청 0개를 자동 테스트로 확인. 시작 화면에 안내. |
@@ -66,7 +77,7 @@
 
 ### 1.2 이번 사이클 포함
 - 게임 한 종류(위 규칙), 학년군 고르기(3~4 / 5~6 / 모두), 카메라 모드·터치 모드, 결과·복습 화면, 소리(효과음·영어 읽어 주기), 최고 점수(기기 안 저장).
-- 문항 161개, 검사 스크립트, 자동 테스트, GitHub Pages 배포 워크플로.
+- 문항 230개(v3, v1은 161개), 검사 스크립트, 자동 테스트, GitHub Pages 배포 워크플로.
 
 ### 1.3 제외(다음 사이클 후보)
 - 교사용 문항 편집 화면, 여러 명 대전, 순위표 서버, 학생 이름 입력, 오프라인 설치(PWA), 손 인식 개인 보정(calibration) 화면(13절 S7에서 실제 값이 나쁘면 후보로 올림).
@@ -280,10 +291,10 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 1. 설명 띠에 영어 설명이 나오고(소리 켬이면 영어로 읽어 줌), 카드 3~4장이 위에서 나타나 떨어진다.
 2. **정답을 잡으면**: 카드가 터지는 효과 + "Great!"(첫 시도) 또는 "Good job!"(오답 뒤) + 카드 자리에 한국어 뜻 표시 + 단어 읽어 주기 → 나머지 카드는 흐려지며 사라짐 → 1.5초 뒤 다음 문제.
 3. **오답을 잡으면**: 그 카드가 빨갛게 흔들리고(0.3초) 사라진다. "Try again!" 짧게 표시, 오답 소리. 연속 정답(콤보)은 0으로. 같은 문제는 남은 카드로 계속. [추천: 14절 4번]
-   - **v2 덧붙임(사용자 요청 "틀리게 단어를 잡으면 점수 깎이게 해줘", 크기는 [추천] — 승인 전)**: 오답을 잡을 때마다 난이도별 감점(Easy 10 / Normal 20 / Hard 30점, 5.3.2·5.5). 잡은 자리에서 빨간 "−20"(실제로 깎인 점수)이 0.8초 동안 위로 떠오르며 사라지고, 설명 띠의 점수가 그만큼 줄어든다. 점수가 이미 0이라 깎인 것이 없으면 숫자는 띄우지 않고 "Try again!"만.
+   - **v2 덧붙임(사용자 요청 "틀리게 단어를 잡으면 점수 깎이게 해줘", 크기 등은 사용자 승인 2026-11-26)**: 오답을 잡을 때마다 난이도별 감점(Easy 10 / Normal 20 / Hard 30점, 5.3.2·5.5). 잡은 자리에서 빨간 "−20"(실제로 깎인 점수)이 0.8초 동안 위로 떠오르며 사라지고, 설명 띠의 점수가 그만큼 줄어든다. 점수가 이미 0이라 깎인 것이 없으면 숫자는 띄우지 않고 "Try again!"만.
 4. **놓침**: 정답 카드가 화면 아래로 완전히 빠지면(오답 카드가 남아 있어도) 문제 끝. 정답 카드를 화면 가운데에 2초 보여 준다: "The answer is **banana**" + 한국어 뜻. 0점, 콤보 0.
 
-### 5.3 난이도 — 문제 진행에 따른 단계 + 난이도 선택(v2) [추천 — v2는 사용자 승인 전]
+### 5.3 난이도 — 문제 진행에 따른 단계 + 난이도 선택(v2) [사용자 승인 2026-11-26]
 
 #### 5.3.1 학년군과 난이도
 - 시작 화면에서 학년군(3~4 / 5~6 / 모두)과 난이도(Easy / Normal / Hard)를 따로 고른다. 학년군은 정답 풀·오답 풀(5.6)을, 난이도는 아래 표의 카드 수·떨어지는 시간·같은 주제 오답 수·점수 배율을 정한다. 9가지 조합 모두 같은 규칙으로 돈다.
@@ -329,7 +340,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 
 (3~4학년군 설명은 8낱말 이하이므로 괄호 값은 쓰이지 않는다.)
 
-- 부록 A 161문항에 적용하면(Plan 계산, 2026-11-26): Easy는 바닥 때문에 늘어나는 문제 **0개**(v1과 같음). Normal은 7~10번 단계에서만 3~4학년군 23/84·5~6학년군 25/77 문항이 늘어남(평균 5.5→5.6초, 최대 6.12초). Hard는 1~3번 단계 9/77(5~6)·0/84(3~4), 4~6번 35/77·48/84, 7~10번 54/77·70/84 문항이 늘어남(7~10번 평균 4.5→약 5.15초, 최대 6.12초). 즉 **Hard의 7~10번은 짧은 설명("We see with it.")에서는 4.5초로 빠르고, 긴 설명에서는 읽을 시간만큼 느려진다.**
+- 부록 A 230문항(v3)에 적용하면(Plan 계산, 2026-11-26): Easy는 바닥 때문에 늘어나는 문제 **0개**(v1과 같음). Normal은 7~10번 단계에서만 3~4학년군 47/143·5~6학년군 28/87 문항이 늘어남(평균 5.5→5.6초, 최대 6.12초). Hard는 1~3번 단계 12/87(5~6)·0/143(3~4), 4~6번 46/87·91/143, 7~10번 65/87·121/143 문항이 늘어남(7~10번 평균 4.5→약 5.2초, 최대 6.12초). (v1 161문항일 때도 거의 같았다: 7~10번 Hard 평균 약 5.15초.) 즉 **Hard의 7~10번은 짧은 설명("We see with it.")에서는 4.5초로 빠르고, 긴 설명에서는 읽을 시간만큼 느려진다.**
 - 카드가 잡히기 시작하는 때: 카드 중심이 설명 띠 아래로 나오는 p ≈ 0.05~0.06(화면 5종). 읽는 동안 카드가 내려오므로 따로 기다리는 시간은 없다.
 - 오답을 한 번 잡은 뒤 다시 잡을 시간은 보장하지 않는다(그것이 "도전"). 놓침은 감점 없이 0점이다(감점은 오답을 잡았을 때만 — 덧붙임).
 
@@ -353,8 +364,8 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 - 첫 시도 정답 100점, 오답 뒤 정답 50점.
 - 빠르기 보너스: `round(50 × (1 − p_정답카드))` (일찍 잡을수록 최대 +50).
 - 콤보: 연속 정답 3개째부터 문제마다 +20, 화면에 "Combo ×3!".
-- **난이도 배율(v2) [추천]**: 정답 한 번의 점수 = `round(배율 × (기본 + 빠르기 보너스 + 콤보))`, 배율 Easy 1.0 / Normal 1.2 / Hard 1.5(5.3.2). 빠르기 보너스는 지금처럼 진행도 p로 계산하므로(`round(50 × (1 − p))`를 먼저 구함) 난이도와 무관하게 0~50. 화면의 "+점수" 표시는 배율을 곱한 값. 이유: Hard는 놓치는 문제가 많아 배율이 없으면 같은 실력에서도 점수가 낮게 나와, 아이들이 Hard를 피하게 된다. 배율로 "어려운 것을 고르면 더 큰 점수"를 보여 도전을 권한다.
-- **오답 감점(v2 덧붙임) [추천 — 사용자 요청으로 넣기로 함, 크기·규칙은 승인 전]**
+- **난이도 배율(v2) [사용자 승인 2026-11-26]**: 정답 한 번의 점수 = `round(배율 × (기본 + 빠르기 보너스 + 콤보))`, 배율 Easy 1.0 / Normal 1.2 / Hard 1.5(5.3.2). 빠르기 보너스는 지금처럼 진행도 p로 계산하므로(`round(50 × (1 − p))`를 먼저 구함) 난이도와 무관하게 0~50. 화면의 "+점수" 표시는 배율을 곱한 값. 이유: Hard는 놓치는 문제가 많아 배율이 없으면 같은 실력에서도 점수가 낮게 나와, 아이들이 Hard를 피하게 된다. 배율로 "어려운 것을 고르면 더 큰 점수"를 보여 도전을 권한다.
+- **오답 감점(v2 덧붙임) [사용자 요청 + 크기·규칙 사용자 승인 2026-11-26]**
   - 오답 카드를 잡을 때마다 `감점 = DIFFICULTIES.<d>.wrongPenalty`(Easy 10 / Normal 20 / Hard 30). 배율을 곱하지 않는 고정 값이다(표에 적힌 숫자 그대로 보이게).
   - **판 점수는 0 아래로 내려가지 않는다**: 감점할 때마다 `점수 = max(0, 점수 − 감점)`. 실제로 깎인 양(`min(점수, 감점)`)을 화면에 띄우고 기록한다. 이유: 초등학생에게 음수 점수는 "망했다"는 느낌을 줘서 그 판을 포기하게 만든다.
   - 한 문제에서 오답을 여러 번 잡으면 그때마다 감점(카드 4장이면 최대 3번). 그 뒤 정답을 잡으면 지금처럼 오답 뒤 정답 점수 `round(배율 × (50 + 빠르기 + 콤보))`. 콤보는 오답을 잡은 순간 0이 되므로 그 정답의 콤보 보너스는 0.
@@ -387,7 +398,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 
 ### 5.8 결과 화면
 - 점수, 맞힌 문제 수(`7 / 10`), 그 학년군×난이도의 최고 점수(새 기록이면 "New record!"). 위에 작은 글씨로 "5~6학년 · Hard"처럼 고른 조합(v2).
-- **도전 권유 한 줄(v2) [추천]**: 첫 시도 정답(○)이 8개 이상이고 Easy였으면 "다음엔 Normal에 도전해 볼까요?", Normal이었으면 "다음엔 Hard에 도전해 볼까요?", Hard였으면 "Hard도 거뜬해요! 최고 점수에 도전해 봐요." 그 밖에는 이 줄 없음.
+- **도전 권유 한 줄(v2) [사용자 승인 2026-11-26]**: 첫 시도 정답(○)이 8개 이상이고 Easy였으면 "다음엔 Normal에 도전해 볼까요?", Normal이었으면 "다음엔 Hard에 도전해 볼까요?", Hard였으면 "Hard도 거뜬해요! 최고 점수에 도전해 봐요." 그 밖에는 이 줄 없음.
 - **복습 표**: 10문제 순서대로 `단어 · 한국어 뜻 · 설명 · ○/△/×`(○ 첫 시도 정답, △ 오답 뒤 정답, × 놓침). v2 덧붙임: 맨 끝에 **그 문제의 점수** 칸 — 얻은 점수와 실제 깎인 점수를 합한 값(`+142`, `+42`, `0`, `−20`), 오답을 잡았으면 그 아래 작은 빨간 글씨 "오답 1번 −20"(잡은 오답 단어도 함께: "오답: cat"). 표 위 요약 줄에 "오답 3번 (−60)"처럼 판 전체 오답 수·감점 합계(오답이 없으면 "오답 0번"). 단어를 누르면 읽어 줌(소리 켬일 때).
 - [다시 하기]: 손으로 잡을 수 있는 큰 영어 카드 **`AGAIN`** + 터치 버튼 [다시 하기]. [처음으로]: 터치 버튼.
 - "팔을 잠깐 쉬어요" 한 줄.
@@ -419,7 +430,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 
 - 설명 글자 크기: 가로 화면에서 `clamp(22px, 3.2vw, 40px)`, 두 줄까지(넘치면 글자를 줄임). 가장 긴 설명은 10단어 — 1024×768과 768×1024에서 두 줄 안에 들어가야 한다(E2E 검사).
 - 대비: 카드는 흰 바탕·진한 남색 글자·두꺼운 테두리. 화면 글자 대비 4.5:1 이상.
-- **시작 화면 난이도 줄(v2) [추천]**
+- **시작 화면 난이도 줄(v2) [사용자 승인 2026-11-26]**
   - 학년군 줄 바로 아래, 같은 모양의 세 칸짜리 고르기 버튼. 각 버튼은 큰 영어 글자 `Easy`/`Normal`/`Hard`와 그 아래 작은 한국어 `쉬움`/`보통`/`어려움`(사용자가 쓴 이름 그대로 + 저학년용 한국어). 고른 버튼은 채운 색, 나머지는 테두리만. Hard 버튼 글자 옆에 작은 별 SVG 아이콘 하나(도전 느낌, 색만으로 구분하지 않게). 버튼 높이 56px 이상.
   - 줄 아래 한 줄 설명(고른 난이도에 따라 바뀜): Easy "천천히 떨어져요. 처음 하는 친구에게 좋아요." / Normal "조금 빨라요. 비슷한 단어가 섞여 나와요." / Hard "빠르고 헷갈리는 단어가 많아요. 도전해 보세요!"
   - 기본 선택: 기억한 값, 없으면 Normal. URL `?difficulty=easy|normal|hard`가 있으면 그것이 우선(저장도 함).
@@ -435,7 +446,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 - Plan은 이 PDF의 목록에서 `*` 표시 단어를 뽑아 **부록 B(819개 형태 — 800개 + 철자 변이형 aeroplane/colour 등)**로 실었다(pdftotext로 추출, 2026-11-26). 추출 실수가 있을 수 있으므로 Review는 부록 B에서 무작위 20개를 PDF와 맞춰 본다.
 - **문항 수와 학년군**: 학년군을 문항마다 정했다(3~4 = 구체적이고 짧은 낱말, 5~6 = 조금 길거나 추상적인 낱말·동사·형용사). 교과서 학년 배정과 똑같지는 않다 [추정].
 
-### 7.2 문항 확정 방식 — **Plan이 부록 A에 161문항을 확정**
+### 7.2 문항 확정 방식 — **Plan이 부록 A에 문항을 확정**(v1 161문항 → v3 230문항, 7.6)
 - 이유: 사용자가 승인 단계에서 단어를 직접 훑어볼 수 있고, Build는 옮기기만 하고, Review는 "spec과 같은가 + 기계 검사 + 사람 눈 검사"로 나눠 볼 수 있다.
 - Plan이 scratchpad의 임시 검사기로 7.4의 V5~V8을 미리 돌려 **위반 0건**을 확인했다(2026-11-26): 설명 낱말의 97.4%가 초등(*) 어휘(활용형·합성어 포함), 나머지는 아래 `**` 허용 목록과 의성어·요일 이름.
 - Build는 부록 A 표를 `src/data/questions.json`으로 **글자 그대로** 옮긴다. 고치고 싶은 문항이 있으면 고치지 말고 보고에 올린다.
@@ -444,7 +455,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 ```jsonc
 {
   "version": 1,
-  "source": "2022 개정 영어과 교육과정 [별표 3] 기본 어휘(초등 *)",
+  "source": "2022 개정 영어과 교육과정 [별표 3] 기본 어휘(초등 * 중심 + 5~6학년군 중학 ** 일부)",  // v3b: 이 문구 그대로(v3 데이터부터)
   "questions": [
     {
       "id": "food-02",          // `<topic>-<두 자리>`, 부록 A의 id
@@ -473,6 +484,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 - V3 `band` ∈ {`3-4`,`5-6`}, `topic` ∈ 7.5 목록, `ko`는 한글 포함 1자 이상.
 - V4 `clue`: 대문자로 시작, `.`로 끝남, 쓸 수 있는 글자는 영문·공백·`,.'?!`만. 낱말 수(아래 토큰 규칙) **3~4학년군 ≤ 8, 5~6학년군 ≤ 10**. [추정: 2015 개정 교육과정의 초등 문장 길이 기준(3~4학년 7낱말, 5~6학년 9낱말 이내 — 확인하지 못함)을 참고해 한 낱말씩 여유]
 - V5 **정답 단어가 설명에 들어가지 않음**: 설명의 각 토큰 t와 그 기본형 후보 L(t)(아래) 중 하나라도 — ① 정답과 같다 ② 길이 3 이상이고 정답의 어간(끝 e/y를 뗀 것)으로 시작한다 ③ 정답이 L의 어간(길이 4 이상)으로 시작한다 ④ 길이 3 이상이고 정답 안에 들어 있다(예: birthday ⊃ day, basketball ⊃ ball) — 이면 실패.
+  - **v3b 보완(2026-11-26)**: **V5 검사에서는** ④를 L(t)가 **실제 낱말**일 때만 적용한다 — L(t)가 토큰 t 자신이거나, 초등 목록(부록 B)·`clue-extra.json`의 목록·문항 낱말 중 하나일 때. 접미사를 떼다 생긴 낱말이 아닌 조각("very" → "ver" ⊂ fever, "this" → "thi" ⊂ thirsty)으로 잘못 걸리는 것을 막기 위함이다. birthday ⊃ day, basketball ⊃ ball처럼 진짜 낱말은 그대로 잡는다. **오답 고르기(5.6)의 "설명에 나온 단어" 빼기는 지금의 넓은 규칙 그대로** 둔다(더 많이 빼는 쪽이 안전하고, 바꾸면 같은 판 카드 구성이 달라진다). 테스트: fever "…gets very hot."는 V5 통과, birthday 설명에 "day"를 넣으면 V5 실패.
 - V6 **설명 어휘**: 각 토큰이 ⓐ L(t)가 초등 목록(부록 B)에 있음 ⓑ L(t)가 초등 목록 두 낱말의 합성(예: birthday, outside) ⓒ `clue-extra.json`에 있음 — 중 하나여야 한다. 설명 하나에 `secondary` 낱말은 2개까지. 전체 토큰 중 ⓐ·ⓑ·감탄사·요일 비율 ≥ 95%.
 - V7 정답 단어: L(word)가 초등 목록에 있거나, `base`의 `+`로 나눈 조각이 모두 초등 목록에 있다.
 - V8 `avoid`의 단어가 모두 문항에 있다.
@@ -489,7 +501,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 ### 7.5 주제(topic) 목록
 `animal, food, body, people, school, home, clothes, nature, place, transport, music, sports, time, feeling, action` (15개). 화면에는 보이지 않는다(오답 고르기용).
 
-### 7.6 v3: 5~6학년군 낱말 수준 높이기 [추천 — 사용자 승인 전]
+### 7.6 v3: 5~6학년군 낱말 수준 높이기 [사용자 승인 2026-11-26]
 
 #### 7.6.1 기준과 근거
 - **교육과정 원문 다시 확인**(2026-11-26, 부록 C의 KICE Word Lister 안내 PDF, 교육부 고시 제2022-33호 [별책 14] 인용) [확인]:
@@ -506,7 +518,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 | **C(추천)** | **섞기: * 안의 어려운 낱말 80% 이상 + ** 중 초등 주제의 구체적 낱말 20% 이하** | 수준이 확실히 올라가면서 대부분 교육과정 권장 안. ** 낱말은 그림이 떠오르는 구체어(장소·동물·직업·건강)로 골라 설명만으로 맞힐 수 있음. 기본 어휘 목록 90% 규칙은 그대로 만족(** 도 기본 어휘) | 검사 규칙 한 줄 추가(V7'·V10), ** 목록 관리 |
 - **"어려운 낱말"을 고른 기준(C안, Plan의 판단 [추정])**: ① 두 음절 이상이거나 추상적인 낱말(history, future, honest, careful, remember) ② 파생어(scientist ← science, dangerous ← danger, thirsty ← thirst — 교육과정의 36개 파생 접사 규칙상 기본형과 같은 낱말로 침) ③ 3~4학년 교과서 첫 단원에 나오는 기초 사물·동물·음식(cat, bread, red)이 아닌 것 ④ 설명을 초등 어휘로 쓸 수 있는 것. 실제 5~6학년 검정 교과서 낱말 목록과 하나하나 맞춰 보지는 못했다(확인 못 함).
 
-#### 7.6.2 5~6학년군 구성(부록 A-v3)
+#### 7.6.2 5~6학년군 구성(부록 A)
 | 구분 | 수 | 낱말 |
 |---|---|---|
 | v1에서 남김 | 18 | scissors, homework, umbrella, television, telephone, library, restaurant, subway, basketball, autumn, weekend, birthday, tomorrow, yesterday, delicious, busy, beautiful, brave |
@@ -529,8 +541,8 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 | 모두 | 230개 전부 | 230개 전부 | 정답의 약 38%가 어려운 낱말 |
 - 난이도(Easy/Normal/Hard)는 속도·카드 수·같은 주제 오답·배율·감점만 바꾸고, 낱말 수준은 학년군이 정한다(v2 5.3.1과 같음).
 
-#### 7.6.5 바뀌는 데이터·검사 (승인 뒤 Build)
-- `src/data/questions.json`: 부록 A-v3 표 그대로(230문항), `version: 2`.
+#### 7.6.5 바뀌는 데이터·검사 (Build W2~W3)
+- `src/data/questions.json`: 부록 A 표 그대로(230문항), `version: 2`, `source`는 **"2022 개정 영어과 교육과정 [별표 3] 기본 어휘(초등 * 중심 + 5~6학년군 중학 ** 일부)"**(v3b — Review R-v3-6, 7.3 예시와 같음).
 - `src/data/vocab/clue-extra.json`:
   - `secondary`에 더함: `thin, wild, pray, loud, truth, stamp, happen, piece, planet, meal, bow`(모두 ** [확인: 같은 PDF]).
   - `proper`에 더함: `christmas`(축일명), `mars`(지명·천체), `italian`(언어명) — 교육과정상 고유 명사·언어명은 새 어휘로 치지 않음.
@@ -539,7 +551,7 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
   - **V7'**: 정답은 지금 V7을 만족하거나, `band`가 `5-6`이고 `answerSecondary`에 있으면 통과. 3~4학년군 정답이 `answerSecondary`에 있으면 위반.
   - **V10(새)**: 5~6학년군 정답 중 `answerSecondary` 낱말 비율 ≤ 20%(지금 16/87 = 18.4%). `answerSecondary`의 낱말은 모두 문항에 쓰여야 한다(안 쓰는 낱말이 목록에 남지 않게).
   - V9 그대로(문항 ≥ 100, 학년군마다 ≥ 50).
-- `tests/unit/data.test.ts`: 기대값 161/84/77 → 230/143/87, 부록 A 비교는 바꿔 끼운 표 기준, V7'·V10 위반 예시(3~4 정답에 museum, ** 비율 21%)를 넣으면 잡아냄.
+- `tests/unit/data.test.ts`: 기대값 161/84/77 → 230/143/87, 부록 A 비교는 바꿔 끼운 표(230행) 기준, V7'·V10 위반 예시(3~4 정답에 museum, ** 비율 21%)를 넣으면 잡아냄.
 - `npm run check:data` 보고에 ** 정답 수·비율 한 줄 추가.
 
 
@@ -686,7 +698,7 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 | `questions.test.ts` | (v2) 난이도별 문제 번호마다 카드 수·같은 주제 오답 수가 5.3.2대로(같은 주제 후보가 모자라면 다른 주제로 채움), 한 판 10문제 중복 없음, 오답에 avoid(양방향)·설명 속 단어 없음, 학년군 필터, 같은 주제 오답 수 5.3대로, 최근 단어 피하기 |
 | `difficulty.test.ts`(v2) | ① 세 난이도의 단계 값·카드 수·같은 주제 수·배율·오답 감점이 5.3.2 표와 같음 ② 바닥 식: 낱말 3~10 × 학년군 2종이 5.3.3 표 값(ms)과 같음(테스트 안에서 식을 따로 계산) ③ **Hard 보장**: `questions.json` 161문항 × 3난이도 × 3단계 모두 `fallMsFor ≥ 단계 값`, `fallMsFor ≥ 바닥`, `0.85 × fallMsFor ≥ T_need`, 그리고 Hard 전체 최소값 ≥ 4500ms ④ Easy는 161문항 모두 `fallMsFor = 단계 값`(v1과 같음) ⑤ 화면 5종에서 p = 0.85일 때 카드 중심이 화면 안(≤ H)이고 H의 88~93% ⑥ 이상한 난이도 이름 → normal |
 | `session.test.ts` | 가짜 시계로 한 판: 정답·오답·놓침 점수(5.5, v2 배율 포함 — 세 난이도 각각), v2 감점: 오답 1·2·3번 뒤 정답 = 깎인 합 + 오답 뒤 정답 점수, 점수 0에서 오답 → 0 유지·깎인 양 0, 점수 15에서 Normal 오답 → 0·깎인 양 15, 오답 뒤 놓침 = 감점만, 오답이 콤보를 끊음, START·AGAIN 카드는 감점 없음, 문제별 기록(얻은 점수·깎인 점수·오답 단어), 문제별 실제 떨어지는 시간 = fallMsFor, 콤보, 3초 손 없음 → 자동 일시정지, dt 100ms 자르기, 10문제 뒤 결과 |
-| `data.test.ts` | `validate.ts`가 V1~V9 위반 0, **부록 A와 JSON이 같음**(테스트가 `spec.md`의 부록 A 표를 직접 읽어 161문항의 모든 칸을 JSON과 비교), 위반 예시(정답이 든 설명, 11낱말 설명 등)를 일부러 넣으면 잡아냄 |
+| `data.test.ts` | `validate.ts`가 V1~V9 위반 0, **부록 A와 JSON이 같음**(테스트가 `spec.md`의 부록 A 표를 직접 읽어 230문항(v3)의 모든 칸을 JSON과 비교), 위반 예시(정답이 든 설명, 11낱말 설명 등)를 일부러 넣으면 잡아냄 |
 | `assets.test.ts` | `public/models/hand_landmarker.task` SHA-256 = 2.4 값, `package.json`의 tasks-vision 버전 = `1.2.3` |
 | `strings.test.ts` | 8.2·9절 문구가 strings.ts에 그대로 있음 |
 
@@ -749,12 +761,13 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 
 - S1~S6은 Build 한 번에, S7은 Embed(배포) 뒤 사람 확인과 함께 진행한다. v2는 D1~D4를 Build 한 번에, D5는 배포 뒤.
 
-**v3(낱말 수준) 단계 — 사용자 승인 뒤, v2 Build가 끝난 다음** (각 단계 끝에 `npm run typecheck && npm test`, 마지막에 `npm run check`)
+**v3(낱말 수준) 단계 — 사용자 승인(2026-11-26), v2 배포(`0b6cfc7`) 뒤 다음 Build** (각 단계 끝에 `npm run typecheck && npm test`, 마지막에 `npm run check`)
 
 | 단계 | 할 일 | 완료 기준 |
 |---|---|---|
-| W1 표 바꿔 끼우기 | Plan(또는 코디네이터)이 spec의 부록 A 본표를 부록 A-v3 표로 바꾸고 부록 A-v3 절을 지움(사용자가 14.2에서 바꾼 것 반영) | spec의 부록 A 본표가 230행이고, 부록 A-v3 절이 없음 |
+| W1 표 바꿔 끼우기 (**완료 2026-11-26, Plan**) | spec의 부록 A 본표를 v3 표로 바꾸고 부록 A-v3 절을 지움 | spec의 부록 A 본표가 230행이고, 부록 A-v3 절이 없음 |
 | W2 데이터·검사 | `questions.json`(version 2), `clue-extra.json`(7.6.5), `validate.ts` V7'·V10, `check-data` 한 줄, `data.test` 기대값·위반 예시 | `npm run check:data` 위반 0(230문항, 5~6의 ** 18.4%), data.test 통과(부록 A ↔ JSON 230행 모든 칸) |
+| W4 v3b 고치기 | `questions.json`의 6문항(15절 v3b 표)과 `source` 문구, `validate.ts` V5 보완(V5 검사용으로만 ④를 실제 낱말에 한정 — 오답 빼기용 `clueMentions`는 그대로), `data.test`에 V5 보완 테스트 2개 | `npm run check:data` 위반 0(fever "very hot" 통과), data.test 통과(부록 A ↔ JSON 230행), `npm run check` 전부 통과 |
 | W3 판 구성 확인 | questions·session 테스트의 문항 수에 기대던 곳 고치기, e2e에서 고정 씨앗으로 나오는 정답 단어에 기대던 곳 고치기 | `npm run check` 전부 통과. 5~6학년군 Hard 한 판을 터치 모드로 끝까지(스크린샷: 설명 띠에 10낱말 설명이 두 줄 안) |
 - Build는 `git`을 다루지 않는다(Embed 몫). `npm install`은 S1에서 프로젝트 루트에 한 번.
 
@@ -778,7 +791,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | 11 | 속도 | ① 문제가 진행될수록 자동으로 빨라짐(5.3) ② 시작 화면에서 느리게/보통 선택 추가 | **①** — 태블릿에서 아이들과 해 본 뒤(S7) 값만 조정 |
 | 12 | 화면 방향 | ① 가로 권장, 세로도 동작 ② 가로만(세로면 "돌려 주세요") | **①** |
 
-### 14.1 v2(난이도) 사용자 확인 필요 — 승인 전
+### 14.1 v2(난이도) 사용자 확인 — 2026-11-26 모두 추천안대로 승인("추천대로 승인")
 (위 1~12는 2026-11-26 승인됨. 아래는 이번 요청의 갈림길. 추천대로 정하면 바로 만들 수 있다. 11번 "속도: 문제 진행에 따라 자동으로 빨라짐"은 그대로 두고 그 위에 난이도 선택을 더한다.)
 
 | # | 갈림길 | 선택지 | **추천** |
@@ -796,7 +809,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | V11 | 점수가 0 아래로 | ① 내려가지 않음(0에서 멈춤) ② 음수 허용 | **①** — 음수 점수는 초등학생 의욕을 꺾는다 |
 | V12 | 오답 뒤 정답·놓침 | ① 오답 뒤 정답은 지금처럼 50점(+빠르기·배율), 콤보는 끊김, 놓침은 감점 없음 ② 오답을 잡으면 그 문제는 끝(정답 기회 없음) ③ 놓침도 감점 | **①** — 틀려도 다시 생각해 맞히는 경험을 남기고, 손을 안 내민 것(놓침)까지 벌하지 않는다 |
 
-### 14.2 v3(낱말 수준) 사용자 확인 필요 — 승인 전
+### 14.2 v3(낱말 수준) 사용자 확인 — 2026-11-26 모두 추천안대로 승인("추천대로 승인")
 
 | # | 갈림길 | 선택지 | **추천** |
 |---|---|---|---|
@@ -804,8 +817,23 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | W2 | v1의 기초 5~6 낱말 59개 | ① 3~4학년군으로 옮김(설명 8낱말 이하로 다듬음) ② 뺌 | **①** — 3~4 학생에게 알맞고 "모두"의 다양성이 유지됨. 3~4학년군은 84 → 143 |
 | W3 | 5~6학년군 문항 수 | ① 87(남긴 18 + 새 69) ② 80 정도로 줄임 ③ 100 이상으로 늘림 | **①** |
 | W4 | 5~6 판의 오답 카드 | ① 지금처럼 230개 전부에서(쉬운 낱말도 오답으로 나옴) ② 5~6학년군 낱말만 | **①** — 같은 주제 오답이 Normal·Hard에서 1~2장 섞여 이미 헷갈림이 있고, 5~6 낱말만 쓰면 주제별 후보가 적어 같은 오답이 자주 되풀이된다 |
-| W5 | 새 낱말 목록 | ① 부록 A-v3 그대로 ② 빼거나 바꿀 낱말을 알려 줌 | **①**(훑어보고 바꾸고 싶은 낱말이 있으면 알려 주시면 Plan이 고침) |
+| W5 | 새 낱말 목록 | ① 부록 A-v3(지금의 부록 A) 그대로 ② 빼거나 바꿀 낱말을 알려 줌 | **①**(훑어보고 바꾸고 싶은 낱말이 있으면 알려 주시면 Plan이 고침) |
 | W6 | 적용 시점 | ① v2(난이도·감점) 배포 뒤 다음 Build로 ② v2와 함께 | **①** — v2 Build가 진행 중이라 데이터 교체를 섞으면 테스트 실패 원인이 겹친다 |
+
+### 14.3 v4(Very Hard·전체 난이도) 사용자 확인 필요 — 승인 전
+
+| # | 갈림길 | 선택지 | **추천** |
+|---|---|---|---|
+| X1 | Easy/Normal/Hard를 얼마나 | ① 단계 값 0.5초씩(6~11%) + 최소 시간 읽기 계수 한 단계 낮춤 ② 단계 값만(계수 그대로 — Hard는 거의 안 빨라짐) ③ 더 크게(약 15%) | **①** — Hard 7~10번이 실제로 약 9% 빨라짐(5.20→4.72초) |
+| X2 | Very Hard 단어 기준 | ① 중학 ** 70% 이상 + 그 위 "심화" 등급 30% 이하(모두 교육과정 기본 어휘 안) ② 중학 **만 ③ 교육과정 목록 밖 교과서 낱말도 | **①** |
+| X3 | Very Hard 문항 | ① 부록 D 94개 그대로 ② 빼거나 바꿀 낱말을 알려 줌 | **①** |
+| X4 | Very Hard와 학년 선택 | ① 학년과 상관없이 Very Hard 전용 풀(학년 줄 흐리게) ② 5~6·모두에서만 Very Hard 버튼이 켜짐 | **①** — 중학 단어는 학년 구분이 의미 없고, 도전하고 싶은 4학년도 해 볼 수 있다 |
+| X5 | Very Hard 오답 카드 | ① Very Hard 풀에서만 ② Very Hard + 5~6학년군 | **①** — 아는 쉬운 낱말을 지우고 고르는 길을 막는다 |
+| X6 | Very Hard 빠르기 | ① 5.0/4.0/3.5초 + 읽기 계수 0.25(7~10번 실제 평균 4.36초) ② 같은 단계 값 + 읽기 계수 0.30(평균 4.83초 — Hard와 비슷, 어려움은 단어·오답으로) | **①** — "빠르기를 더 빠르게" 요청대로 Hard보다 확실히 빠름(약 8%) |
+| X7 | Very Hard 점수 | ① 배율 ×2.0, 감점 −40 ② ×1.8, −30 | **①** |
+| X8 | Very Hard 최고 점수 | ① 학년과 상관없이 한 칸 ② 학년군마다 | **①** |
+| X9 | 버튼 이름·모양 | ① `Very Hard` + "매우 어려움", 별 두 개 ② `Expert`/"도전" 등 다른 이름 | **①** — 사용자가 쓴 이름 그대로 |
+| X10 | scientist 설명·V5b(덧붙임) | ① 설명을 "This person does tests to find out how things work."로 바꾸고 V5b 검사 추가 ② 그대로 둠 | **①** |
 
 ---
 
@@ -852,214 +880,8 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 - 2026-11-26 **사용자 결정**(v2 덧붙임, 14절 4번의 승인 내용 "오답은 감점 없이 그 카드만 사라짐"을 바꿈): "틀리게 단어를 잡으면 점수 깎이게 해줘"(사용자 요청 원문). → 오답을 잡으면 감점한다는 것 자체는 사용자 결정. 감점 크기(Easy −10 / Normal −20 / Hard −30), 0점 아래 금지, 오답 뒤 정답 50점 유지·콤보 끊김, 놓침 감점 없음, 화면·복습표 표시는 Plan이 고른 것(14.1 V10~V12에서 바꿀 수 있음, 승인 전).
 - 2026-11-26 **사용자 승인**(v2): 14.1 V1~V12를 모두 추천안대로(사용자 원문: "추천대로 승인"). → 난이도 Easy/Normal/Hard(v1 속도 = Easy, 기본 Normal), 같은 속도표 + 최소 시간 보장, 점수 배율 ×1.0/×1.2/×1.5, 최고 점수 9칸(v1 기록은 Easy로), 도전 권유, 오답 감점 −10/−20/−30·0점 아래 금지·오답 뒤 정답 50점 유지·놓침 감점 없음. Build(D1~D4) 시작.
 - 2026-11-26 **Plan v3(단어 수준) — 사용자 승인 전**: 사용자 요청 원문 "5,6학년 아이들이 단어가 너무 쉽다는 피드백이 왔는데, 단어의 수준도 좀 더 높여줘. 지금은 너무 쉽다고 해"(지침 `docs/briefs/plan-brief-v3-words.md`). Plan이 고른 것(모두 [추천], 14.2에서 바꿀 수 있음): 7.6과 부록 A-v3. 부록 A 본표·v2 내용은 바꾸지 않음. 사용자가 14.2를 정하면 여기에 답 원문을 적고 W1~W3을 시작한다.
-
----
-
-## 부록 A. 문항 161개 (3~4학년군 84, 5~6학년군 77)
-- 열: id, word(정답), 학년군, topic, 한국어 뜻(ko), clue(설명), avoid(같이 오답으로 내지 않을 단어), base(목록에 그대로 없는 정답의 근거 어근).
-- 2026-11-26 Plan의 임시 검사기로 V4~V8 위반 0건 확인. 사람 눈 검사(H1~H4)는 Review가 한다.
-- 2026-11-26 Plan 수정 v1: 17문항(animal-09, school-04, home-04·06·08, clothes-06·07, nature-11, transport-01·03·06, time-09·10, feeling-05·08·12, action-05)의 설명·avoid를 고쳤다(15절 표). 고친 뒤 저장소의 `validateQuestions`(V1~V9)로 위반 0건, 초등 어휘 비율 97.4%를 다시 확인했다.
-
-| id | word | 학년군 | topic | 한국어 뜻 | clue | avoid | base |
-|---|---|---|---|---|---|---|---|
-| animal-01 | cat | 3~4 | animal | 고양이 | A small pet. It says meow. |  |  |
-| animal-02 | dog | 3~4 | animal | 개 | A pet animal. It says woof. |  |  |
-| animal-03 | cow | 3~4 | animal | 소 | A farm animal. It gives us milk. |  |  |
-| animal-04 | pig | 3~4 | animal | 돼지 | A pink farm animal. It says oink. |  |  |
-| animal-05 | duck | 3~4 | animal | 오리 | A bird that can swim. It says quack. |  |  |
-| animal-06 | rabbit | 3~4 | animal | 토끼 | It has long ears. It likes carrots. |  |  |
-| animal-07 | monkey | 3~4 | animal | 원숭이 | It climbs trees and loves bananas. |  |  |
-| animal-08 | fish | 3~4 | animal | 물고기 | It lives in water and swims all day. | duck |  |
-| animal-09 | bird | 3~4 | animal | 새 | It has two wings and can fly. | bee,airplane,duck |  |
-| animal-10 | elephant | 3~4 | animal | 코끼리 | A very big animal with a long nose. |  |  |
-| animal-11 | lion | 5~6 | animal | 사자 | People call it the king of animals. | tiger |  |
-| animal-12 | tiger | 5~6 | animal | 호랑이 | This big orange animal has black lines. |  |  |
-| animal-13 | bear | 5~6 | animal | 곰 | A big animal. It sleeps all winter. |  |  |
-| animal-14 | horse | 5~6 | animal | 말 | People ride this animal. It runs fast. |  |  |
-| animal-15 | mouse | 5~6 | animal | 쥐 | A very small animal. It likes cheese. |  |  |
-| animal-16 | bee | 5~6 | animal | 벌 | A small yellow and black bug. It makes honey. | bird |  |
-| food-01 | apple | 3~4 | food | 사과 | A round red fruit. It grows on trees. | tomato |  |
-| food-02 | banana | 3~4 | food | 바나나 | A long yellow fruit. Monkeys love it. |  |  |
-| food-03 | milk | 3~4 | food | 우유 | A white drink. Cows give it to us. | juice |  |
-| food-04 | egg | 3~4 | food | 달걀 | Chickens lay this. We eat it for breakfast. |  |  |
-| food-05 | juice | 3~4 | food | 주스 | A drink made from fruit. | milk |  |
-| food-06 | pizza | 3~4 | food | 피자 | Round food with cheese and tomato on top. |  |  |
-| food-07 | carrot | 3~4 | food | 당근 | An orange vegetable. Rabbits like it. |  |  |
-| food-08 | bread | 5~6 | food | 빵 | We bake it and make sandwiches with it. | cake |  |
-| food-09 | cake | 5~6 | food | 케이크 | A sweet food for birthday parties. | bread,candy |  |
-| food-10 | candy | 5~6 | food | 사탕 | This small sweet food is bad for your teeth. | cake |  |
-| food-11 | cheese | 5~6 | food | 치즈 | This yellow food is made from milk. |  |  |
-| food-12 | potato | 5~6 | food | 감자 | This brown vegetable grows under the ground. | carrot |  |
-| food-13 | tomato | 5~6 | food | 토마토 | A red vegetable. We put it in salad. | apple |  |
-| food-14 | watermelon | 5~6 | food | 수박 | A big green fruit. It is red inside. |  |  |
-| body-01 | eye | 3~4 | body | 눈 | We see with it. |  |  |
-| body-02 | ear | 3~4 | body | 귀 | We listen with it. |  |  |
-| body-03 | nose | 3~4 | body | 코 | We smell with it. |  |  |
-| body-04 | mouth | 3~4 | body | 입 | We eat and speak with it. | tooth |  |
-| body-05 | hand | 3~4 | body | 손 | It has five fingers. |  |  |
-| body-06 | foot | 3~4 | body | 발 | We put socks and shoes on it. | leg |  |
-| body-07 | leg | 3~4 | body | 다리 | It is between your body and your foot. | foot |  |
-| body-08 | tooth | 5~6 | body | 이 | It is white and hard. We brush it every day. | hair |  |
-| body-09 | hair | 5~6 | body | 머리카락 | It grows on your head. It can be long. |  |  |
-| body-10 | finger | 5~6 | body | 손가락 | Your hand has five of these. |  |  |
-| body-11 | neck | 5~6 | body | 목 | It is between your head and your body. |  |  |
-| people-01 | mother | 3~4 | people | 엄마 | She is your father's wife. |  |  |
-| people-02 | father | 3~4 | people | 아빠 | He is your mother's husband. |  |  |
-| people-03 | baby | 3~4 | people | 아기 | A very young child. It cries a lot. |  |  |
-| people-04 | teacher | 3~4 | people | 선생님 | This person helps students learn at school. |  | teach |
-| people-05 | friend | 3~4 | people | 친구 | A person you like and play with. |  |  |
-| people-06 | doctor | 3~4 | people | 의사 | You see this person when you are sick. |  |  |
-| people-07 | sister | 5~6 | people | 언니, 누나, 여동생 | A girl with the same mother and father as you. |  |  |
-| people-08 | aunt | 5~6 | people | 이모, 고모 | Your mother's sister or your father's sister. |  |  |
-| people-09 | uncle | 5~6 | people | 삼촌 | Your father's brother or your mother's brother. |  |  |
-| people-10 | cook | 5~6 | people | 요리사 | This person makes food at a restaurant. |  |  |
-| people-11 | pilot | 5~6 | people | 조종사 | This person flies an airplane. |  |  |
-| people-12 | police | 5~6 | people | 경찰 | They catch bad people and keep us safe. |  |  |
-| school-01 | book | 3~4 | school | 책 | We read it. It has many pages. |  |  |
-| school-02 | pencil | 3~4 | school | 연필 | We write and draw with it. | paper |  |
-| school-03 | desk | 3~4 | school | 책상 | We sit at it to study at school. | chair |  |
-| school-04 | chair | 3~4 | school | 의자 | We sit on it at a desk. | desk,bed |  |
-| school-05 | bag | 3~4 | school | 가방 | We carry our books in it. |  |  |
-| school-06 | clock | 3~4 | school | 시계 | It tells us the time. |  |  |
-| school-07 | scissors | 5~6 | school | 가위 | We cut paper with them. | knife |  |
-| school-08 | homework | 5~6 | school | 숙제 | Your teacher gives it. You do it after school. |  |  |
-| school-09 | map | 5~6 | school | 지도 | A picture that shows where places are. |  |  |
-| school-10 | paper | 5~6 | school | 종이 | We write and draw on it. | pencil,book |  |
-| home-01 | bed | 3~4 | home | 침대 | We sleep on it at night. |  |  |
-| home-02 | door | 3~4 | home | 문 | We open it to go into a room. | window |  |
-| home-03 | window | 3~4 | home | 창문 | We look out through it. It is glass. | door |  |
-| home-04 | spoon | 3~4 | home | 숟가락 | We hold it and eat soup with it. | mouth,cup |  |
-| home-05 | cup | 3~4 | home | 컵 | We drink water from it. |  |  |
-| home-06 | knife | 5~6 | home | 칼 | We cut food with it in the kitchen. | scissors,tooth |  |
-| home-07 | umbrella | 5~6 | home | 우산 | We use it when it rains. |  |  |
-| home-08 | key | 5~6 | home | 열쇠 | We put it in a door to open it. | hand |  |
-| home-09 | kitchen | 5~6 | home | 부엌 | We cook food in this room. |  |  |
-| home-10 | television | 5~6 | home | 텔레비전 | We watch shows on it at home. |  |  |
-| home-11 | telephone | 5~6 | home | 전화기 | We call our friends with it. | camera |  |
-| home-12 | camera | 5~6 | home | 카메라 | We take pictures with it. | telephone |  |
-| clothes-01 | hat | 3~4 | clothes | 모자 | We wear it on our head. |  |  |
-| clothes-02 | shoes | 3~4 | clothes | 신발 | We wear them on our feet outside. | socks | shoe |
-| clothes-03 | socks | 3~4 | clothes | 양말 | We wear them under our shoes. | shoes | sock |
-| clothes-04 | pants | 3~4 | clothes | 바지 | We wear them on our legs. |  |  |
-| clothes-05 | coat | 5~6 | clothes | 외투, 코트 | We wear it over our clothes when it is cold. | shirt |  |
-| clothes-06 | shirt | 5~6 | clothes | 셔츠 | We wear it under a coat. It has buttons. | coat,dress,pants |  |
-| clothes-07 | dress | 5~6 | clothes | 원피스, 드레스 | Girls wear it. It is a top and skirt together. |  |  |
-| clothes-08 | belt | 5~6 | clothes | 허리띠, 벨트 | It holds up our pants. |  |  |
-| nature-01 | sun | 3~4 | nature | 해, 태양 | It gives us light in the day. |  |  |
-| nature-02 | moon | 3~4 | nature | 달 | It is round. We see it at night. |  |  |
-| nature-03 | rain | 3~4 | nature | 비 | Water that falls from the clouds. | snow |  |
-| nature-04 | snow | 3~4 | nature | 눈 | White and cold, it falls in winter. | rain |  |
-| nature-05 | tree | 3~4 | nature | 나무 | A tall plant. Birds live in it. | flower |  |
-| nature-06 | flower | 3~4 | nature | 꽃 | A pretty plant. It smells good. | tree |  |
-| nature-07 | cloud | 5~6 | nature | 구름 | It is white or gray, up in the sky. | snow,airplane |  |
-| nature-08 | river | 5~6 | nature | 강 | Water that runs to the sea. |  |  |
-| nature-09 | sea | 5~6 | nature | 바다 | Very big salty water. Ships go on it. | river |  |
-| nature-10 | mountain | 5~6 | nature | 산 | It is very high. People climb it. | tree |  |
-| nature-11 | wind | 5~6 | nature | 바람 | We cannot see it, but it moves the trees. | cold |  |
-| place-01 | zoo | 3~4 | place | 동물원 | We see lions and tigers here. |  |  |
-| place-02 | school | 3~4 | place | 학교 | Students learn here with their teachers. |  |  |
-| place-03 | park | 3~4 | place | 공원 | A green place to play and walk. | beach,zoo |  |
-| place-04 | hospital | 3~4 | place | 병원 | Sick people go here to get well. |  |  |
-| place-05 | library | 5~6 | place | 도서관 | You can borrow books here. |  |  |
-| place-06 | farm | 5~6 | place | 농장 | Cows and pigs live here. |  |  |
-| place-07 | restaurant | 5~6 | place | 식당 | We go here to eat food. A cook makes it. |  |  |
-| place-08 | bank | 5~6 | place | 은행 | We keep our money here. |  |  |
-| place-09 | beach | 5~6 | place | 해변 | We play in the sand here, by the sea. |  |  |
-| transport-01 | bus | 3~4 | transport | 버스 | Many people ride it on the road. |  |  |
-| transport-02 | train | 3~4 | transport | 기차 | It is long and runs on tracks. | subway |  |
-| transport-03 | airplane | 3~4 | transport | 비행기 | We ride in it to fly far away. | pilot |  |
-| transport-04 | boat | 3~4 | transport | 배 | It goes on the water. | duck,fish |  |
-| transport-05 | bike | 3~4 | transport | 자전거 | It has two wheels. You ride it. |  |  |
-| transport-06 | taxi | 5~6 | transport | 택시 | A car with a driver. You pay to ride it. | bus,subway,train |  |
-| transport-07 | truck | 5~6 | transport | 트럭 | A big car that carries heavy things. | bus |  |
-| transport-08 | subway | 5~6 | transport | 지하철 | A train that runs under the city. |  |  |
-| music-01 | piano | 3~4 | music | 피아노 | It has many black and white keys. |  |  |
-| music-02 | guitar | 3~4 | music | 기타 | It has six strings. We play it. |  |  |
-| music-03 | drum | 3~4 | music | 북, 드럼 | We hit it to make music. |  |  |
-| music-04 | dance | 3~4 | music | 춤추다 | We move our body to music. |  |  |
-| music-05 | sing | 3~4 | music | 노래하다 | We do this with our voice and music. |  |  |
-| sports-01 | swim | 3~4 | sports | 수영하다 | We move our arms and legs in water. | fish,duck,boat |  |
-| sports-02 | soccer | 5~6 | sports | 축구 | Players kick a ball into a goal. |  |  |
-| sports-03 | basketball | 5~6 | sports | 농구 | In this sport, players shoot at a high ring. |  |  |
-| sports-04 | baseball | 5~6 | sports | 야구 | In this sport, players hit with a bat and run. |  |  |
-| sports-05 | tennis | 5~6 | sports | 테니스 | Two players hit a small ball over a net. |  |  |
-| sports-06 | ski | 5~6 | sports | 스키를 타다 | We do this on snow. We go down mountains. |  |  |
-| time-01 | morning | 3~4 | time | 아침 | The time when the sun comes up. |  |  |
-| time-02 | night | 3~4 | time | 밤 | It is dark. We sleep at this time. |  |  |
-| time-03 | winter | 3~4 | time | 겨울 | The cold season with snow. |  |  |
-| time-04 | summer | 3~4 | time | 여름 | The hottest season of the year. |  |  |
-| time-05 | spring | 5~6 | time | 봄 | The season when flowers start to grow. |  |  |
-| time-06 | autumn | 5~6 | time | 가을 | The season between summer and winter. |  |  |
-| time-07 | weekend | 5~6 | time | 주말 | Saturday and Sunday. |  |  |
-| time-08 | birthday | 5~6 | time | 생일 | A party with cake and presents, once a year. |  | birth+day |
-| time-09 | tomorrow | 5~6 | time | 내일 | Today is Monday, so Tuesday will be this. |  |  |
-| time-10 | yesterday | 5~6 | time | 어제 | Today is Tuesday, so Monday was this. | weekend |  |
-| feeling-01 | happy | 3~4 | feeling | 행복한 | You feel this when you smile. |  |  |
-| feeling-02 | sad | 3~4 | feeling | 슬픈 | You feel this when you cry. |  |  |
-| feeling-03 | hot | 3~4 | feeling | 뜨거운, 더운 | Fire and the summer sun are this. |  |  |
-| feeling-04 | cold | 3~4 | feeling | 차가운, 추운 | Ice and snow are this. |  |  |
-| feeling-05 | big | 3~4 | feeling | 큰 | An elephant is this. A mouse is not. | tall,heavy |  |
-| feeling-06 | small | 3~4 | feeling | 작은 | A mouse is this. An elephant is not. |  |  |
-| feeling-07 | fast | 5~6 | feeling | 빠른 | It is not slow. |  |  |
-| feeling-08 | slow | 5~6 | feeling | 느린 | It takes a long time. It is not fast. |  |  |
-| feeling-09 | sick | 5~6 | feeling | 아픈 | You feel this way, so you go to a doctor. |  |  |
-| feeling-10 | delicious | 5~6 | feeling | 맛있는 | Food that tastes very good is this. |  |  |
-| feeling-11 | busy | 5~6 | feeling | 바쁜 | You have many things to do. |  |  |
-| feeling-12 | heavy | 5~6 | feeling | 무거운 | It is hard to carry, like a big rock. | big |  |
-| feeling-13 | beautiful | 5~6 | feeling | 아름다운 | Very, very pretty. |  | beauty |
-| feeling-14 | brave | 5~6 | feeling | 용감한 | Not afraid of danger. |  |  |
-| feeling-15 | tall | 5~6 | feeling | 키가 큰 | Basketball players are often this. | big |  |
-| action-01 | run | 3~4 | action | 달리다 | Move your legs very fast. |  |  |
-| action-02 | walk | 3~4 | action | 걷다 | Move on your feet, not fast. |  |  |
-| action-03 | jump | 3~4 | action | 뛰어오르다 | Go up into the air with your legs. |  |  |
-| action-04 | sleep | 3~4 | action | 자다 | We do this in bed at night. |  |  |
-| action-05 | eat | 3~4 | action | 먹다 | We do this with food in our mouth. | drink,cook |  |
-| action-06 | drink | 3~4 | action | 마시다 | We do this with water and juice. | eat |  |
-| action-07 | read | 3~4 | action | 읽다 | We do this with books. | write |  |
-| action-08 | write | 3~4 | action | 쓰다 | We do this with a pencil. | read |  |
-| action-09 | cry | 5~6 | action | 울다 | We do this when we are very sad. |  |  |
-| action-10 | climb | 5~6 | action | 오르다 | We go up a mountain or a tree this way. |  |  |
-| action-11 | wash | 5~6 | action | 씻다 | We do this to our hands before we eat. |  |  |
-| action-12 | buy | 5~6 | action | 사다 | We pay money to get things. |  |  |
-| action-13 | listen | 5~6 | action | 듣다 | We do this with our ears. |  |  |
-| action-14 | smile | 5~6 | action | 미소 짓다 | Your mouth does this when you are happy. |  |  |
-
-## 부록 B. 2022 개정 기본 어휘 중 초등 권장(*) 단어 (Plan 추출, 819개 형태)
-- 출처: 부록 C의 KICE Word Lister 안내 PDF 7~36쪽(인쇄 쪽 5~34) 「기본 어휘 목록」에서 `*` 하나만 붙은 단어. 철자 변이형(aeroplane, colour, cheque, okey, OK, nope, nay, yeah, yep, dialog, cooky, programme, maths/math, grey 등)과 서수 twenty-first 등이 같이 들어 있다. `I`는 대명사.
-- `src/data/vocab/elementary-2022.txt`로 한 줄에 하나씩 옮긴다(소문자로 바꿔 비교).
-
-a, about, above, across, act, add, address, adult, aeroplane, afraid, after, afternoon, again, against, age, ago, agree, ahead, air, airplane, album, all, almost, alone, along, already, alright, also, always, and, animal, another, answer, any, apartment, apple, area, arm, around, arrive, art, as, ask, at, aunt, autumn, away, baby, back, bad, badminton, bag, bake, ball, banana, bank, base, baseball, basket, basketball, bat, bath, be, beach, bear, beauty, because, become, bed, bee, beef, before, begin, behind, believe, bell, below, belt, beside, between, big, bike, bill, bird, birth, biscuit, black, blood, blue, board, boat, body, bone, book, borrow, both, bottle, bottom, box, boy, brave, bread, break, breakfast, bridge, bright, bring, brother, brown, brush, build, burn, bus, business, busy, but, butter, button, buy, by, cake, call, camera, camp, campaign, can, candy, cap, car, card, care, carrot, carry, case, cash, cat, catch, center, certain, chair, chance, change, cheap, check, cheese, cheque, chicken, child, chocolate, choose, church, circle, city, class, clean, clear, clever, climb, clock, close, clothes, cloud, club, coat, coffee, cold, collect, college, color, colour, come, comic, company, compute, condition, congratulate, control, cook, cookie, cooky, cool, corner, cost, could, country, couple, course, court, cousin, cover, cow, crayon, cream, cross, cry, culture, cup, curtain, customer, cut, dance, danger, dark, date, daughter, day, dead, death, decide, deep, delicious, design, desk, dialog, dialogue, die, difficult, dinner, discuss, do, doctor, dog, doll, door, double, doughnut, down, draw, dream, dress, drink, drive, drop, drum, dry, duck, during, ear, early, earth, east, eat, egg, eight, elephant, eleven, end, energy, enough, enter, evening, every, example, exercise, eye, face, fact, fail, fall, family, fan, far, farm, fast, fat, father, favorite, favourite, feel, festival, field, fight, file, fill, film, find, fine, finger, finish, fire, first, fish, five, fix, floor, flower, fly, focus, food, fool, foot, football, for, forest, forget, fork, form, four, fox, free, fresh, friend, from, front, fruit, full, fun, future, game, garden, gas, gentleman, get, girl, give, glad, glass, go, goal, god, gold, good, goodbye, grandfather, grape, grass, gray, great, green, grey, ground, group, grow, guess, guitar, gum, guy, habit, hair, hamburger, hand, hang, happy, hard, hat, hate, have, he, head, heart, heat, heavy, hello, helmet, help, here, hero, hey, hi, high, hike, hill, history, hit, hobby, hold, holiday, home, homework, honest, hope, horse, hospital, hot, hour, house, how, however, human, hundred, hunt, hurry, husband, I, ice, idea, if, image, in, inside, internet, into, introduce, invite, issue, it, jacket, jam, job, join, juice, jump, just, keep, key, kick, kid, kill, kind, king, kiss, kitchen, knife, know, lady, lake, land, large, laser, last, late, lazy, learn, left, leg, lesson, letter, library, lie, life, light, like, line, lion, lip, listen, little, live, long, look, love, low, luck, lunch, mad, mail, make, man, many, map, marathon, market, marry, math, mathematics, maths, may, meat, medal, meet, member, memory, middle, might, milk, mind, miss, model, money, monkey, month, moon, morning, mother, mountain, mouse, mouth, move, movie, much, music, must, name, nation, nature, nay, near, neck, need, never, new, news, newspaper, next, nice, night, nine, no, nope, north, nose, not, note, notebook, nothing, now, number, nurse, of, off, office, often, oil, OK, okay, okey, old, on, one, only, open, or, orange, out, over, page, paint, pants, paper, parent, park, part, partner, party, pass, pay, pen, pencil, people, phone, piano, pick, picture, pig, pilot, pink, pizza, place, plan, plastic, play, please, point, police, poor, potato, power, present, pretty, prince, print, problem, program, programme, project, puppy, push, put, queen, question, quick, quiet, quiz, rabbit, race, radio, rain, read, ready, recreation, red, remember, restaurant, restroom, return, ribbon, rich, right, ring, river, road, robot, rock, room, rose, run, sad, safe, salad, sale, salt, same, sand, sandwich, save, say, school, science, scissors, score, sea, season, second, see, sell, send, service, set, seven, she, ship, shirt, shoe, shop, short, should, show, shy, sick, side, sing, sister, sit, six, size, skate, ski, skin, skirt, sky, sleep, slow, small, smell, smile, snow, so, soccer, sock, soft, software, some, son, song, sorry, sound, soup, south, space, spaghetti, speak, speed, spoon, sport, spring, staff, stand, star, start, stay, steak, stone, stop, store, story, street, strong, study, style, subway, sugar, summer, sun, sure, swim, table, tail, take, talk, tall, tape, taste, taxi, teach, team, telephone, television, tell, ten, tennis, tent, test, textbook, than, thank, that, the, there, they, thing, think, third, thirst, thirteen, thirty, this, three, ticket, tiger, time, tire, to, today, together, tomato, tomorrow, tonight, too, tooth, top, touch, town, toy, track, train, travel, tree, trip, truck, true, try, turn, twelve, twenty, twenty-first, twenty-second, twenty-third, twice, two, type, ugly, umbrella, uncle, under, understand, up, use, vegetable, very, video, violin, visit, voice, wait, wake, walk, wall, want, war, warm, wash, watch, water, watermelon, way, we, wear, weather, website, wedding, week, weekend, weight, welcome, well, west, wet, what, when, where, white, who, why, wife, will, win, wind, window, wine, winter, wish, with, woman, wood, word, work, world, worry, write, wrong, yeah, year, yellow, yep, yes, yesterday, you, young, zoo
-
-## 부록 C. 확인한 자료 (모두 2026-11-26 열람)
-| 내용 | 주소 |
-|---|---|
-| Hand Landmarker Web 가이드(사용법·옵션·결과 형식·모델 주소). `ai.google.dev/...`에서 이 주소로 301 이동. 쪽에 "마지막 수정일" 표시 없음 | https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/web_js |
-| Hand Landmarker 개요(21점 번호, 모델 묶음, Pixel 6 지연 시간, 추적 설명, Hugging Face 모델 주소) | https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker |
-| Gesture Recognizer 개요(기본 제스처 8종, 지연 시간) | https://developers.google.com/edge/mediapipe/solutions/vision/gesture_recognizer |
-| npm `@mediapipe/tasks-vision` 버전·게시일(`npm view`): latest 1.2.3(2026-11-11), nightly 1.3.0-rc.20261122 | https://www.npmjs.com/package/@mediapipe/tasks-vision |
-| 1.2.3 파일 목록·크기 | https://data.jsdelivr.com/v1/packages/npm/@mediapipe/tasks-vision@1.2.3?structure=flat |
-| 1.2.3 타입 정의(FilesetResolver, HandLandmarkerOptions, delegate, canvas) | https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/vision.d.ts |
-| 1.2.3 번들(wasm 파일 이름 규칙, 로더 script 삽입) | https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/vision_bundle.mjs |
-| 모델(Google): 200, 7,819,105B, `access-control-allow-origin: *` | https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task |
-| 모델(Hugging Face) SHA-256 `fbc2a300…cde1`, 7,819,105B | https://huggingface.co/api/models/litert-community/MediaPipe-HandLandmarker-Full/tree/main |
-| getUserMedia(보안 컨텍스트, 오류 이름, facingMode). 쪽 마지막 수정 2025-11-30 | https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia |
-| GitHub Pages 한도(1GB, 대역폭 100GB/월 soft, 사용자 지정 워크플로는 빌드 횟수 제한 없음) | https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits |
-| GitHub Pages 게시 원천을 GitHub Actions로 | https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site |
-| GitHub 요금제(Free: 공개 저장소에서 Pages) | https://docs.github.com/en/get-started/learning-about-github/githubs-plans |
-| 2022 개정 영어과 기본 어휘(KICE Word Lister 안내, 교육부 고시 제2022-33호 [별책 14] 인용) | https://www.goe.go.kr/resource/old/BBSMSTR_000000030136/BBS_202307111028067791.pdf |
-| 저장소 상태(`gh repo view eversunk2-tech/english1`: 공개, 비어 있음) | https://github.com/eversunk2-tech/english1 |
-| 형제 프로젝트 참고(읽기만): spec 형식, Vite 8/TS 6/Vitest 5, Pages 워크플로 | `/Users/sungchul/Desktop/play2/selectio game/`, `/Users/sungchul/Desktop/play2/game2/.github/workflows/pages.yml` |
-
-**확인하지 못한 것**: 2022 개정 교육과정의 초등 문장 길이 기준(V4의 8/10낱말은 추정), iPad Safari에서 GPU 대리 실행이 실제로 되는지·속도, 어린이 손에서의 임계값(4.6), GitHub Pages의 `.wasm` MIME과 캐시 시간, 트레일링 슬래시 넘겨주기 — 모두 S2·S7과 12.4에서 확인한다.
-
----
-
-## 부록 A-v3 (승인 전) — v3 문항 표 230개 (3~4학년군 143, 5~6학년군 87)
-- **승인 전 [추천]**이다. 승인되면 Build가 위 "부록 A."의 표를 이 표로 **통째로 바꿔 끼우고**(이 절의 제목·설명은 지움) `questions.json`을 이 표대로 만든다. 그 전까지 `data.test`는 위의 부록 A(161문항)를 기준으로 한다 — 이 절은 `## 부록 B.` 뒤에 있어서 지금 테스트가 읽지 않는다.
-- 열은 부록 A와 같다. `**` 표시는 이 보고용이며 표 안에는 없다. id는 v1 것을 그대로 두고(학년군만 바뀐 것 포함), 새 문항은 주제마다 다음 번호를 이어 붙였다.
-- Plan 확인(2026-11-26): 저장소의 `validateQuestions`로 V1~V9 위반 0(아래 7.6.5의 V7' 규칙을 적용하면 0, 지금 규칙으로는 `**` 정답 16개만 V7로 걸림), 초등 어휘 비율 96.8%, 판 구성 흉내(학년군 3종 × 난이도 3종 × 씨앗 5,000개) 오류 0.
-
-### A-v3.1 바뀐 것 목록
+- 2026-11-26 **사용자 승인**(v3): 14.2 W1~W6을 모두 추천안대로(사용자 원문: "추천대로 승인"). → W1 기준 = 섞기(초등 권장 * 80% 이상 + 중학 ** 20% 이하), W2 v1 기초 5~6 낱말 59개는 3~4학년군으로 옮김, W3 5~6학년군 87문항, W4 5~6 판의 오답 카드는 지금처럼 230개 전부에서, W5 새 낱말 목록은 부록 A-v3 그대로, W6 적용은 v2 배포 뒤 다음 Build. 같은 날 Plan이 W1(부록 A 바꿔 끼우기)을 했다(지침 `docs/briefs/plan-fix-brief-v3.md`).
+- v3에서 바뀐 것 목록(부록 A-v3 절에 있던 것을 옮겨 둠):
 - **5~6에서 3~4로 옮김 59개**(id 그대로): lion, tiger, bear, horse, mouse, bee, bread, cake, candy, cheese, potato, tomato, watermelon, tooth, hair, finger, neck, sister, aunt, uncle, cook, pilot, police, map, paper, knife, key, kitchen, camera, coat, shirt, dress, belt, cloud, river, sea, mountain, wind, farm, bank, beach, taxi, truck, soccer, baseball, tennis, ski, spring, fast, slow, sick, heavy, tall, cry, climb, wash, buy, listen, smile.
 - **5~6에 남긴 v1 낱말 18개**: scissors, homework, umbrella, television, telephone, library, restaurant, subway, basketball, autumn, weekend, birthday, tomorrow, yesterday, delicious, busy, beautiful, brave.
 - **새 5~6 문항 69개**(`**` = 중학 기본 어휘, 16개): giraffe**, dolphin**, whale**, vegetable, breakfast, spaghetti, medicine**, fever**, heart, nurse, scientist, farmer, artist, driver, customer, dentist**, cousin, hero, queen, history, science, math, calendar**, curtain, bottle, button, helmet, ticket, computer, weather, earth, forest, island**, desert**, planet**, church, market, office, bridge, airport**, museum**, village**, violin, marathon, holiday, future, season, dangerous, careful, honest, lazy, shy, clever, quiet, cheap, difficult, thirsty, hungry**, angry**, borrow, arrive, remember, forget, choose, collect, invite, travel, worry, invent**.
@@ -1129,8 +951,113 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | action-12 buy | 학년군 5~6→3~4 |
 | action-13 listen | 학년군 5~6→3~4 |
 | action-14 smile | 학년군 5~6→3~4 |
+- 2026-11-26 **Plan 수정 v3b**(Review 12절 v3 검증 "수정 필요" 반영, 지침 `docs/briefs/plan-fix-brief-v3b.md`):
+  - **사용자 결정**: "모두 고치기"(사용자 답 원문) — 반드시 1건(M-v3-1)과 권장 문항 다듬기(R-v3-1~R-v3-5 중 문항), `source` 문구(R-v3-6)까지.
+  - Plan이 고른 것: coat 설명 문장(Review 예시 "…over clothes when cold" 대신 3~4학년군 8낱말 안의 "…over our clothes in winter"), coat avoid에 belt 추가("옷 위에 두르는 것"으로 볼 수 있어서), lazy avoid에 sad 추가(Review가 "필요하면 sad도"로 적음), fever를 "very hot"으로 쓰기 위한 V5 보완(지금 규칙으로는 very → ver ⊂ fever로 잘못 걸림). scientist 표현(R-v3-5 둘째)은 Review가 "통한다"고 해 그대로 둠. R-v3-7(떠오르는 점수 위치)은 코드 쪽 일이라 spec을 바꾸지 않음.
 
-### A-v3.2 표
+| id | 전: 설명 / avoid | 후: 설명 / avoid | 이유 |
+|---|---|---|---|
+| nature-14 forest | A place with many, many trees and wild animals. / park,zoo | 같음 / park,zoo,**mountain** | 산도 "나무가 많고 야생 동물이 사는 곳"(M-v3-1, 반드시) |
+| clothes-05 coat | We wear it outside when it is cold. / shirt,hat | **We wear it over our clothes in winter.** / shirt,hat,**belt** | "옷 위에" 뜻을 되살려 shoes·socks·pants가 답이 되지 않게(R-v3-1) |
+| people-21 hero | A brave person who saves people from danger. / police,brave | 같음 / police,brave,**doctor,nurse** | 의사·간호사도 "사람을 구하는 사람"(R-v3-2) |
+| feeling-19 lazy | You do not want to work or move. / busy | 같음 / busy,**sick,sad** | 아프거나 슬플 때도 그럼(R-v3-3) |
+| place-12 office | People work here at desks with computers. / school,bank | 같음 / school,bank,**library** | 도서관에도 책상·컴퓨터(R-v3-4) |
+| body-13 fever | When you are sick, your body gets so hot. / sick | **When you are sick, your body gets very hot.** / sick | 더 자연스러운 영어(R-v3-5). V5 보완 필요(7.4) |
+
+  - Plan 확인: 고친 부록 A로 저장소의 `validateQuestions`(V7'·V10 포함)를 돌리면 위반은 fever의 V5 1건뿐이고, 7.4 보완 규칙을 적용하면 0(보완 규칙은 Plan이 같은 데이터로 따로 계산해 확인 — fever만 바뀌고 다른 문항의 V5 결과는 같음). 판 구성 흉내(현재 `buildPlans`, 학년군 3 × 난이도 3 × 씨앗 2,000): 오류 0, Hard 최악 조건 후보 부족 0, forest↔mountain·hero↔doctor·nurse·lazy↔sick·sad·office↔library 함께 나옴 0%. coat ↔ shoes·socks·pants·dress는 14~40% 함께 나오지만 "옷 위에, 겨울에"로 답이 갈린다.
+- 2026-11-26 **Plan v4(Very Hard) — 사용자 승인 전**: 사용자 요청 원문 "very hard 모드를 만들어서 단어의 수준(중학교 과정을 심화까지), 빠르기를 더 빠르게 해줘. hard도 쉽다고 하네. 그리고 전체적으로 모든 모드 난이도 조금씩 더 올려야 겠어. 빠르기를 약간 더 빠르게 하는 등"(지침 `docs/briefs/plan-brief-v4-veryhard.md`, 덧붙임: Review 13절 scientist). Plan이 고른 것(모두 [추천], 14.3에서 바꿀 수 있음): 16절, 부록 D·E. 기존 승인 값·부록 A 본표는 바꾸지 않음.
+
+
+---
+
+## 16. v4 — Very Hard 모드 + 전체 난이도 올리기 [추천 — 사용자 승인 전]
+
+이 절의 값은 **승인 전**이다. 승인되면 Plan이 5.3·5.5·6.2·7.x의 해당 문장과 표를 이 절의 "후" 값으로 바꾸고(W1처럼 바꿔 끼우기), 그 전까지 Build·Review의 기준은 위 절들의 승인된 값이다.
+
+### 16.1 Very Hard 단어 수준 — "중학교 과정을 심화까지"
+- **해석**: 2022 개정 [별표 3] 기본 어휘 3,000개는 세 등급이다 — `*` 800(초등 권장), `**` 1,200(중학교와 고등학교 공통과목 권장), 표시 없는 1,000("그 외의 과목" 즉 고등학교 선택과목 권장). 중학교 1~3학년군 총 학습 어휘는 1,500단어 이내(초등 800 + 약 700). [확인: 부록 C의 KICE PDF, 2026-11-26 다시 열어 확인 — 1쪽 표·지침, 35~41쪽 개정 해설]
+  - "중학교 과정" = `**` 등급, "심화까지" = 그보다 한 단계 높은 **표시 없는 등급**(고교 선택과목 권장 — 중학 교과서의 읽기 지문·심화 활동에 나오는 수준 [추정]). 목록 밖 낱말(교과서에서만 보이는 낱말)은 근거를 확인할 수 없어서 쓰지 않는다.
+- **비율 [추천]**: 정답의 **70% 이상은 `**`**, **30% 이하는 표시 없는 등급("심화")**. 지금 문항: `**` 71개(nervous는 nerve**의 파생, base `nerve`), 심화 23개 = 24.5%.
+  - 심화 23개: insect, goat, ingredient, thumb, athlete, passenger, professor, vocabulary, ladder, continent, harbor, tunnel, gallery, passport, submarine, orchestra, rhythm, anniversary, generous, grateful, celebrate, explore, translate.
+- **고른 기준**(Plan의 판단): 설명 한두 문장으로 하나로 정해지는 구체적인 낱말(동물·음식·몸·직업·장소·탈것·악기) 위주 + 중학 교과서에 자주 나오는 성격·감정·동작 낱말(proud, nervous, polite, explain, protect …). 추상적이어서 설명이 애매해지는 낱말(attitude, concept, policy …)은 뺐다.
+- **문항 수**: **94개**(부록 D, 14개 주제 — sports 없음). 한 판 10문제 × 최근 2판 피하기(20개)를 해도 74개가 남고, 같은 주제 오답 2~3장을 고를 수 있게 주제마다 3개 이상(music·time 3개, clothes 4개, 나머지 5~9개).
+- **설명 문장 규칙(Very Hard용, VH-V6)**: 토큰마다 초등 목록(부록 B)·**중학 목록(부록 E)**·허용 목록(고유 명사·언어명·의성어) 중 하나. 설명 하나에 `**` 낱말 3개까지, 표시 없는 등급 낱말은 설명에 쓰지 않는다(정답보다 쉬워야 하므로). 10낱말 이하(화면 두 줄). 지금 문항: 초등 92.0%, 중학 6.8%, 허용 1.2%(ribbit, English, Korean, Chinese, Pacific, Asia, Africa), 설명 평균 8.0낱말, `**` 최대 3개.
+- **학년 선택과의 관계 [추천]**: Very Hard는 **학년과 상관없이 Very Hard 전용 풀**에서만 정답·오답을 고른다. 학년 줄은 흐리게(누를 수는 있음 — 다른 난이도로 돌아갈 때를 위해 값은 기억) 하고 "Very Hard는 학년과 상관없이 중학 단어로 나와요"를 보인다. 이유: 중학 단어는 3~4/5~6 구분이 의미가 없고, 학년마다 따로 만들면 풀이 작아진다. 다른 안: 5~6·모두를 고를 때만 Very Hard 버튼을 켬(14.3 X4).
+- **오답 카드 [추천]**: Very Hard 풀(94개)에서만. 5~6 낱말을 섞으면 아는 쉬운 낱말을 지우고 고르는 길이 생겨 어려움이 줄어든다.
+- **품질 확인(Plan, 2026-11-26)**: 정답·변형이 설명에 없음(저장소 `clueMentions`로 94개 확인), 부록 A와 겹치는 낱말 0, 같은 주제 오답 후보 전체를 읽어 헷갈리는 짝은 avoid(양방향): sheep↔goat, recipe↔ingredient, lawyer↔judge, dictionary↔vocabulary↔language, ceiling↔roof, storm↔flood, climate↔temperature, helicopter↔rocket, polite↔grateful, repair↔destroy, explain↔translate. 저장소 `pickDistractors`로 94개 × 300번(오답 3장 모두 같은 주제를 요구하는 가장 나쁜 조건) 뽑아 후보 부족 0.
+- 가장 긴 낱말 11자(temperature, anniversary) — 부록 A의 10자보다 1자 길다. 카드 글자 줄이기(최소 18px)로 들어가는지 E6에서 확인한다.
+
+### 16.2 빠르기 — 네 난이도의 값 (전 → 후)
+| 난이도 | 문제 | 카드 수 | 떨어지는 시간(단계 값) 전 → 후 | 같은 주제 오답 | 배율 | 오답 감점 |
+|---|---|---|---|---|---|---|
+| Easy | 1~3 / 4~6 / 7~10 | 3 / 4 / 4 (그대로) | 9.0 / 7.5 / 6.5 → **8.5 / 7.0 / 6.0** | 0 / 1 / 2 (그대로) | ×1.0 | −10 |
+| Normal | 1~3 / 4~6 / 7~10 | 3 / 4 / 4 | 7.5 / 6.5 / 5.5 → **7.0 / 6.0 / 5.0** | 1 / 1 / 2 | ×1.2 | −20 |
+| Hard | 1~3 / 4~6 / 7~10 | 4 / 4 / 4 | 6.0 / 5.0 / 4.5 → **5.5 / 4.5 / 4.0** | 1 / 2 / 2 | ×1.5 | −30 |
+| **Very Hard(새)** | 1~3 / 4~6 / 7~10 | 4 / 4 / 4 | **5.0 / 4.0 / 3.5** | **2 / 3 / 3** | **×2.0** | **−40** |
+
+- "약간": 단계 값 0.5초씩(Easy 6~8%, Normal 7~9%, Hard 8~11%). 어려운 난이도일수록 조금 더 줄였다 — 사용자 피드백 "hard도 쉽다".
+- **최소 시간 식 계수(5.3.3) 전 → 후**: 낱말당 읽기 `WORD` 3~4학년군 0.40 → **0.35**, 5~6학년군 0.35 → **0.30**, Very Hard **0.25**(새, 문항 band `vh`). `BASE 0.3`, `MOVE 1.0`, `GRAB 0.4`, `COMFORT_P 0.85`, 식 `ceil(T_need×100/85/10)×10`은 그대로.
+  - 이유: 계수를 그대로 두면 Hard 7~10번은 230문항 중 3~4학년군 138/143·5~6학년군 83/87이 최소 시간에 묶여 실제 평균이 5.20→5.14초로 거의 안 바뀐다. 사용자가 "Hard도 쉽다"고 한 것은 실제 학생이 이 모형(약 150~170 wpm으로 읽기)보다 빨리 읽고 잡는다는 뜻으로 보고, 한 단계(약 0.05초/낱말) 낮춘다 [추정]. Very Hard는 스스로 고른 잘 읽는 학생(약 240 wpm) 기준이다 [추정].
+  - 최소 시간(바닥) 표 — 후: 낱말 3~10개에 3~4학년군 3.24~6.12초, 5~6학년군 3.06~5.53초, Very Hard 2.89~4.95초(Very Hard는 단계 값 3.5초 아래로 내려가지 않음).
+- **실제 떨어지는 시간(문제 7~10번, 부록 A 230문항·부록 D 94문항으로 Plan 계산)**
+
+| | 전(지금) 평균 / 최대 | 후 평균 / 최대 |
+|---|---|---|
+| Easy | 6.50 / 6.50 | 6.00 / 6.00 |
+| Normal 3~4 · 5~6 | 5.59 · 5.62 / 6.12 | 5.10 · 5.11 / 5.53 |
+| Hard 3~4 · 5~6 | 5.23 · 5.20 / 6.12 | 4.81 · 4.72 / 5.53 |
+| Very Hard | — | 4.36 / 4.95 (4~6번 4.41, 1~3번 5.00) |
+
+- **"극악"이 아닌 이유(Very Hard)**: 가장 짧은 3.5초에서도 카드가 잡히기 시작해 편한 한계(p 0.85)까지 약 2.8초 — 반대쪽 끝까지 손 옮기기 1.0초 + 쥐기 0.4초의 2배. 최소 시간 식이 설명 길이만큼 시간을 늘려 준다(긴 설명 4.95초). 판정 여유·손 인식 기준은 그대로.
+- **목표 첫 시도 정답률(갱신, [추정])**: Easy 85~90%, Normal 약 75%, Hard 약 55~65%, **Very Hard 약 40~55%**(Very Hard는 "잘하는 학생도 반쯤" — 도전 목표). 교실에서 재서 0.5초 단위로 조정(D5와 같은 방법).
+
+### 16.3 화면
+- **시작 화면 난이도 줄**: 버튼 4개 `Easy 쉬움 · Normal 보통 · Hard 어려움 · Very Hard 매우 어려움`. Very Hard는 별 SVG 두 개(Hard는 하나). 가로 1024×768·1180×820, 세로 768×1024·820×1180에서 **한 줄 4칸, 스크롤 없음**, 버튼 높이 ≥ 56px. 세로에서 글자가 넘치면 `Very Hard`를 두 줄(Very / Hard)로 줄바꿈해도 된다(낱말 중간에서 끊지 않음).
+- 한 줄 설명(Very Hard): "중학교 단어가 아주 빠르게 떨어져요. 최고의 도전!"
+- Very Hard를 고르면 학년 줄이 흐려지고(투명도 0.4) 그 아래 "Very Hard는 학년과 상관없이 중학 단어로 나와요". 다른 난이도로 바꾸면 원래대로.
+- 설명 띠 배지 `Very Hard`, 결과 화면 머리 "Very Hard · 중학 단어".
+- **최고 점수**: Very Hard는 학년과 상관없이 한 칸 `catchword.best.veryhard`. 최근 정답 기억도 따로 `catchword.recent.veryhard`(다른 난이도의 최근 목록과 섞이지 않게). `catchword.difficulty`에 `veryhard` 값 추가, URL `?difficulty=veryhard`.
+- **도전 권유 바뀜**: Hard에서 첫 시도 8개 이상 → "다음엔 Very Hard에 도전해 볼까요?"(전: "Hard도 거뜬해요! 최고 점수에 도전해 봐요."). Very Hard에서 8개 이상 → "Very Hard도 거뜬해요! 최고 점수에 도전해 봐요."
+
+### 16.4 데이터·검사(Very Hard)
+- 새 파일 `src/data/veryhard.json`: 7.3과 같은 모양, `"band": "vh"`, `"source": "2022 개정 영어과 교육과정 [별표 3] 기본 어휘(중학 ** 중심 + 그 외 등급 일부)"`, 부록 D 표 그대로("수준" 열은 JSON에 넣지 않고 아래 목록으로).
+- 새 파일 `src/data/vocab/secondary-2022.txt`: 부록 E(중학 권장 ** 1,215개 형태, Plan 추출) 한 줄에 하나.
+- `clue-extra.json`에 더함: `veryhardAdvanced`(심화 23개, 16.1 목록), `proper`에 `english, korean, chinese, pacific, asia, africa`, `interjection`에 `ribbit`.
+- `validate.ts`에 Very Hard 검사(따로 보고):
+  - VH-V1 id `^vh-[a-z]+-\d{2}$`, 가운데가 topic. VH-V2 정답 `^[a-z]{2,11}$`, 부록 A 낱말과 겹치지 않음, 중복 없음. VH-V4 설명 규칙(V4와 같음, 10낱말 이하). VH-V5 V5·V5b와 같음.
+  - VH-V6 16.1의 설명 규칙. VH-V7 정답이 부록 E(또는 `base`가 부록 E)에 있거나 `veryhardAdvanced`에 있음. VH-V10 `veryhardAdvanced` 비율 ≤ 30%, 목록의 낱말은 모두 쓰임. VH-V8 avoid가 Very Hard 풀 안. VH-V9 문항 ≥ 90, 주제마다 ≥ 3.
+- 부록 E는 PDF에서 자동 추출했으므로 Review가 무작위 20개를 원문과 맞춰 본다.
+
+### 16.5 scientist 설명과 V5b (덧붙임 — Review 13절)
+- **people-14 scientist** 전: "This person does science tests to learn new things." → **후: "This person does tests to find out how things work."** (avoid `science,teacher` 그대로 — teacher도 시험을 내므로). 설명 속 "science"가 정답의 어근(science + -ist)이라 사실상 답을 알려 준다. 고친 문장은 저장소 `validateQuestions`로 V1~V10 위반 0(Plan 확인).
+- **V5b [추천]**: V5에 더해, ① 정답의 `base` 조각 ② 정답에서 파생 접사(-ist, -er, -or, -ian, -ous, -ful, -y, -ness, -ly)를 뗀 기본형(뗀 뒤 e를 붙이거나 i→y, t→ce로 바꾼 것 포함) 중 초등 목록에 있는 것 — 이 설명에 나오면(V5와 같은 판정) 실패. Plan이 지금 부록 A 230문항에 돌려 보니 걸리는 것은 scientist 하나뿐이고, 고친 문장과 부록 D 94문항은 0이다. 오답 고르기에는 쓰지 않는다(검사 전용).
+
+### 16.6 바뀌는 기존 테스트
+- `difficulty.test.ts`: 5.3.2 표 값(전 → 후), 바닥 표 값(계수 변경), Very Hard 행 추가, Hard·Very Hard 최소 시간 보장(`0.85 × fall ≥ T_need`, Very Hard ≥ 3,500ms), Easy가 바닥에 걸리는 문항 0 유지.
+- `session.test.ts`·`scoring`: Very Hard 배율 ×2.0·감점 40, 0점 바닥.
+- `questions.test.ts`: Very Hard는 학년과 상관없이 Very Hard 풀만, 같은 주제 2/3/3, `recent.veryhard` 분리.
+- `data.test.ts`: Very Hard 파일 검사(VH-V1~V10), 부록 D ↔ `veryhard.json` 모든 칸, V5b 위반 예시.
+- e2e: E2(Easy 점수 독립 계산은 새 단계 값으로), E6(버튼 4개 스크롤 없음, 11자 낱말 카드), E8(Very Hard 기억·URL·배지·학년 줄 흐림·최고 점수 키·Hard → Very Hard 권유).
+
+### 16.7 사용자 확인 필요 → 14.3
+
+### 16.8 Build 단계(승인 뒤, v3 배포 다음)
+| 단계 | 할 일 | 완료 기준 |
+|---|---|---|
+| X1 값 | Plan이 5.3·5.5·6.2의 표·문장을 16.2·16.3 값으로 바꿔 끼움 → Build가 `config.ts`(E/N/H 새 값, `veryhard` 난이도, `FALL_FLOOR.WORD_MS` 3-4 350·5-6 300·vh 250) | `difficulty.test` 통과(새 표), Easy 한 판 값이 새 표와 같음 |
+| X2 데이터 | Plan이 부록 D를 확정(사용자 수정 반영) → Build가 `veryhard.json`, `secondary-2022.txt`, `clue-extra.json`, `validate.ts` VH 검사·V5b, `check-data` Very Hard 줄 | `npm run check:data` 부록 A·Very Hard 모두 위반 0, data.test 통과 |
+| X3 게임 | `buildPlans`가 Very Hard면 Very Hard 풀만(학년 무시), 최근 목록·최고 점수 키 분리 | questions·session 테스트 통과 |
+| X4 화면 | 버튼 4개, 학년 줄 흐림·안내, 배지·결과, 권유 문구, `strings.ts` | E6·E8 통과, 화면 4종 스크린샷 |
+| X5 scientist | Plan이 부록 A의 people-14를 16.5대로 고침 → Build가 JSON 반영 | data.test 통과 |
+| X6 기기 조정 | 교실에서 네 난이도 첫 시도 정답률 재기(16.2 목표) | 값 조정이 있으면 Plan이 표를 고침 |
+
+---
+
+## 부록 A. 문항 230개 (3~4학년군 143, 5~6학년군 87)
+- 열: id, word(정답), 학년군, topic, 한국어 뜻(ko), clue(설명), avoid(같이 오답으로 내지 않을 단어), base(목록에 그대로 없는 정답의 근거 어근).
+- 2026-11-26 Plan의 임시 검사기로 V4~V8 위반 0건 확인. 사람 눈 검사(H1~H4)는 Review가 한다.
+- 2026-11-26 Plan 수정 v1: 17문항(animal-09, school-04, home-04·06·08, clothes-06·07, nature-11, transport-01·03·06, time-09·10, feeling-05·08·12, action-05)의 설명·avoid를 고쳤다(15절 표). 고친 뒤 저장소의 `validateQuestions`(V1~V9)로 위반 0건, 초등 어휘 비율 97.4%를 다시 확인했다.
+- 2026-11-26 **v3 바꿔 끼움**(사용자 승인 "추천대로 승인", 7.6): 5~6학년군 기초 낱말 59개를 3~4학년군으로 옮기고(21개는 설명을 8낱말 이하로), 18개를 남기고, 새 5~6 문항 69개(그중 중학 기본 어휘 `**` 16개 — `answerSecondary`)를 더했다. 바뀐 목록은 15절. 저장소의 `validateQuestions`로 V1~V9를 다시 검사: `**` 정답 16개의 V7(코드에 V7'·V10이 들어가면 사라짐) 말고 위반 0, 초등 어휘 비율 96.8%.
 
 | id | word | 학년군 | topic | 한국어 뜻 | clue | avoid | base |
 |---|---|---|---|---|---|---|---|
@@ -1182,7 +1109,7 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | body-10 | finger | 3~4 | body | 손가락 | Your hand has five of these. |  |  |
 | body-11 | neck | 3~4 | body | 목 | It is between your head and your body. |  |  |
 | body-12 | medicine | 5~6 | body | 약 | Sick people take it to get well. | hospital,doctor |  |
-| body-13 | fever | 5~6 | body | 열 | When you are sick, your body gets so hot. | sick |  |
+| body-13 | fever | 5~6 | body | 열 | When you are sick, your body gets very hot. | sick |  |
 | body-14 | heart | 5~6 | body | 심장 | It is inside your body. It sends blood everywhere. |  |  |
 | people-01 | mother | 3~4 | people | 엄마 | She is your father's wife. |  |  |
 | people-02 | father | 3~4 | people | 아빠 | He is your mother's husband. |  |  |
@@ -1204,7 +1131,7 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | people-18 | customer | 5~6 | people | 손님 | A person who buys things at a store. |  |  |
 | people-19 | dentist | 5~6 | people | 치과 의사 | This doctor checks and cleans your teeth. | nurse,doctor |  |
 | people-20 | cousin | 5~6 | people | 사촌 | Your aunt's or uncle's son or daughter. | friend |  |
-| people-21 | hero | 5~6 | people | 영웅 | A brave person who saves people from danger. | police,brave |  |
+| people-21 | hero | 5~6 | people | 영웅 | A brave person who saves people from danger. | police,brave,doctor,nurse |  |
 | people-22 | queen | 5~6 | people | 여왕 | The wife of a king. |  |  |
 | school-01 | book | 3~4 | school | 책 | We read it. It has many pages. |  |  |
 | school-02 | pencil | 3~4 | school | 연필 | We write and draw with it. | paper |  |
@@ -1242,7 +1169,7 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | clothes-02 | shoes | 3~4 | clothes | 신발 | We wear them on our feet outside. | socks | shoe |
 | clothes-03 | socks | 3~4 | clothes | 양말 | We wear them under our shoes. | shoes | sock |
 | clothes-04 | pants | 3~4 | clothes | 바지 | We wear them on our legs. |  |  |
-| clothes-05 | coat | 3~4 | clothes | 외투, 코트 | We wear it outside when it is cold. | shirt,hat |  |
+| clothes-05 | coat | 3~4 | clothes | 외투, 코트 | We wear it over our clothes in winter. | shirt,hat,belt |  |
 | clothes-06 | shirt | 3~4 | clothes | 셔츠 | It has buttons. We wear it under coats. | coat,dress,pants |  |
 | clothes-07 | dress | 3~4 | clothes | 원피스, 드레스 | A top and skirt together, for girls. |  |  |
 | clothes-08 | belt | 3~4 | clothes | 허리띠, 벨트 | It holds up our pants. |  |  |
@@ -1259,7 +1186,7 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | nature-11 | wind | 3~4 | nature | 바람 | We cannot see it, but it moves trees. | cold |  |
 | nature-12 | weather | 5~6 | nature | 날씨 | Sunny, rainy, and snowy are kinds of this. |  |  |
 | nature-13 | earth | 5~6 | nature | 지구 | The planet we live on. |  |  |
-| nature-14 | forest | 5~6 | nature | 숲 | A place with many, many trees and wild animals. | park,zoo |  |
+| nature-14 | forest | 5~6 | nature | 숲 | A place with many, many trees and wild animals. | park,zoo,mountain |  |
 | nature-15 | island | 5~6 | nature | 섬 | A piece of ground with water all around it. |  |  |
 | nature-16 | desert | 5~6 | nature | 사막 | A very hot, dry place with lots of sand. | beach |  |
 | nature-17 | planet | 5~6 | nature | 행성 | Earth and Mars are this. They go around the sun. | moon |  |
@@ -1274,7 +1201,7 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | place-09 | beach | 3~4 | place | 해변 | We play in the sand by the sea. |  |  |
 | place-10 | church | 5~6 | place | 교회 | A building where people go to pray. |  |  |
 | place-11 | market | 5~6 | place | 시장 | People buy fruit and fish here. |  |  |
-| place-12 | office | 5~6 | place | 사무실 | People work here at desks with computers. | school,bank |  |
+| place-12 | office | 5~6 | place | 사무실 | People work here at desks with computers. | school,bank,library |  |
 | place-13 | bridge | 5~6 | place | 다리(건너는 다리) | We cross a river on it. | boat |  |
 | place-14 | airport | 5~6 | place | 공항 | Airplanes take off and land here. |  |  |
 | place-15 | museum | 5~6 | place | 박물관 | We see very old things and art here. |  |  |
@@ -1331,7 +1258,7 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | feeling-16 | dangerous | 5~6 | feeling | 위험한 | Not safe at all. Please be careful. |  | danger |
 | feeling-17 | careful | 5~6 | feeling | 조심하는 | Look both ways. Be this when you cross the road. |  | care |
 | feeling-18 | honest | 5~6 | feeling | 정직한 | You always tell the truth. |  |  |
-| feeling-19 | lazy | 5~6 | feeling | 게으른 | You do not want to work or move. | busy |  |
+| feeling-19 | lazy | 5~6 | feeling | 게으른 | You do not want to work or move. | busy,sick,sad |  |
 | feeling-20 | shy | 5~6 | feeling | 수줍은 | Your face gets red when you meet new people. | angry |  |
 | feeling-21 | clever | 5~6 | feeling | 영리한 | You learn things fast and think well. |  |  |
 | feeling-22 | quiet | 5~6 | feeling | 조용한 | Not loud. Please be this in the library. |  |  |
@@ -1364,3 +1291,140 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | action-22 | travel | 5~6 | action | 여행하다 | You go to faraway places and see new things. |  |  |
 | action-23 | worry | 5~6 | action | 걱정하다 | You keep thinking something bad may happen. |  |  |
 | action-24 | invent | 5~6 | action | 발명하다 | You make a new thing for the first time. |  |  |
+
+## 부록 B. 2022 개정 기본 어휘 중 초등 권장(*) 단어 (Plan 추출, 819개 형태)
+- 출처: 부록 C의 KICE Word Lister 안내 PDF 7~36쪽(인쇄 쪽 5~34) 「기본 어휘 목록」에서 `*` 하나만 붙은 단어. 철자 변이형(aeroplane, colour, cheque, okey, OK, nope, nay, yeah, yep, dialog, cooky, programme, maths/math, grey 등)과 서수 twenty-first 등이 같이 들어 있다. `I`는 대명사.
+- `src/data/vocab/elementary-2022.txt`로 한 줄에 하나씩 옮긴다(소문자로 바꿔 비교).
+
+a, about, above, across, act, add, address, adult, aeroplane, afraid, after, afternoon, again, against, age, ago, agree, ahead, air, airplane, album, all, almost, alone, along, already, alright, also, always, and, animal, another, answer, any, apartment, apple, area, arm, around, arrive, art, as, ask, at, aunt, autumn, away, baby, back, bad, badminton, bag, bake, ball, banana, bank, base, baseball, basket, basketball, bat, bath, be, beach, bear, beauty, because, become, bed, bee, beef, before, begin, behind, believe, bell, below, belt, beside, between, big, bike, bill, bird, birth, biscuit, black, blood, blue, board, boat, body, bone, book, borrow, both, bottle, bottom, box, boy, brave, bread, break, breakfast, bridge, bright, bring, brother, brown, brush, build, burn, bus, business, busy, but, butter, button, buy, by, cake, call, camera, camp, campaign, can, candy, cap, car, card, care, carrot, carry, case, cash, cat, catch, center, certain, chair, chance, change, cheap, check, cheese, cheque, chicken, child, chocolate, choose, church, circle, city, class, clean, clear, clever, climb, clock, close, clothes, cloud, club, coat, coffee, cold, collect, college, color, colour, come, comic, company, compute, condition, congratulate, control, cook, cookie, cooky, cool, corner, cost, could, country, couple, course, court, cousin, cover, cow, crayon, cream, cross, cry, culture, cup, curtain, customer, cut, dance, danger, dark, date, daughter, day, dead, death, decide, deep, delicious, design, desk, dialog, dialogue, die, difficult, dinner, discuss, do, doctor, dog, doll, door, double, doughnut, down, draw, dream, dress, drink, drive, drop, drum, dry, duck, during, ear, early, earth, east, eat, egg, eight, elephant, eleven, end, energy, enough, enter, evening, every, example, exercise, eye, face, fact, fail, fall, family, fan, far, farm, fast, fat, father, favorite, favourite, feel, festival, field, fight, file, fill, film, find, fine, finger, finish, fire, first, fish, five, fix, floor, flower, fly, focus, food, fool, foot, football, for, forest, forget, fork, form, four, fox, free, fresh, friend, from, front, fruit, full, fun, future, game, garden, gas, gentleman, get, girl, give, glad, glass, go, goal, god, gold, good, goodbye, grandfather, grape, grass, gray, great, green, grey, ground, group, grow, guess, guitar, gum, guy, habit, hair, hamburger, hand, hang, happy, hard, hat, hate, have, he, head, heart, heat, heavy, hello, helmet, help, here, hero, hey, hi, high, hike, hill, history, hit, hobby, hold, holiday, home, homework, honest, hope, horse, hospital, hot, hour, house, how, however, human, hundred, hunt, hurry, husband, I, ice, idea, if, image, in, inside, internet, into, introduce, invite, issue, it, jacket, jam, job, join, juice, jump, just, keep, key, kick, kid, kill, kind, king, kiss, kitchen, knife, know, lady, lake, land, large, laser, last, late, lazy, learn, left, leg, lesson, letter, library, lie, life, light, like, line, lion, lip, listen, little, live, long, look, love, low, luck, lunch, mad, mail, make, man, many, map, marathon, market, marry, math, mathematics, maths, may, meat, medal, meet, member, memory, middle, might, milk, mind, miss, model, money, monkey, month, moon, morning, mother, mountain, mouse, mouth, move, movie, much, music, must, name, nation, nature, nay, near, neck, need, never, new, news, newspaper, next, nice, night, nine, no, nope, north, nose, not, note, notebook, nothing, now, number, nurse, of, off, office, often, oil, OK, okay, okey, old, on, one, only, open, or, orange, out, over, page, paint, pants, paper, parent, park, part, partner, party, pass, pay, pen, pencil, people, phone, piano, pick, picture, pig, pilot, pink, pizza, place, plan, plastic, play, please, point, police, poor, potato, power, present, pretty, prince, print, problem, program, programme, project, puppy, push, put, queen, question, quick, quiet, quiz, rabbit, race, radio, rain, read, ready, recreation, red, remember, restaurant, restroom, return, ribbon, rich, right, ring, river, road, robot, rock, room, rose, run, sad, safe, salad, sale, salt, same, sand, sandwich, save, say, school, science, scissors, score, sea, season, second, see, sell, send, service, set, seven, she, ship, shirt, shoe, shop, short, should, show, shy, sick, side, sing, sister, sit, six, size, skate, ski, skin, skirt, sky, sleep, slow, small, smell, smile, snow, so, soccer, sock, soft, software, some, son, song, sorry, sound, soup, south, space, spaghetti, speak, speed, spoon, sport, spring, staff, stand, star, start, stay, steak, stone, stop, store, story, street, strong, study, style, subway, sugar, summer, sun, sure, swim, table, tail, take, talk, tall, tape, taste, taxi, teach, team, telephone, television, tell, ten, tennis, tent, test, textbook, than, thank, that, the, there, they, thing, think, third, thirst, thirteen, thirty, this, three, ticket, tiger, time, tire, to, today, together, tomato, tomorrow, tonight, too, tooth, top, touch, town, toy, track, train, travel, tree, trip, truck, true, try, turn, twelve, twenty, twenty-first, twenty-second, twenty-third, twice, two, type, ugly, umbrella, uncle, under, understand, up, use, vegetable, very, video, violin, visit, voice, wait, wake, walk, wall, want, war, warm, wash, watch, water, watermelon, way, we, wear, weather, website, wedding, week, weekend, weight, welcome, well, west, wet, what, when, where, white, who, why, wife, will, win, wind, window, wine, winter, wish, with, woman, wood, word, work, world, worry, write, wrong, yeah, year, yellow, yep, yes, yesterday, you, young, zoo
+
+## 부록 C. 확인한 자료 (모두 2026-11-26 열람)
+| 내용 | 주소 |
+|---|---|
+| Hand Landmarker Web 가이드(사용법·옵션·결과 형식·모델 주소). `ai.google.dev/...`에서 이 주소로 301 이동. 쪽에 "마지막 수정일" 표시 없음 | https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/web_js |
+| Hand Landmarker 개요(21점 번호, 모델 묶음, Pixel 6 지연 시간, 추적 설명, Hugging Face 모델 주소) | https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker |
+| Gesture Recognizer 개요(기본 제스처 8종, 지연 시간) | https://developers.google.com/edge/mediapipe/solutions/vision/gesture_recognizer |
+| npm `@mediapipe/tasks-vision` 버전·게시일(`npm view`): latest 1.2.3(2026-11-11), nightly 1.3.0-rc.20261122 | https://www.npmjs.com/package/@mediapipe/tasks-vision |
+| 1.2.3 파일 목록·크기 | https://data.jsdelivr.com/v1/packages/npm/@mediapipe/tasks-vision@1.2.3?structure=flat |
+| 1.2.3 타입 정의(FilesetResolver, HandLandmarkerOptions, delegate, canvas) | https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/vision.d.ts |
+| 1.2.3 번들(wasm 파일 이름 규칙, 로더 script 삽입) | https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/vision_bundle.mjs |
+| 모델(Google): 200, 7,819,105B, `access-control-allow-origin: *` | https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task |
+| 모델(Hugging Face) SHA-256 `fbc2a300…cde1`, 7,819,105B | https://huggingface.co/api/models/litert-community/MediaPipe-HandLandmarker-Full/tree/main |
+| getUserMedia(보안 컨텍스트, 오류 이름, facingMode). 쪽 마지막 수정 2025-11-30 | https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia |
+| GitHub Pages 한도(1GB, 대역폭 100GB/월 soft, 사용자 지정 워크플로는 빌드 횟수 제한 없음) | https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits |
+| GitHub Pages 게시 원천을 GitHub Actions로 | https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site |
+| GitHub 요금제(Free: 공개 저장소에서 Pages) | https://docs.github.com/en/get-started/learning-about-github/githubs-plans |
+| 2022 개정 영어과 기본 어휘(KICE Word Lister 안내, 교육부 고시 제2022-33호 [별책 14] 인용) | https://www.goe.go.kr/resource/old/BBSMSTR_000000030136/BBS_202307111028067791.pdf |
+| 저장소 상태(`gh repo view eversunk2-tech/english1`: 공개, 비어 있음) | https://github.com/eversunk2-tech/english1 |
+| 형제 프로젝트 참고(읽기만): spec 형식, Vite 8/TS 6/Vitest 5, Pages 워크플로 | `/Users/sungchul/Desktop/play2/selectio game/`, `/Users/sungchul/Desktop/play2/game2/.github/workflows/pages.yml` |
+
+**확인하지 못한 것**: 2022 개정 교육과정의 초등 문장 길이 기준(V4의 8/10낱말은 추정), iPad Safari에서 GPU 대리 실행이 실제로 되는지·속도, 어린이 손에서의 임계값(4.6), GitHub Pages의 `.wasm` MIME과 캐시 시간, 트레일링 슬래시 넘겨주기 — 모두 S2·S7과 12.4에서 확인한다.
+
+---
+
+## 부록 D. Very Hard 문항 94개 (v4, 승인 전)
+- 승인 전 [추천]. 승인되면 Build가 `src/data/veryhard.json`으로 옮긴다(16.4). id는 `vh-<topic>-NN`. "수준" 열: 중학 = `**` 등급(nervous는 nerve**의 파생), 심화 = 기본 어휘의 표시 없는 등급. 학년군 열 대신 수준 열을 두었다(이 표는 부록 A가 아니므로 data.test가 읽지 않는다).
+- Plan 확인(2026-11-26): 16.1의 검사 — 설명 규칙 위반 0, 정답·변형 노출 0(V5·V5b), 부록 A와 겹침 0, 가장 나쁜 조건의 오답 고르기 실패 0.
+
+| id | word | 수준 | topic | 한국어 뜻 | clue | avoid | base |
+|---|---|---|---|---|---|---|---|
+| vh-animal-01 | zebra | 중학 | animal | 얼룩말 | It looks like a horse with black and white lines. |  |  |
+| vh-animal-02 | snake | 중학 | animal | 뱀 | This long animal has no legs. Some have poison. |  |  |
+| vh-animal-03 | frog | 중학 | animal | 개구리 | A small green animal that jumps and says ribbit. |  |  |
+| vh-animal-04 | sheep | 중학 | animal | 양 | A farm animal. We get wool from it. | goat |  |
+| vh-animal-05 | insect | 심화 | animal | 곤충 | Ants and bees are this. They have six legs. |  |  |
+| vh-animal-06 | goat | 심화 | animal | 염소 | A farm animal. It is good at climbing rocks. | sheep |  |
+| vh-food-01 | mushroom | 중학 | food | 버섯 | It looks like a tiny umbrella and grows in forests. |  |  |
+| vh-food-02 | strawberry | 중학 | food | 딸기 | A small red fruit with seeds on the outside. |  |  |
+| vh-food-03 | lemon | 중학 | food | 레몬 | A yellow fruit. It is very sour. |  |  |
+| vh-food-04 | pepper | 중학 | food | 후추 | We put this hot black powder on food. |  |  |
+| vh-food-05 | recipe | 중학 | food | 요리법 | It tells you how to cook a dish. | ingredient |  |
+| vh-food-06 | snack | 중학 | food | 간식 | A small amount of food between meals. |  |  |
+| vh-food-07 | ingredient | 심화 | food | 재료 | Things we mix to make a dish. | recipe |  |
+| vh-body-01 | shoulder | 중학 | body | 어깨 | It is between your neck and your arm. |  |  |
+| vh-body-02 | knee | 중학 | body | 무릎 | The middle part of your leg. It bends. |  |  |
+| vh-body-03 | tongue | 중학 | body | 혀 | It is in your mouth. It helps you taste food. |  |  |
+| vh-body-04 | stomach | 중학 | body | 위, 배 | Food goes here after you swallow it. |  |  |
+| vh-body-05 | brain | 중학 | body | 뇌 | It is in your head. You think with it. |  |  |
+| vh-body-06 | muscle | 중학 | body | 근육 | It makes your body strong. Exercise makes it bigger. |  |  |
+| vh-body-07 | cough | 중학 | body | 기침 | A sudden noise from your throat when you are sick. |  |  |
+| vh-body-08 | thumb | 심화 | body | 엄지손가락 | The short, thick finger on your hand. |  |  |
+| vh-people-01 | engineer | 중학 | people | 기술자, 공학자 | This person designs machines, roads, or bridges. |  |  |
+| vh-people-02 | soldier | 중학 | people | 군인 | This person fights for the country in the army. |  |  |
+| vh-people-03 | lawyer | 중학 | people | 변호사 | This person helps people in court. | judge |  |
+| vh-people-04 | thief | 중학 | people | 도둑 | A person who takes things that are not theirs. |  |  |
+| vh-people-05 | neighbor | 중학 | people | 이웃 | A person who lives next to your house. |  |  |
+| vh-people-06 | judge | 중학 | people | 판사 | This person decides in court if someone is guilty. | lawyer |  |
+| vh-people-07 | athlete | 심화 | people | 운동선수 | A person who is good at sports and trains hard. |  |  |
+| vh-people-08 | passenger | 심화 | people | 승객 | A person who rides in a bus, train, or plane. |  |  |
+| vh-people-09 | professor | 심화 | people | 교수 | A teacher at a university. |  |  |
+| vh-school-01 | dictionary | 중학 | school | 사전 | A book that tells you what words mean. | vocabulary |  |
+| vh-school-02 | diary | 중학 | school | 일기 | You write about your day in it every night. |  |  |
+| vh-school-03 | poem | 중학 | school | 시 | A poet writes it. It has short lines. |  |  |
+| vh-school-04 | language | 중학 | school | 언어 | English, Korean, and Chinese are examples of this. |  |  |
+| vh-school-05 | laboratory | 중학 | school | 실험실 | We do science experiments in this room. |  |  |
+| vh-school-06 | grade | 중학 | school | 성적 | Your teacher gives it to show how well you did. |  |  |
+| vh-school-07 | vocabulary | 심화 | school | 어휘 | All the words that you know. | dictionary,language |  |
+| vh-home-01 | furniture | 중학 | home | 가구 | Beds, chairs, and tables are this. |  |  |
+| vh-home-02 | mirror | 중학 | home | 거울 | You look at it to see your face. |  |  |
+| vh-home-03 | blanket | 중학 | home | 담요 | A warm cover you put on your bed. |  |  |
+| vh-home-04 | towel | 중학 | home | 수건 | You dry your body with it after a bath. |  |  |
+| vh-home-05 | oven | 중학 | home | 오븐 | We bake bread and cakes inside it. |  |  |
+| vh-home-06 | ceiling | 중학 | home | 천장 | The top of a room, above your head. | roof |  |
+| vh-home-07 | roof | 중학 | home | 지붕 | The top of a house. It keeps the rain out. | ceiling |  |
+| vh-home-08 | ladder | 심화 | home | 사다리 | We climb it to reach high places. |  |  |
+| vh-clothes-01 | glove | 중학 | clothes | 장갑 | You wear it on your hand in winter. |  |  |
+| vh-clothes-02 | scarf | 중학 | clothes | 목도리 | You wear it around your neck when it is cold. |  |  |
+| vh-clothes-03 | sweater | 중학 | clothes | 스웨터 | A warm top made of wool. |  |  |
+| vh-clothes-04 | uniform | 중학 | clothes | 교복, 제복 | The same clothes that all students in a school wear. |  |  |
+| vh-nature-01 | ocean | 중학 | nature | 대양, 바다 | A very large sea, like the Pacific. |  |  |
+| vh-nature-02 | rainbow | 중학 | nature | 무지개 | Seven colors appear in the sky after a storm. |  |  |
+| vh-nature-03 | valley | 중학 | nature | 계곡, 골짜기 | Low land between two mountains. |  |  |
+| vh-nature-04 | storm | 중학 | nature | 폭풍 | Very strong wind with heavy rain. | flood |  |
+| vh-nature-05 | flood | 중학 | nature | 홍수 | Too much water covers the land after heavy rain. | storm |  |
+| vh-nature-06 | climate | 중학 | nature | 기후 | The weather of a place over many years. | temperature |  |
+| vh-nature-07 | temperature | 중학 | nature | 온도 | How hot or cold something is. | climate |  |
+| vh-nature-08 | continent | 심화 | nature | 대륙 | Asia and Africa are this. They are very big lands. |  |  |
+| vh-place-01 | hotel | 중학 | place | 호텔 | You pay to sleep here when you travel. |  |  |
+| vh-place-02 | factory | 중학 | place | 공장 | People make cars or toys here with machines. |  |  |
+| vh-place-03 | prison | 중학 | place | 감옥 | A place where people who break the law live. |  |  |
+| vh-place-04 | castle | 중학 | place | 성 | Kings and queens lived in this big, old building. |  |  |
+| vh-place-05 | university | 중학 | place | 대학교 | Students go here to study after high school. |  |  |
+| vh-place-06 | harbor | 심화 | place | 항구 | Ships stay here safely near the land. |  |  |
+| vh-place-07 | tunnel | 심화 | place | 터널 | A long road under a mountain or the sea. |  |  |
+| vh-place-08 | gallery | 심화 | place | 미술관 | A place where people look at art. |  |  |
+| vh-transport-01 | helicopter | 중학 | transport | 헬리콥터 | It flies with big turning parts on top. | rocket |  |
+| vh-transport-02 | rocket | 중학 | transport | 로켓 | It carries people into space. | helicopter |  |
+| vh-transport-03 | traffic | 중학 | transport | 교통(량) | Many cars on the road at the same time. |  |  |
+| vh-transport-04 | passport | 심화 | transport | 여권 | You need it to travel to other countries. |  |  |
+| vh-transport-05 | submarine | 심화 | transport | 잠수함 | A ship that goes under the sea. |  |  |
+| vh-music-01 | instrument | 중학 | music | 악기 | A piano and a violin are this. |  |  |
+| vh-music-02 | orchestra | 심화 | music | 오케스트라 | A large group of people playing music together. |  |  |
+| vh-music-03 | rhythm | 심화 | music | 리듬 | The beat in music that makes you move. |  |  |
+| vh-time-01 | century | 중학 | time | 세기, 100년 | One hundred years. |  |  |
+| vh-time-02 | noon | 중학 | time | 정오 | The middle of the day, at twelve. |  |  |
+| vh-time-03 | anniversary | 심화 | time | 기념일 | The same date every year when we remember something. |  |  |
+| vh-feeling-01 | proud | 중학 | feeling | 자랑스러운 | You feel this when you do something great. |  |  |
+| vh-feeling-02 | nervous | 중학 | feeling | 긴장한 | You feel this before a big test. |  | nerve |
+| vh-feeling-03 | curious | 중학 | feeling | 호기심 많은 | You want to know about everything. |  |  |
+| vh-feeling-04 | polite | 중학 | feeling | 예의 바른 | You say please and thank you. | grateful |  |
+| vh-feeling-05 | rude | 중학 | feeling | 무례한 | Not polite. You do not say sorry or thanks. |  |  |
+| vh-feeling-06 | calm | 중학 | feeling | 차분한 | Quiet and relaxed. Not worried at all. |  |  |
+| vh-feeling-07 | wise | 중학 | feeling | 지혜로운 | Old people with lots of knowledge are often this. |  |  |
+| vh-feeling-08 | generous | 심화 | feeling | 너그러운, 후한 | You like to give and share with others. |  |  |
+| vh-feeling-09 | grateful | 심화 | feeling | 고마워하는 | You want to say thank you to someone. | polite |  |
+| vh-action-01 | explain | 중학 | action | 설명하다 | You tell someone about something so they can understand. | translate |  |
+| vh-action-02 | protect | 중학 | action | 지키다, 보호하다 | You keep someone safe from danger. |  |  |
+| vh-action-03 | repair | 중학 | action | 고치다 | You fix something that does not work. | destroy |  |
+| vh-action-04 | destroy | 중학 | action | 파괴하다 | You break something so it can never be used again. | repair |  |
+| vh-action-05 | whisper | 중학 | action | 속삭이다 | You speak very quietly so others cannot hear. |  |  |
+| vh-action-06 | escape | 중학 | action | 탈출하다 | You get out of a place where you are trapped. |  |  |
+| vh-action-07 | celebrate | 심화 | action | 축하하다 | You have a party because something good happened. |  |  |
+| vh-action-08 | explore | 심화 | action | 탐험하다 | You travel to a new place to learn about it. |  |  |
+| vh-action-09 | translate | 심화 | action | 번역하다 | You change words from English into Korean. |  |  |
+
+## 부록 E. 2022 개정 기본 어휘 중 중학 권장(**) 낱말 (v4, Plan 추출, 1,215개 형태)
+- 출처: 부록 C의 KICE Word Lister 안내 PDF 7~36쪽 「기본 어휘 목록」에서 `**`가 붙은 낱말(pdftotext 추출, 2026-11-26). 철자 변이형(colour형 등)이 함께 들어 있다. Very Hard의 정답·설명 검사(16.4)에 쓴다. 승인되면 `src/data/vocab/secondary-2022.txt`로 옮긴다.
+
+able, absolute, accent, accept, access, accident, account, accuse, achieve, adapt, admire, admit, adopt, advance, advantage, adventure, advertise, advertize, advice, advise, affair, affect, afford, agent, aid, aim, airline, airport, alarm, alcohol, alive, allow, aloud, alter, although, altogether, amaze, ambulance, among, amount, amuse, analysis, angel, anger, announce, annoy, annual, ant, anxious, apart, appeal, appear, apply, appoint, appreciate, approach, appropriate, argue, army, arrange, arrest, article, aside, asleep, assess, assign, assist, associate, assume, atmosphere, attach, attack, attempt, attend, attention, attitude, attract, audience, automatic, average, avoid, awake, award, aware, awkward, background, bacon, balance, balloon, band, bang, bar, bare, bark, basis, battery, battle, bay, bean, beat, beer, beg, belief, belong, bench, bend, beneath, benefit, bet, beyond, billion, bin, bind, bit, bite, bitter, blame, blank, blanket, bless, blind, block, blonde, bloom, blow, boil, bomb, bond, boom, boot, bore, boss, bother, bounce, bow, bowl, brain, brake, branch, brand, breast, breath, breathe, brick, brief, brilliant, broad, bubble, budget, bug, bump, bunch, burst, bury, bush, cable, cage, calculate, calendar, calm, capable, cape, capital, captain, career, carpet, cart, cast, castle, catalog, catalogue, category, cause, ceiling, cell, century, chain, chairman, challenge, champion, channel, character, characteristic, charge, charm, chart, chase, chat, cheek, cheer, chest, chew, chief, chip, choice, chop, cigarette, cinema, circumstance, citizen, civil, claim, clerk, click, client, cliff, climate, clip, clue, coach, coal, coast, code, coin, combine, comedy, comfort, command, comment, commerce, committee, common, communicate, community, compare, complain, complete, complex, complicate, concentrate, concept, concern, concert, confirm, conflict, confuse, connect, conscious, consider, constant, consume, contact, contain, content, contest, context, continue, contract, contribute, converse, convince, cop, cope, copy, correct, cottage, cotton, cough, council, count, countryside, county, crack, crash, crawl, create, credit, crime, crisis, crisp, crowd, crown, cruel, cure, curious, curl, current, cute, cycle, damage, dare, darling, dawn, deal, debate, debt, deck, decorate, defence, defense, define, definite, degree, delay, delight, deliver, demand, demonstrate, dentist, deny, depend, depress, describe, desert, deserve, desire, desperate, despite, destroy, detail, detect, determine, develop, diary, dictionary, diet, dig, direct, dirt, disappoint, disc, discipline, disgust, dish, display, distance, district, disturb, dive, divide, divorce, document, dolphin, domestic, donate, doubt, dozen, drag, drama, drug, due, dump, dust, duty, each, earn, ease, economy, edge, edit, educate, effect, effort, either, elect, electric, element, else, embarrass, emotion, emphasize, empire, employ, empty, enemy, engage, engine, engineer, enormous, entertain, entire, envelope, equal, escape, especial, essay, establish, estimate, even, event, ever, evidence, evil, exact, examine, except, exchange, excite, excuse, exhaust, exist, exit, expand, expect, expense, experience, experiment, expert, explain, expose, express, extend, extra, extreme, factor, factory, faint, fair, faith, familiar, fancy, fantastic, fascinate, fashion, fault, favor, favour, fear, feature, fee, feed, fellow, female, fence, fever, few, figure, final, finance, firm, fit, flag, flame, flash, flat, flight, float, flood, flow, fog, fold, folk, follow, force, foreign, forever, forgive, forth, fortunate, fortune, forward, found, frame, frankly, freeze, fright, frog, frustrate, fry, function, fund, fur, furniture, gain, garage, gate, gather, gear, general, gentle, gesture, ghost, giant, gift, giraffe, glance, glory, glove, glue, golf, gorgeous, govern, grab, grace, grade, grand, grant, graph, greet, grocery, guarantee, guard, guest, guide, guilt, gun, half, hall, handle, handsome, happen, harm, health, hear, heaven, height, helicopter, hell, hesitate, hide, highway, hint, hire, hole, honey, honor, honour, hotel, hug, huge, humor, humour, hunger, hurt, identity, ignore, ill, illustrate, imagine, immediate, impress, improve, include, income, increase, indeed, indicate, individual, industry, influence, inform, injure, innocent, insist, inspect, instance, instant, instead, instruct, instrument, insure, intend, intense, intent, interest, internal, interrupt, invent, invest, investigate, involve, iron, island, item, jaw, jeans, joke, journey, joy, judge, junior, justice, knee, knock, knowledge, lab, label, labor, laboratory, labour, lack, lamb, lamp, lane, language, laugh, law, lawn, lawyer, lay, lead, leaf, league, lean, leap, leave, legal, lemon, lend, let, level, licence, license, lid, lift, limit, link, list, livingroom, load, loan, local, locate, lock, log, loose, lose, loss, lot, loud, machine, magazine, magic, main, maintain, major, male, manage, manner, manufacture, mark, marvel, mask, mass, master, match, mate, matter, maximum, maybe, meal, mean, measure, medical, medicine, melon, melt, mental, mention, menu, mess, message, metal, method, microwave, military, mill, minor, minute, mirror, mission, mix, modern, moment, monitor, mood, moral, moreover, motion, motor, mount, mud, muscle, museum, mushroom, mystery, nail, narrow, native, navy, neat, necessary, neighbor, neighbour, neither, nerve, nest, net, noise, none, noon, nor, notice, nowadays, nowhere, nut, oak, object, observe, obvious, occasion, occur, ocean, odd, offer, officer, once, opera, operate, opinion, oppose, order, ordinary, other, otherwise, ought, oven, overall, own, pack, pain, pair, palace, pan, panic, parade, paragraph, pardon, particular, past, path, patient, pattern, pause, peace, pear, pepper, per, perfect, perform, perhaps, period, person, pet, photo, photograph, physical, picnic, pie, piece, pile, pin, pine, pipe, pitch, pity, plain, plane, planet, plant, plate, plenty, plus, pocket, poem, poet, poison, pole, policy, polite, politics, pollute, pool, pop, popular, pork, port, possess, possible, post, pot, potential, pour, powder, practical, practice, practise, pray, prefer, pregnant, prepare, presence, press, pretend, prevent, previous, price, pride, prime, principle, prison, privacy, private, prize, probable, proceed, process, produce, profession, profit, progress, promise, promote, pronounce, proper, property, propose, protect, protest, proud, prove, provide, pub, public, pull, pump, punch, punish, purchase, pure, purple, purpose, puzzle, quality, quarter, quit, quite, quote, rail, rainbow, raise, range, rapid, rare, rat, rate, rather, reach, react, real, reason, receive, recent, recipe, recognize, recommend, record, recover, reduce, refer, reflect, refuse, regard, region, register, regular, relate, relax, release, relief, rely, remain, remark, remind, remove, rent, repair, repeat, replace, reply, report, represent, request, require, research, reserve, resist, resource, respect, respond, responsible, rest, result, retire, rice, ride, rise, risk, rob, rocket, role, roll, roof, root, rope, rough, round, route, row, royal, rub, rude, ruin, rule, rush, sail, salary, sample, satisfy, sauce, scale, scare, scarf, scene, schedule, scratch, scream, screen, seal, search, seat, secret, secretary, section, secure, seed, seek, seem, select, self, senior, sense, sentence, separate, series, serious, serve, session, settle, several, sew, sex, shade, shadow, shake, shall, shame, shape, share, sharp, shave, sheep, sheet, shelf, shell, shelter, shift, shine, shock, shoot, shore, shoulder, shout, shower, shut, sight, sign, silly, silver, similar, simple, since, single, sink, site, situate, skill, slave, slide, slight, slip, smart, smash, smoke, smooth, snack, snake, snap, social, society, soil, soldier, solid, solve, somewhat, soon, sore, sort, soul, sour, source, spare, species, specific, speech, spell, spend, spin, spirit, spoil, sponsor, spot, spray, spread, spy, square, stable, stage, stairs, stamp, standard, stare, state, station, steady, steal, steam, steel, step, stick, still, stir, stock, stomach, storm, straight, strange, strategy, strawberry, stream, stress, stretch, strike, string, structure, struggle, studio, stuff, subject, succeed, success, such, sudden, suffer, suggest, suit, sum, super, supper, supply, support, suppose, surface, surprise, surround, survey, survive, suspect, swallow, sweater, sweep, sweet, swing, switch, system, tale, tank, tap, target, tax, tea, tear, technic, technique, technology, teenage, temperature, tend, tense, term, terrible, text, theater, theatre, then, theory, therefore, thick, thief, thin, though, thousand, threat, throat, through, throw, thus, tide, tie, tight, till, tin, tiny, tip, title, toast, toe, toilet, tone, tongue, tool, topic, total, tough, tour, toward, towards, towel, tower, trace, trade, tradition, traffic, transfer, transport, trap, tray, treat, triangle, trick, trouble, trunk, trust, truth, tune, twin, twist, uniform, unit, unite, university, unless, until, upon, upper, upset, valley, value, van, various, vary, vehicle, version, victim, view, villa, village, violent, vision, volume, volunteer, vote, wage, warn, waste, wave, weak, weapon, weigh, whale, wheel, whether, which, while, whisper, whistle, whole, wide, wild, wing, wipe, wire, wise, within, without, wonder, wool, worth, would, wound, wrap, yell, yet, zebra, zero
+

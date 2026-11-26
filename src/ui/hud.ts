@@ -4,6 +4,9 @@ import { h, ICONS, svg } from './dom.ts';
 import { S } from './strings.ts';
 
 export const CLUE_LINE_HEIGHT = 1.2;
+/** 떠오르는 점수 숫자: 위로 떠오르는 거리(styles.css @keyframes pop-up과 같게)와 띠 아래 여백 */
+export const POP_RISE_PX = 60;
+const POP_GAP_PX = 6;
 const CLUE_MIN_PX = 14;
 
 /** 설명 글자 크기: 가로 화면 clamp(22px, 3.2vw, 40px) */
@@ -110,8 +113,13 @@ export class Hud {
   popScore(text: string, x: number, y: number, kind: 'gain' | 'loss'): void {
     const el = h('div', { class: `score-pop ${kind === 'loss' ? 'penalty-pop' : 'gain-pop'}`, lang: 'en' }, text);
     el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
+    el.style.visibility = 'hidden';
     this.pops.append(el);
+    // 떠오르는 0.8초 내내 설명 띠 아래(놀이 영역 안)에 있게 시작 높이를 자른다(review R-v3-7):
+    // 숫자 아래 끝 = top, 위 끝은 top − 높이 − 떠오르는 거리. 그 위 끝이 띠 아래 경계 + 여백보다 아래여야 한다.
+    const minTop = bandHeight(this.H) + POP_GAP_PX + el.offsetHeight + POP_RISE_PX;
+    el.style.top = `${Math.max(y, minTop)}px`;
+    el.style.visibility = '';
     window.setTimeout(() => el.remove(), 800);
   }
 

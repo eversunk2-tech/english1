@@ -107,22 +107,31 @@ export function stemOf(word: string): string {
   return word.endsWith('e') || word.endsWith('y') ? word.slice(0, -1) : word;
 }
 
-/** V5: 낱말 L(설명 토큰의 기본형 후보 하나)이 정답 word와 겹치는가 */
-export function lemmaHitsWord(l: string, word: string): boolean {
+/**
+ * V5: 낱말 L(설명 토큰의 기본형 후보 하나)이 정답 word와 겹치는가.
+ * @param containsOk ④(정답 안에 들어 있음)를 적용할지. 주지 않으면 늘 적용(오답 고르기용 넓은 규칙).
+ */
+export function lemmaHitsWord(l: string, word: string, containsOk: boolean = true): boolean {
   if (l === word) return true; // ①
   const ws = stemOf(word);
   if (l.length >= 3 && ws.length > 0 && l.startsWith(ws)) return true; // ②
   const ls = stemOf(l);
   if (ls.length >= 4 && word.startsWith(ls)) return true; // ③
-  if (l.length >= 3 && word.includes(l)) return true; // ④
+  if (containsOk && l.length >= 3 && word.includes(l)) return true; // ④
   return false;
 }
 
-/** V5: 설명(clue)에 word가 (같은 어근 포함) 들어 있는가 */
-export function clueMentions(clue: string, word: string): boolean {
+/**
+ * 설명(clue)에 word가 (같은 어근 포함) 들어 있는가.
+ * - isRealWord를 주지 않으면(오답 고르기, spec 5.6) 넓은 규칙 그대로: ④를 모든 기본형 후보에 적용.
+ * - isRealWord를 주면(V5 기계 검사, spec 7.4 v3b 보완) ④는 그 후보가 토큰 자신이거나 실제 낱말일 때만 적용 —
+ *   "very" → "ver" ⊂ fever 같은 가짜 조각으로 잘못 걸리지 않게 한다. ①②③은 그대로.
+ */
+export function clueMentions(clue: string, word: string, isRealWord?: (l: string) => boolean): boolean {
   for (const t of tokenize(clue)) {
     for (const l of lemmas(t)) {
-      if (lemmaHitsWord(l, word)) return true;
+      const containsOk = isRealWord === undefined || l === t || isRealWord(l);
+      if (lemmaHitsWord(l, word, containsOk)) return true;
     }
   }
   return false;

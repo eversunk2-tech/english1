@@ -1,5 +1,6 @@
 {
-  "secondary": ["pet", "wing", "ride", "bug", "honey", "round", "lay", "sweet", "lot", "person", "through", "plant", "other", "wheel", "string", "shoot", "net", "once"],
+  "secondary": ["pet", "wing", "ride", "bug", "honey", "round", "lay", "sweet", "lot", "person", "through", "plant", "other", "wheel", "string", "shoot", "net", "once", "thin", "wild", "pray", "loud", "truth", "stamp", "happen", "piece", "planet", "meal", "bow"],
   "interjection": ["meow", "woof", "oink", "quack"],
-  "proper": ["monday", "tuesday", "saturday", "sunday"]
+  "proper": ["monday", "tuesday", "saturday", "sunday", "christmas", "mars", "italian"],
+  "answerSecondary": ["giraffe", "dolphin", "whale", "medicine", "fever", "dentist", "calendar", "island", "desert", "planet", "airport", "museum", "village", "hungry", "angry", "invent"]
 }

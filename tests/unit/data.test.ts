@@ -43,17 +43,23 @@ describe('data (spec 7)', () => {
   it('validate.ts V1~V9 위반 0', () => {
     const r = validateQuestions(data, vocab, extra);
     expect(r.errors).toEqual([]);
-    expect(r.stats.total).toBe(161);
-    expect(r.stats.band34).toBe(84);
-    expect(r.stats.band56).toBe(77);
+    // v3(spec 7.6): 230문항 = 3~4학년군 143 + 5~6학년군 87, 5~6의 ** 정답 16/87 = 18.4%
+    expect(r.stats.total).toBe(230);
+    expect(r.stats.band34).toBe(143);
+    expect(r.stats.band56).toBe(87);
+    expect(r.stats.answerSecondaryCount).toBe(16);
+    expect(Number((r.stats.answerSecondaryRatio * 100).toFixed(1))).toBe(18.4);
     expect(r.stats.coreRatio).toBeGreaterThanOrEqual(0.95);
   });
 
-  it('부록 A 표와 questions.json이 모든 칸에서 같다(161문항)', () => {
+  it('부록 A 표와 questions.json이 모든 칸에서 같다(230문항, v3)', () => {
     const rows = specRows();
-    expect(rows.length).toBe(161);
-    expect(data.questions.length).toBe(161);
-    expect(data.version).toBe(1);
+    expect(rows.length).toBe(230);
+    expect(data.questions.length).toBe(230);
+    expect(data.version).toBe(2);
+    // v3b(spec 7.3·7.6.5): source 문구
+    expect(data.source).toBe('2022 개정 영어과 교육과정 [별표 3] 기본 어휘(초등 * 중심 + 5~6학년군 중학 ** 일부)');
+    expect(spec.includes(`"source": "${data.source}"`)).toBe(true);
     rows.forEach((cells, i) => {
       const [id, word, band, topic, ko, clue, avoid, base] = cells;
       const q = data.questions[i]!;
@@ -78,10 +84,18 @@ describe('data (spec 7)', () => {
     expect(vocab.filter((l) => l.length > 0)).toEqual(words);
   });
 
-  it('clue-extra.json이 spec 7.3과 같다', () => {
-    expect(extra.secondary).toEqual(['pet', 'wing', 'ride', 'bug', 'honey', 'round', 'lay', 'sweet', 'lot', 'person', 'through', 'plant', 'other', 'wheel', 'string', 'shoot', 'net', 'once']);
+  it('clue-extra.json이 spec 7.3 + 7.6.5(v3 더함)와 같다', () => {
+    expect(extra.secondary).toEqual([
+      'pet', 'wing', 'ride', 'bug', 'honey', 'round', 'lay', 'sweet', 'lot', 'person', 'through', 'plant', 'other', 'wheel', 'string', 'shoot', 'net', 'once',
+      'thin', 'wild', 'pray', 'loud', 'truth', 'stamp', 'happen', 'piece', 'planet', 'meal', 'bow',
+    ]);
     expect(extra.interjection).toEqual(['meow', 'woof', 'oink', 'quack']);
-    expect(extra.proper).toEqual(['monday', 'tuesday', 'saturday', 'sunday']);
+    expect(extra.proper).toEqual(['monday', 'tuesday', 'saturday', 'sunday', 'christmas', 'mars', 'italian']);
+    expect(extra.answerSecondary).toEqual([
+      'giraffe', 'dolphin', 'whale', 'medicine', 'fever', 'dentist', 'calendar', 'island', 'desert', 'planet', 'airport', 'museum', 'village', 'hungry', 'angry', 'invent',
+    ]);
+    // spec 7.6.5에 적힌 answerSecondary 목록 글자와 같다
+    expect(spec.includes(`\`answerSecondary\`: \`${JSON.stringify(extra.answerSecondary)}\``)).toBe(true);
   });
 
   describe('위반 예시를 일부러 넣으면 잡아낸다', () => {
@@ -95,7 +109,8 @@ describe('data (spec 7)', () => {
     it('V4 소문자 시작', () => expect(has(withQuestion((q) => (q.clue = 'a small pet. It says meow.')), 'V4')).toBe(true));
     it('V4 쓸 수 없는 글자', () => expect(has(withQuestion((q) => (q.clue = 'A small pet: it says meow.')), 'V4')).toBe(true));
     it('V4 11낱말 설명(5~6)', () => {
-      const errs = withQuestion((q) => (q.clue = 'It is a very big animal and it can run fast.'), 10);
+      const idx56 = data.questions.findIndex((q) => q.band === '5-6');
+      const errs = withQuestion((q) => (q.clue = 'It is a very big animal and it can run fast.'), idx56);
       expect(has(errs, 'V4')).toBe(true);
     });
     it('V4 9낱말 설명(3~4)', () => {
@@ -107,9 +122,60 @@ describe('data (spec 7)', () => {
       const idx = data.questions.findIndex((q) => q.word === 'birthday');
       expect(has(withQuestion((q) => (q.clue = 'A happy day with cake.'), idx), 'V5')).toBe(true);
     });
+    it('V5 보완(v3b): fever "…gets very hot."는 통과(very → ver 같은 가짜 조각은 ④에 안 걸림)', () => {
+      const fever = data.questions.find((q) => q.word === 'fever')!;
+      expect(fever.clue).toBe('When you are sick, your body gets very hot.');
+      // 오답 고르기용 넓은 규칙으로는 걸리지만(그대로 둠, spec 5.6) V5 검사에서는 통과
+      expect(clueMentions(fever.clue, 'fever')).toBe(true);
+      const errs = validateQuestions(clone(), vocab, extra).errors;
+      expect(errs.filter((e) => e.startsWith('V5'))).toEqual([]);
+      // 같은 보완으로 this → thi ⊂ thirsty 도 V5에 걸리지 않는다
+      const idx = data.questions.findIndex((q) => q.word === 'thirsty');
+      expect(withQuestion((q) => (q.clue = 'You feel this and want water.'), idx).filter((e) => e.startsWith('V5'))).toEqual([]);
+    });
+    it('V5 보완(v3b): birthday 설명에 진짜 낱말 "day"를 넣으면 여전히 V5 실패', () => {
+      const idx = data.questions.findIndex((q) => q.word === 'birthday');
+      const errs = withQuestion((q) => (q.clue = 'A party with cake and presents on this day.'), idx);
+      expect(errs.some((e) => e.startsWith('V5') && e.includes('birthday'))).toBe(true);
+      // basketball ⊃ ball 도 그대로 잡는다
+      const bi = data.questions.findIndex((q) => q.word === 'basketball');
+      expect(has(withQuestion((q) => (q.clue = 'Players throw a big ball into a high ring.'), bi), 'V5')).toBe(true);
+    });
     it('V6 목록 밖 낱말', () => expect(has(withQuestion((q) => (q.clue = 'A small feline. It says meow.')), 'V6')).toBe(true));
     it('V6 secondary 3개', () => expect(has(withQuestion((q) => (q.clue = 'A pet bug with honey.')), 'V6')).toBe(true));
     it('V7 정답이 목록에 없음', () => expect(has(withQuestion((q) => (q.word = 'zebra')), 'V7')).toBe(true));
+    it("V7' 3~4학년군 정답에 중학 권장 낱말(museum)", () => {
+      const d = clone();
+      // museum 문항을 3~4학년군으로 바꾼다
+      const m = d.questions.find((q) => q.word === 'museum')!;
+      m.band = '3-4';
+      const errs = validateQuestions(d, vocab, extra).errors;
+      expect(errs.some((e) => e.startsWith("V7'") && e.includes('museum'))).toBe(true);
+    });
+    it("V7' 5~6학년군 ** 정답도 answerSecondary에 없으면 위반", () => {
+      const d = clone();
+      const ex = { ...extra, answerSecondary: (extra.answerSecondary ?? []).filter((w) => w !== 'giraffe') };
+      const errs = validateQuestions(d, vocab, ex).errors;
+      expect(errs.some((e) => e.startsWith("V7'") && e.includes('giraffe'))).toBe(true);
+    });
+    it('V10 5~6학년군 ** 정답 비율 21% → 위반', () => {
+      const d = clone();
+      // 5~6학년군 * 정답 2개를 ** 낱말로 바꿔 18/87 → 18.4%를 넘기고, 목록에도 더해 V7'은 통과시킨다
+      const star = d.questions.filter((q) => q.band === '5-6' && !(extra.answerSecondary ?? []).includes(q.word));
+      const extraWords = ['tunnel', 'volcano'];
+      star.slice(0, 2).forEach((q, i) => (q.word = extraWords[i]!));
+      const ex = { ...extra, answerSecondary: [...(extra.answerSecondary ?? []), ...extraWords] };
+      const r = validateQuestions(d, vocab, ex);
+      expect(r.stats.answerSecondaryCount).toBe(18);
+      expect(r.stats.answerSecondaryRatio).toBeCloseTo(18 / 87, 9);
+      expect(18 / 87).toBeGreaterThan(0.2);
+      expect(r.errors.some((e) => e.startsWith('V10') && e.includes('20%'))).toBe(true);
+    });
+    it('V10 answerSecondary 낱말이 어느 문항에도 안 쓰이면 위반', () => {
+      const ex = { ...extra, answerSecondary: [...(extra.answerSecondary ?? []), 'volcano'] };
+      const errs = validateQuestions(clone(), vocab, ex).errors;
+      expect(errs.some((e) => e.startsWith('V10') && e.includes('volcano'))).toBe(true);
+    });
     it('V8 avoid가 문항에 없음', () => expect(has(withQuestion((q) => (q.avoid = ['unicorn'])), 'V8')).toBe(true));
     it('V9 문항 수 부족', () => {
       const d = clone();

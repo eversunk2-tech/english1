@@ -133,6 +133,8 @@ export function signed(n: number): string {
   return '0';
 }
 
+const V2_WRONG_LABEL = '오답:';
+
 export const V2 = {
   difficultyLabel: '난이도',
   /** 감점 숫자(영어 쪽 짧은 반응, spec 6.1): −20 */
@@ -146,7 +148,9 @@ export const V2 = {
   /** 복습 표 문제 칸 아래 작은 빨간 글씨: "오답 1번 −20" */
   wrongRow: (count: number, deducted: number): string =>
     deducted > 0 ? `오답 ${count}번 \u2212${deducted}` : `오답 ${count}번`,
-  wrongWords: (words: readonly string[]): string => `오답: ${words.join(', ')}`,
+  wrongWords: (words: readonly string[]): string => `${V2_WRONG_LABEL} ${words.join(', ')}`,
+  /** "오답:" 머리(한국어) — 단어 부분만 lang="en"으로 따로 감싼다(review V2-R1) */
+  wrongWordsLabel: V2_WRONG_LABEL,
   /** ?debug=1 결과 화면: 문제별 잡은 시각·설명 낱말 수·떨어지는 시간 */
   debugRow: (grabSec: number | null, words: number, fallSec: number): string =>
     `${grabSec === null ? '놓침' : `잡은 시각 ${grabSec.toFixed(1)}초`} · ${words}낱말 · 떨어지는 시간 ${fallSec.toFixed(2)}초`,

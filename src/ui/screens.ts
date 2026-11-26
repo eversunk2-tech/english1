@@ -207,7 +207,8 @@ export class Screens {
           r.wrongs.length > 0
             ? h('div', { class: 'wrong-note' },
                 h('div', {}, keepWords(V2.wrongRow(r.wrongs.length, r.deducted))),
-                h('div', { lang: 'en' }, V2.wrongWords(r.wrongs)),
+                // 한국어 "오답:"과 영어 단어를 나눈다 — 화면 읽기 프로그램이 각각 알맞은 목소리로 읽게(review V2-R1)
+                h('div', { class: 'wrong-words' }, `${V2.wrongWordsLabel} `, h('span', { lang: 'en' }, r.wrongs.join(', '))),
               )
             : null,
         ),

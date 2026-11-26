@@ -81,7 +81,14 @@ async function playGame(page: Page, d: Diff, band: '3-4' | '5-6', wrongs: Record
     expect(s.results[i]!.wrongs.length).toBe(r.wrongCount);
     const netText = r.net > 0 ? `+${r.net}` : r.net < 0 ? `−${-r.net}` : '0';
     await expect(row.locator('.net')).toHaveText(netText);
-    if (r.wrongCount > 0) await expect(row.locator('.wrong-note')).toContainText(`오답 ${r.wrongCount}번`);
+    if (r.wrongCount > 0) {
+      await expect(row.locator('.wrong-note')).toContainText(`오답 ${r.wrongCount}번`);
+      // review V2-R1: "오답:"은 한국어, 단어만 lang="en"
+      const ww = row.locator('.wrong-words');
+      await expect(ww).toHaveText(`오답: ${s.results[i]!.wrongs.join(', ')}`);
+      expect(await ww.evaluate((el) => el.closest('[lang="en"]'))).toBe(null);
+      await expect(ww.locator('span[lang="en"]')).toHaveText(s.results[i]!.wrongs.join(', '));
+    }
     else await expect(row.locator('.wrong-note')).toHaveCount(0);
   }
   const totalWrong = rows.reduce((a, r) => a + r.wrongCount, 0);

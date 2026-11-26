@@ -49,6 +49,13 @@ test('E2 터치 모드 한 판(Easy): 정답 누르기 ×10 → 10/10, 점수 = 
     s = await state(page);
     expect(s.phase).toBe('correct');
     expect(s.score).toBe(expected);
+    // review R-v3-7: 떠오르는 "+점수"가 0.8초 내내 설명 띠 글자 위에 겹치지 않음(시작 위 끝 − 떠오르는 60px ≥ 띠 아래 경계)
+    const pop = await page.locator('.gain-pop').last().evaluate((el) => {
+      const e = el as HTMLElement;
+      const band = document.querySelector('.band')!.getBoundingClientRect();
+      return { top: parseFloat(e.style.top), h: e.offsetHeight, bandBottom: band.bottom };
+    });
+    expect(pop.top - pop.h - 60, `q${q} pop`).toBeGreaterThanOrEqual(pop.bandBottom);
     await step(page, 1600);
   }
   const s = await stepUntil(page, (st) => st.screen === 'result');

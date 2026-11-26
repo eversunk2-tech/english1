@@ -53,7 +53,7 @@ describe('difficulty (spec 5.3·5.5 v2)', () => {
     }
   });
 
-  it('③ Hard 보장: 161문항 × 3난이도 × 3단계 — fall ≥ 단계 값, ≥ 바닥, 0.85·fall ≥ T_need, Hard 최소 ≥ 4500ms', () => {
+  it('③ Hard 보장: 230문항 × 3난이도 × 3단계 — fall ≥ 단계 값, ≥ 바닥, 0.85·fall ≥ T_need, Hard 최소 ≥ 4500ms', () => {
     let hardMin = Infinity;
     for (const d of DIFFS) {
       for (const from of STAGE_START) {
@@ -72,7 +72,7 @@ describe('difficulty (spec 5.3·5.5 v2)', () => {
     expect(hardMin).toBeGreaterThanOrEqual(4500);
   });
 
-  it('④ Easy는 161문항 모두 fallMsFor = 단계 값(v1과 같음)', () => {
+  it('④ Easy는 230문항 모두 fallMsFor = 단계 값(v1과 같음)', () => {
     for (const from of STAGE_START) {
       const st = stageFor(from, 'easy');
       for (const q of qs) expect(fallMsFor(q, st)).toBe(st.fallMs);
@@ -82,10 +82,11 @@ describe('difficulty (spec 5.3·5.5 v2)', () => {
   it('바닥 때문에 늘어나는 문항 수가 5.3.3의 Plan 계산과 같다', () => {
     const count = (d: Difficulty, from: number, band: Band): number =>
       qs.filter((q) => q.band === band && fallMsFor(q, stageFor(from, d)) > stageFor(from, d).fallMs).length;
-    expect([1, 4, 7].map((f) => count('normal', f, '3-4'))).toEqual([0, 0, 23]);
-    expect([1, 4, 7].map((f) => count('normal', f, '5-6'))).toEqual([0, 0, 25]);
-    expect([1, 4, 7].map((f) => count('hard', f, '3-4'))).toEqual([0, 48, 70]);
-    expect([1, 4, 7].map((f) => count('hard', f, '5-6'))).toEqual([9, 35, 54]);
+    // v3 부록 A 230문항 기준 Plan 계산(spec 5.3.3): Normal 7~10번 47/143·28/87, Hard 0/91/121(3~4)·12/46/65(5~6)
+    expect([1, 4, 7].map((f) => count('normal', f, '3-4'))).toEqual([0, 0, 47]);
+    expect([1, 4, 7].map((f) => count('normal', f, '5-6'))).toEqual([0, 0, 28]);
+    expect([1, 4, 7].map((f) => count('hard', f, '3-4'))).toEqual([0, 91, 121]);
+    expect([1, 4, 7].map((f) => count('hard', f, '5-6'))).toEqual([12, 46, 65]);
     const hard710 = qs.map((q) => fallMsFor(q, stageFor(7, 'hard')));
     expect(Math.max(...hard710)).toBe(6120);
   });

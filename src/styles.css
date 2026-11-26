@@ -784,7 +784,7 @@ body {
   }
   to {
     opacity: 0;
-    transform: translate(-50%, calc(-100% - 60px));
+    transform: translate(-50%, calc(-100% - 60px)); /* 60px = hud.ts POP_RISE_PX */
   }
 }
 
