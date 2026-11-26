@@ -5,7 +5,7 @@ describe('config는 실행 중 바꿀 수 없다 (spec 12.2, review M2)', () => 
   it('모든 상수 객체가 깊게 얼어 있다', () => {
     for (const o of [HAND, GAME, LAYOUT, PERF, ASSETS, STORAGE_KEYS]) expect(Object.isFrozen(o)).toBe(true);
     expect(Object.isFrozen(GAME.DIFFICULTIES)).toBe(true);
-    for (const d of ['easy', 'normal', 'hard'] as const) {
+    for (const d of ['easy', 'normal', 'hard', 'veryhard'] as const) {
       expect(Object.isFrozen(GAME.DIFFICULTIES[d])).toBe(true);
       expect(Object.isFrozen(GAME.DIFFICULTIES[d].stages)).toBe(true);
       for (const st of GAME.DIFFICULTIES[d].stages) expect(Object.isFrozen(st)).toBe(true);
@@ -23,7 +23,13 @@ describe('config는 실행 중 바꿀 수 없다 (spec 12.2, review M2)', () => 
     expect(() => {
       (GAME.DIFFICULTIES.hard.stages[2] as unknown as { fallMs: number }).fallMs = 1;
     }).toThrow(TypeError);
-    expect(GAME.DIFFICULTIES.hard.stages[2]!.fallMs).toBe(4500);
+    expect(GAME.DIFFICULTIES.hard.stages[2]!.fallMs).toBe(4000);
+    expect(() => {
+      (GAME.DIFFICULTIES.veryhard as unknown as { wrongPenalty: number }).wrongPenalty = 0;
+    }).toThrow(TypeError);
+    expect(() => {
+      (GAME.FALL_FLOOR.WORD_MS as unknown as { vh: number }).vh = 1;
+    }).toThrow(TypeError);
     expect(() => {
       (GAME.DIFFICULTIES.normal as unknown as { wrongPenalty: number }).wrongPenalty = 0;
     }).toThrow(TypeError);

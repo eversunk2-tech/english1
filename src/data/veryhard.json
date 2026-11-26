@@ -1,0 +1,989 @@
+{
+  "version": 1,
+  "source": "2022 개정 영어과 교육과정 [별표 3] 기본 어휘(중학 ** 중심 + 그 외 등급 일부)",
+  "questions": [
+    {
+      "id": "vh-animal-01",
+      "word": "zebra",
+      "band": "vh",
+      "topic": "animal",
+      "ko": "얼룩말",
+      "clue": "It looks like a horse with black and white lines.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-animal-02",
+      "word": "snake",
+      "band": "vh",
+      "topic": "animal",
+      "ko": "뱀",
+      "clue": "This long animal has no legs. Some have poison.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-animal-03",
+      "word": "frog",
+      "band": "vh",
+      "topic": "animal",
+      "ko": "개구리",
+      "clue": "A small green animal that jumps and says ribbit.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-animal-04",
+      "word": "sheep",
+      "band": "vh",
+      "topic": "animal",
+      "ko": "양",
+      "clue": "A farm animal. We get wool from it.",
+      "avoid": [
+        "goat"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-animal-05",
+      "word": "insect",
+      "band": "vh",
+      "topic": "animal",
+      "ko": "곤충",
+      "clue": "Ants and bees are this. They have six legs.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-animal-06",
+      "word": "goat",
+      "band": "vh",
+      "topic": "animal",
+      "ko": "염소",
+      "clue": "A farm animal. It is good at climbing rocks.",
+      "avoid": [
+        "sheep"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-food-01",
+      "word": "mushroom",
+      "band": "vh",
+      "topic": "food",
+      "ko": "버섯",
+      "clue": "It looks like a tiny umbrella and grows in forests.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-food-02",
+      "word": "strawberry",
+      "band": "vh",
+      "topic": "food",
+      "ko": "딸기",
+      "clue": "A small red fruit with seeds on the outside.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-food-03",
+      "word": "lemon",
+      "band": "vh",
+      "topic": "food",
+      "ko": "레몬",
+      "clue": "A yellow fruit. It is very sour.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-food-04",
+      "word": "pepper",
+      "band": "vh",
+      "topic": "food",
+      "ko": "후추",
+      "clue": "We put this hot black powder on food.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-food-05",
+      "word": "recipe",
+      "band": "vh",
+      "topic": "food",
+      "ko": "요리법",
+      "clue": "It tells you how to cook a dish.",
+      "avoid": [
+        "ingredient"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-food-06",
+      "word": "snack",
+      "band": "vh",
+      "topic": "food",
+      "ko": "간식",
+      "clue": "Cookies and chips are this. We eat it between meals.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-food-07",
+      "word": "ingredient",
+      "band": "vh",
+      "topic": "food",
+      "ko": "재료",
+      "clue": "Eggs, milk, and sugar for a cake are these.",
+      "avoid": [
+        "recipe"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-body-01",
+      "word": "shoulder",
+      "band": "vh",
+      "topic": "body",
+      "ko": "어깨",
+      "clue": "It is between your neck and your arm.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-02",
+      "word": "knee",
+      "band": "vh",
+      "topic": "body",
+      "ko": "무릎",
+      "clue": "The middle part of your leg. It bends.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-03",
+      "word": "tongue",
+      "band": "vh",
+      "topic": "body",
+      "ko": "혀",
+      "clue": "It is in your mouth. It helps you taste food.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-04",
+      "word": "stomach",
+      "band": "vh",
+      "topic": "body",
+      "ko": "위, 배",
+      "clue": "Food goes here after you swallow it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-05",
+      "word": "brain",
+      "band": "vh",
+      "topic": "body",
+      "ko": "뇌",
+      "clue": "It is in your head. You think with it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-06",
+      "word": "muscle",
+      "band": "vh",
+      "topic": "body",
+      "ko": "근육",
+      "clue": "It makes your body strong. Exercise makes it bigger.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-07",
+      "word": "cough",
+      "band": "vh",
+      "topic": "body",
+      "ko": "기침",
+      "clue": "A sudden noise from your throat when you are sick.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-body-08",
+      "word": "thumb",
+      "band": "vh",
+      "topic": "body",
+      "ko": "엄지손가락",
+      "clue": "The short, thick finger on your hand.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-01",
+      "word": "engineer",
+      "band": "vh",
+      "topic": "people",
+      "ko": "기술자, 공학자",
+      "clue": "This person designs machines, roads, or bridges.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-02",
+      "word": "soldier",
+      "band": "vh",
+      "topic": "people",
+      "ko": "군인",
+      "clue": "This person fights for the country in the army.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-03",
+      "word": "lawyer",
+      "band": "vh",
+      "topic": "people",
+      "ko": "변호사",
+      "clue": "This person helps people in court.",
+      "avoid": [
+        "judge"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-people-04",
+      "word": "thief",
+      "band": "vh",
+      "topic": "people",
+      "ko": "도둑",
+      "clue": "A person who takes things that are not theirs.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-05",
+      "word": "neighbor",
+      "band": "vh",
+      "topic": "people",
+      "ko": "이웃",
+      "clue": "A person who lives next to your house.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-06",
+      "word": "judge",
+      "band": "vh",
+      "topic": "people",
+      "ko": "판사",
+      "clue": "This person decides in court if someone is guilty.",
+      "avoid": [
+        "lawyer"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-people-07",
+      "word": "athlete",
+      "band": "vh",
+      "topic": "people",
+      "ko": "운동선수",
+      "clue": "A person who is good at sports and trains hard.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-08",
+      "word": "passenger",
+      "band": "vh",
+      "topic": "people",
+      "ko": "승객",
+      "clue": "A person who rides in a bus, train, or plane.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-people-09",
+      "word": "professor",
+      "band": "vh",
+      "topic": "people",
+      "ko": "교수",
+      "clue": "A teacher at a university.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-school-01",
+      "word": "dictionary",
+      "band": "vh",
+      "topic": "school",
+      "ko": "사전",
+      "clue": "A book that tells you what words mean.",
+      "avoid": [
+        "vocabulary"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-school-02",
+      "word": "diary",
+      "band": "vh",
+      "topic": "school",
+      "ko": "일기",
+      "clue": "You write about your day in it every night.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-school-03",
+      "word": "poem",
+      "band": "vh",
+      "topic": "school",
+      "ko": "시",
+      "clue": "Beautiful words in short lines, like a song.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-school-04",
+      "word": "language",
+      "band": "vh",
+      "topic": "school",
+      "ko": "언어",
+      "clue": "English, Korean, and Chinese are examples of this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-school-05",
+      "word": "laboratory",
+      "band": "vh",
+      "topic": "school",
+      "ko": "실험실",
+      "clue": "We do science experiments in this room.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-school-06",
+      "word": "grade",
+      "band": "vh",
+      "topic": "school",
+      "ko": "성적",
+      "clue": "Your teacher gives it to show how well you did.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-school-07",
+      "word": "vocabulary",
+      "band": "vh",
+      "topic": "school",
+      "ko": "어휘",
+      "clue": "All the words that you know.",
+      "avoid": [
+        "dictionary",
+        "language"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-home-01",
+      "word": "furniture",
+      "band": "vh",
+      "topic": "home",
+      "ko": "가구",
+      "clue": "Beds, chairs, and tables are this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-home-02",
+      "word": "mirror",
+      "band": "vh",
+      "topic": "home",
+      "ko": "거울",
+      "clue": "You look at it to see your face.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-home-03",
+      "word": "blanket",
+      "band": "vh",
+      "topic": "home",
+      "ko": "담요",
+      "clue": "A warm cover you put on your bed.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-home-04",
+      "word": "towel",
+      "band": "vh",
+      "topic": "home",
+      "ko": "수건",
+      "clue": "You dry your body with it after a bath.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-home-05",
+      "word": "oven",
+      "band": "vh",
+      "topic": "home",
+      "ko": "오븐",
+      "clue": "We bake bread and cakes inside it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-home-06",
+      "word": "ceiling",
+      "band": "vh",
+      "topic": "home",
+      "ko": "천장",
+      "clue": "The top of a room, above your head.",
+      "avoid": [
+        "roof"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-home-07",
+      "word": "roof",
+      "band": "vh",
+      "topic": "home",
+      "ko": "지붕",
+      "clue": "The top of a house. It keeps the rain out.",
+      "avoid": [
+        "ceiling"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-home-08",
+      "word": "ladder",
+      "band": "vh",
+      "topic": "home",
+      "ko": "사다리",
+      "clue": "We climb it to reach high places.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-clothes-01",
+      "word": "glove",
+      "band": "vh",
+      "topic": "clothes",
+      "ko": "장갑",
+      "clue": "You wear it on your hand in winter.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-clothes-02",
+      "word": "scarf",
+      "band": "vh",
+      "topic": "clothes",
+      "ko": "목도리",
+      "clue": "You wear it around your neck when it is cold.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-clothes-03",
+      "word": "sweater",
+      "band": "vh",
+      "topic": "clothes",
+      "ko": "스웨터",
+      "clue": "A warm top made of wool.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-clothes-04",
+      "word": "uniform",
+      "band": "vh",
+      "topic": "clothes",
+      "ko": "교복, 제복",
+      "clue": "The same clothes that all students in a school wear.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-nature-01",
+      "word": "ocean",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "대양, 바다",
+      "clue": "A very large sea, like the Pacific.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-nature-02",
+      "word": "rainbow",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "무지개",
+      "clue": "Seven colors appear in the sky after a storm.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-nature-03",
+      "word": "valley",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "계곡, 골짜기",
+      "clue": "Low land between two mountains.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-nature-04",
+      "word": "storm",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "폭풍",
+      "clue": "Very strong wind with heavy rain.",
+      "avoid": [
+        "flood"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-nature-05",
+      "word": "flood",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "홍수",
+      "clue": "Too much water covers the land after heavy rain.",
+      "avoid": [
+        "storm"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-nature-06",
+      "word": "climate",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "기후",
+      "clue": "The weather of a place over many years.",
+      "avoid": [
+        "temperature"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-nature-07",
+      "word": "temperature",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "온도",
+      "clue": "How hot or cold something is.",
+      "avoid": [
+        "climate"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-nature-08",
+      "word": "continent",
+      "band": "vh",
+      "topic": "nature",
+      "ko": "대륙",
+      "clue": "Asia and Africa are this. They are very big lands.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-01",
+      "word": "hotel",
+      "band": "vh",
+      "topic": "place",
+      "ko": "호텔",
+      "clue": "You pay to sleep here when you travel.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-02",
+      "word": "factory",
+      "band": "vh",
+      "topic": "place",
+      "ko": "공장",
+      "clue": "People make cars or toys here with machines.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-03",
+      "word": "prison",
+      "band": "vh",
+      "topic": "place",
+      "ko": "감옥",
+      "clue": "A place where people who break the law live.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-04",
+      "word": "castle",
+      "band": "vh",
+      "topic": "place",
+      "ko": "성",
+      "clue": "Kings and queens lived in this big, old building.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-05",
+      "word": "university",
+      "band": "vh",
+      "topic": "place",
+      "ko": "대학교",
+      "clue": "Students go here to study after high school.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-06",
+      "word": "harbor",
+      "band": "vh",
+      "topic": "place",
+      "ko": "항구",
+      "clue": "Ships stay here safely near the land.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-07",
+      "word": "tunnel",
+      "band": "vh",
+      "topic": "place",
+      "ko": "터널",
+      "clue": "A long road under a mountain or the sea.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-place-08",
+      "word": "gallery",
+      "band": "vh",
+      "topic": "place",
+      "ko": "미술관",
+      "clue": "A place where people look at art.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-transport-01",
+      "word": "helicopter",
+      "band": "vh",
+      "topic": "transport",
+      "ko": "헬리콥터",
+      "clue": "It flies with big turning parts on top.",
+      "avoid": [
+        "rocket"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-transport-02",
+      "word": "rocket",
+      "band": "vh",
+      "topic": "transport",
+      "ko": "로켓",
+      "clue": "It carries people into space.",
+      "avoid": [
+        "helicopter"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-transport-03",
+      "word": "traffic",
+      "band": "vh",
+      "topic": "transport",
+      "ko": "교통(량)",
+      "clue": "Many cars on the road at the same time.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-transport-04",
+      "word": "passport",
+      "band": "vh",
+      "topic": "transport",
+      "ko": "여권",
+      "clue": "You need it to travel to other countries.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-transport-05",
+      "word": "submarine",
+      "band": "vh",
+      "topic": "transport",
+      "ko": "잠수함",
+      "clue": "A ship that goes under the sea.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-music-01",
+      "word": "instrument",
+      "band": "vh",
+      "topic": "music",
+      "ko": "악기",
+      "clue": "A piano and a violin are this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-music-02",
+      "word": "orchestra",
+      "band": "vh",
+      "topic": "music",
+      "ko": "오케스트라",
+      "clue": "A large group of people playing music together.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-music-03",
+      "word": "rhythm",
+      "band": "vh",
+      "topic": "music",
+      "ko": "리듬",
+      "clue": "The beat in music that makes you move.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-time-01",
+      "word": "century",
+      "band": "vh",
+      "topic": "time",
+      "ko": "세기, 100년",
+      "clue": "One hundred years.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-time-02",
+      "word": "noon",
+      "band": "vh",
+      "topic": "time",
+      "ko": "정오",
+      "clue": "The middle of the day, at twelve.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-time-03",
+      "word": "anniversary",
+      "band": "vh",
+      "topic": "time",
+      "ko": "기념일",
+      "clue": "The same date every year when we remember something.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-01",
+      "word": "proud",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "자랑스러운",
+      "clue": "You feel this when you do something great.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-02",
+      "word": "nervous",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "긴장한",
+      "clue": "You feel this before a big test.",
+      "avoid": [],
+      "base": "nerve"
+    },
+    {
+      "id": "vh-feeling-03",
+      "word": "curious",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "호기심 많은",
+      "clue": "You want to know about everything.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-04",
+      "word": "polite",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "예의 바른",
+      "clue": "You say please and thank you.",
+      "avoid": [
+        "grateful"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-05",
+      "word": "rude",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "무례한",
+      "clue": "Not polite. You do not say sorry or thanks.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-06",
+      "word": "calm",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "차분한",
+      "clue": "Quiet and relaxed. Not worried at all.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-07",
+      "word": "wise",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "지혜로운",
+      "clue": "Old people with lots of knowledge are often this.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-08",
+      "word": "generous",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "너그러운, 후한",
+      "clue": "You like to give and share with others.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-feeling-09",
+      "word": "grateful",
+      "band": "vh",
+      "topic": "feeling",
+      "ko": "고마워하는",
+      "clue": "You want to say thank you to someone.",
+      "avoid": [
+        "polite"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-action-01",
+      "word": "explain",
+      "band": "vh",
+      "topic": "action",
+      "ko": "설명하다",
+      "clue": "You tell someone about something so they can understand.",
+      "avoid": [
+        "translate"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-action-02",
+      "word": "protect",
+      "band": "vh",
+      "topic": "action",
+      "ko": "지키다, 보호하다",
+      "clue": "You keep someone safe from danger.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-action-03",
+      "word": "repair",
+      "band": "vh",
+      "topic": "action",
+      "ko": "고치다",
+      "clue": "You fix something that does not work.",
+      "avoid": [
+        "destroy"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-action-04",
+      "word": "destroy",
+      "band": "vh",
+      "topic": "action",
+      "ko": "파괴하다",
+      "clue": "You break something so it can never be used again.",
+      "avoid": [
+        "repair"
+      ],
+      "base": null
+    },
+    {
+      "id": "vh-action-05",
+      "word": "whisper",
+      "band": "vh",
+      "topic": "action",
+      "ko": "속삭이다",
+      "clue": "You speak very quietly so others cannot hear.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-action-06",
+      "word": "escape",
+      "band": "vh",
+      "topic": "action",
+      "ko": "탈출하다",
+      "clue": "You get out of a place where you are trapped.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-action-07",
+      "word": "celebrate",
+      "band": "vh",
+      "topic": "action",
+      "ko": "축하하다",
+      "clue": "You have a party because something good happened.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-action-08",
+      "word": "explore",
+      "band": "vh",
+      "topic": "action",
+      "ko": "탐험하다",
+      "clue": "You travel to a new place to learn about it.",
+      "avoid": [],
+      "base": null
+    },
+    {
+      "id": "vh-action-09",
+      "word": "translate",
+      "band": "vh",
+      "topic": "action",
+      "ko": "번역하다",
+      "clue": "You change words from English into Korean.",
+      "avoid": [],
+      "base": null
+    }
+  ]
+}

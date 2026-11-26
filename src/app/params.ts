@@ -13,7 +13,7 @@ export interface Params {
   test: boolean;
   delegate: 'auto' | 'GPU' | 'CPU';
   manualClock: boolean;
-  /** ?difficulty=easy|normal|hard — 있으면 기억한 값보다 우선(spec 6.2 v2) */
+  /** ?difficulty=easy|normal|hard|veryhard — 있으면 기억한 값보다 우선(spec 6.2 v2·v4) */
   difficulty: Difficulty | null;
 }
 
@@ -35,6 +35,6 @@ export function parseParams(search: string): Params {
     delegate: delegate === 'CPU' ? 'CPU' : delegate === 'GPU' ? 'GPU' : 'auto',
     // ?clock=manual은 ?test=1이 함께 있을 때만(spec 11·12.2, review R1)
     manualClock: q.get('test') === '1' && q.get('clock') === 'manual',
-    difficulty: diff === 'easy' || diff === 'normal' || diff === 'hard' ? diff : null,
+    difficulty: diff === 'easy' || diff === 'normal' || diff === 'hard' || diff === 'veryhard' ? diff : null,
   };
 }

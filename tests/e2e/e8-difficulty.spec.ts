@@ -1,31 +1,41 @@
 import { expect, test, type Page } from '@playwright/test';
 import { clickAt, startTouchGame, state, step, stepUntil, watchPage } from './helpers.ts';
 
-type Diff = 'easy' | 'normal' | 'hard';
+import { readFileSync } from 'node:fs';
+
+type Diff = 'easy' | 'normal' | 'hard' | 'veryhard';
+const VH_WORDS = new Set<string>(
+  (JSON.parse(readFileSync(new URL('../../src/data/veryhard.json', import.meta.url), 'utf8')) as { questions: { word: string }[] }).questions.map(
+    (q) => q.word,
+  ),
+);
 
 // spec 5.3.2·5.3.3·5.5를 테스트 안에 따로 적는다(저장소 코드를 기대값으로 쓰지 않음)
-const MULT: Record<Diff, number> = { easy: 1.0, normal: 1.2, hard: 1.5 };
-const PENALTY: Record<Diff, number> = { easy: 10, normal: 20, hard: 30 };
+const MULT: Record<Diff, number> = { easy: 1.0, normal: 1.2, hard: 1.5, veryhard: 2.0 };
+const PENALTY: Record<Diff, number> = { easy: 10, normal: 20, hard: 30, veryhard: 40 };
 const STAGE: Record<Diff, [number, number][]> = {
-  // [카드 수, 단계 값 ms] — 1~3, 4~6, 7~10
-  easy: [[3, 9000], [4, 7500], [4, 6500]],
-  normal: [[3, 7500], [4, 6500], [4, 5500]],
-  hard: [[4, 6000], [4, 5000], [4, 4500]],
+  // [카드 수, 단계 값 ms] — 1~3, 4~6, 7~10 (spec 5.3.2 v4)
+  easy: [[3, 8500], [4, 7000], [4, 6000]],
+  normal: [[3, 7000], [4, 6000], [4, 5000]],
+  hard: [[4, 5500], [4, 4500], [4, 4000]],
+  veryhard: [[4, 5000], [4, 4000], [4, 3500]],
 };
-const LABEL: Record<Diff, string> = { easy: 'Easy', normal: 'Normal', hard: 'Hard' };
+const LABEL: Record<Diff, string> = { easy: 'Easy', normal: 'Normal', hard: 'Hard', veryhard: 'Very Hard' };
+type QBand = '3-4' | '5-6' | 'vh';
 
 function stageOf(d: Diff, q: number): [number, number] {
   return STAGE[d][q <= 3 ? 0 : q <= 6 ? 1 : 2]!;
 }
-function expectedFall(clue: string, band: '3-4' | '5-6', d: Diff, q: number): number {
+function expectedFall(clue: string, band: QBand, d: Diff, q: number): number {
   const n = (clue.toLowerCase().match(/[a-z]+('[a-z]+)?/g) ?? []).length;
-  const need = 300 + n * (band === '3-4' ? 400 : 350) + 1000 + 400;
+  const need = 300 + n * (band === '3-4' ? 350 : band === '5-6' ? 300 : 250) + 1000 + 400;
   return Math.max(stageOf(d, q)[1], Math.ceil((need * 100) / 85 / 10) * 10);
 }
 const center = (r: { x: number; y: number; w: number; h: number }): [number, number] => [r.x + r.w / 2, r.y + r.h / 2];
 
 /** 한 판: wrongs[q] 번 오답을 누른 뒤 정답을 누른다. 점수·문제별 기록을 독립 계산해 비교한다. */
 async function playGame(page: Page, d: Diff, band: '3-4' | '5-6', wrongs: Record<number, number>, touch: boolean): Promise<{ score: number; first: number }> {
+  const qBand: QBand = d === 'veryhard' ? 'vh' : band;
   let score = 0;
   let combo = 0;
   let first = 0;
@@ -34,8 +44,10 @@ async function playGame(page: Page, d: Diff, band: '3-4' | '5-6', wrongs: Record
     let s = await stepUntil(page, (st) => st.question === q && st.phase === 'falling');
     // 카드 수·떨어지는 시간 = 5.3.2·5.3.3
     expect(s.cards.length, `q${q} cards`).toBe(stageOf(d, q)[0]);
-    expect(s.fallMs, `q${q} fallMs`).toBe(expectedFall(s.clue!, band, d, q));
+    expect(s.fallMs, `q${q} fallMs`).toBe(expectedFall(s.clue!, qBand, d, q));
     expect(s.difficulty).toBe(d);
+    // Very Hard는 학년과 상관없이 Very Hard 풀의 낱말만, 다른 난이도는 그 풀이 아님
+    for (const c of s.cards) expect(VH_WORDS.has(c.word), `q${q} ${c.word}`).toBe(d === 'veryhard');
     let firstTry = true;
     let deducted = 0;
     let wrongCount = 0;
@@ -71,7 +83,9 @@ async function playGame(page: Page, d: Diff, band: '3-4' | '5-6', wrongs: Record
   const s = await stepUntil(page, (st) => st.screen === 'result');
   expect(s.score).toBe(score);
   await expect(page.locator('#result-score b')).toHaveText(String(score));
-  await expect(page.locator('#result-combo')).toHaveText(`${band === '3-4' ? '3~4학년' : '5~6학년'} · ${LABEL[d]}`);
+  await expect(page.locator('#result-combo')).toHaveText(
+    d === 'veryhard' ? 'Very Hard · 중학 단어' : `${band === '3-4' ? '3~4학년' : '5~6학년'} · ${LABEL[d]}`,
+  );
   // 복습표 문제별 점수·오답 수
   for (let i = 0; i < 10; i++) {
     const row = page.locator('#review tbody tr').nth(i);
@@ -122,8 +136,10 @@ const GAMES: { d: Diff; band: '3-4' | '5-6'; seed: number; wrongs: Record<number
   { d: 'easy', band: '3-4', seed: 21, wrongs: { 1: 1 }, challenge: '다음엔 Normal에 도전해 볼까요?' },
   // Normal: 오답 섞인 문제 3개 → 첫 시도 7개 → 권유 없음
   { d: 'normal', band: '3-4', seed: 22, wrongs: { 1: 1, 2: 2, 5: 1 }, challenge: null },
-  // Hard(5~6학년군): 오답 섞인 문제 2개 → 첫 시도 8개 → Hard 권유
-  { d: 'hard', band: '5-6', seed: 23, wrongs: { 3: 2, 8: 1 }, challenge: 'Hard도 거뜬해요! 최고 점수에 도전해 봐요.' },
+  // Hard(5~6학년군): 오답 섞인 문제 2개 → 첫 시도 8개 → Very Hard 권유(v4)
+  { d: 'hard', band: '5-6', seed: 23, wrongs: { 3: 2, 8: 1 }, challenge: '다음엔 Very Hard에 도전해 볼까요?' },
+  // Very Hard(학년 3~4를 골라도 Very Hard 풀): 1번 문제 점수 0에서 오답(깎인 것 없음), 오답 문제 2개 → 첫 시도 8개 → Very Hard 권유
+  { d: 'veryhard', band: '3-4', seed: 24, wrongs: { 1: 1, 6: 2 }, challenge: 'Very Hard도 거뜬해요! 최고 점수에 도전해 봐요.' },
 ];
 
 for (const g of GAMES) {
@@ -136,8 +152,13 @@ for (const g of GAMES) {
     await expect(page.locator('#diff-badge')).toHaveText(LABEL[g.d]);
     const { score, first } = await playGame(page, g.d, g.band, g.wrongs, touch);
     expect(first).toBe(10 - Object.keys(g.wrongs).length);
-    // ⑤ 최고 점수 키
-    expect(await page.evaluate((k) => localStorage.getItem(k), `catchword.best.${g.band}.${g.d}`)).toBe(String(score));
+    // ⑤ 최고 점수 키(Very Hard는 학년과 상관없이 한 칸), 최근 목록도 Very Hard는 따로
+    const key = g.d === 'veryhard' ? 'catchword.best.veryhard' : `catchword.best.${g.band}.${g.d}`;
+    expect(await page.evaluate((k) => localStorage.getItem(k), key)).toBe(String(score));
+    const recentKey = g.d === 'veryhard' ? 'catchword.recent.veryhard' : 'catchword.recent';
+    const otherKey = g.d === 'veryhard' ? 'catchword.recent' : 'catchword.recent.veryhard';
+    expect(JSON.parse((await page.evaluate((k) => localStorage.getItem(k), recentKey)) ?? '[]').length).toBe(10);
+    expect(await page.evaluate((k) => localStorage.getItem(k), otherKey)).toBe(null);
     await expect(page.locator('#result-best b')).toHaveText(String(score));
     // ⑥ 도전 권유
     if (g.challenge) await expect(page.locator('#challenge')).toHaveText(g.challenge);
@@ -177,4 +198,34 @@ test('E8 ③ 오답 감점: Normal에서 점수 0이면 빨간 숫자 없이 Try
   expect(s.score).toBe(0);
   await expect(page.locator('#feedback')).toHaveText('Try again!');
   await expect(page.locator('.penalty-pop')).toHaveCount(0);
+});
+
+test('E8 v4 Very Hard 화면: 버튼 4칸, 고르면 학년 줄 흐림 + 안내, 기억·URL, 배지', async ({ page }) => {
+  await page.goto('./?test=1');
+  await expect(page.locator('[data-difficulty]')).toHaveCount(4);
+  await expect(page.locator('[data-difficulty="veryhard"]')).toContainText('Very Hard');
+  await expect(page.locator('[data-difficulty="veryhard"]')).toContainText('매우 어려움');
+  await expect(page.locator('[data-difficulty="veryhard"] .icon.star')).toHaveCount(2);
+  await expect(page.locator('[data-difficulty="hard"] .icon.star')).toHaveCount(1);
+  await expect(page.locator('#band-note')).toBeHidden();
+  await page.click('[data-difficulty="veryhard"]');
+  await expect(page.locator('#difficulty-desc')).toHaveText('중학교 단어가 아주 빠르게 떨어져요. 최고의 도전!');
+  await expect(page.locator('#band-note')).toHaveText('Very Hard는 학년과 상관없이 중학 단어로 나와요');
+  expect(await page.locator('#band-row').evaluate((el) => getComputedStyle(el).opacity)).toBe('0.4');
+  // 흐려도 누를 수 있고 값은 기억
+  await page.click('[data-band="5-6"]');
+  await expect(page.locator('[data-band="5-6"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.reload();
+  await expect(page.locator('[data-difficulty="veryhard"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#band-note')).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('catchword.difficulty'))).toBe('veryhard');
+  // 다른 난이도로 바꾸면 원래대로
+  await page.click('[data-difficulty="normal"]');
+  await expect(page.locator('#band-note')).toBeHidden();
+  expect(await page.locator('#band-row').evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+  // URL ?difficulty=veryhard가 기억보다 우선 + 배지
+  await page.goto('./?test=1&input=pointer&clock=manual&difficulty=veryhard');
+  await expect(page.locator('[data-difficulty="veryhard"]')).toHaveAttribute('aria-pressed', 'true');
+  await startTouchGame(page);
+  await expect(page.locator('#diff-badge')).toHaveText('Very Hard');
 });

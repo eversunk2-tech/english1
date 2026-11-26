@@ -136,3 +136,60 @@ export function clueMentions(clue: string, word: string, isRealWord?: (l: string
   }
   return false;
 }
+
+/** V5b(spec 7.4 v4)의 파생 접사 */
+export const DERIVATION_SUFFIXES: readonly string[] = ['ist', 'er', 'or', 'ian', 'ous', 'ful', 'y', 'ness', 'ly'];
+
+/**
+ * V5b: 정답의 어근 후보 — ① base를 '+'로 나눈 조각 ② 정답 끝에서 파생 접사 하나를 뗀 기본형
+ * (뗀 결과 3자 이상; 그대로·끝에 e·끝 i→y·끝 t→ce 가운데 초등 목록에 있는 것).
+ */
+export function derivedRoots(
+  word: string,
+  base: string | null,
+  elementary: ReadonlySet<string>,
+  notDerived: ReadonlySet<string> = new Set(),
+): string[] {
+  const out = new Set<string>();
+  if (base) for (const p of base.split('+')) if (p.trim()) out.add(p.trim().toLowerCase());
+  // v4b: 접사를 떼서 우연히 초등 낱말이 되는 가짜 어근(busy→bus, shoulder→should)은 ②를 건너뛰고 ①(base)만 본다
+  if (notDerived.has(word)) {
+    out.delete(word);
+    return [...out];
+  }
+  for (const suf of DERIVATION_SUFFIXES) {
+    if (!word.endsWith(suf)) continue;
+    const stem = word.slice(0, -suf.length);
+    if (stem.length < 3) continue;
+    const cands = [stem, `${stem}e`];
+    if (stem.endsWith('i')) cands.push(`${stem.slice(0, -1)}y`);
+    if (stem.endsWith('t')) cands.push(`${stem.slice(0, -1)}ce`);
+    for (const c of cands) if (elementary.has(c)) out.add(c);
+  }
+  out.delete(word);
+  return [...out];
+}
+
+/** V5c에서 빼는 기능어 21개(spec 7.4) */
+export const V5C_FUNCTION_WORDS: ReadonlySet<string> = new Set([
+  'this', 'that', 'these', 'those', 'then', 'than', 'them', 'they', 'their', 'there',
+  'what', 'when', 'where', 'which', 'with', 'will', 'your', 'have', 'from', 'some', 'very',
+]);
+
+/**
+ * V5c(spec 7.4 v4b, 같은 날 다듬은 문장, 검사 전용): 같은 뿌리의 다른 낱말이 설명에 들어 있는가.
+ * 설명 토큰 t(기본형으로 바꾸지 않은 그대로)가 ① 정답과 길이가 같고 4자 이상 ② 마지막 한 글자만 다르고
+ * ③ 초등 목록(부록 B)의 낱말이 아니고 ④ 기능어 목록에 없으면 걸린다(예: poem ↔ poet).
+ * 걸린 토큰을 돌려준다. 오답 고르기에는 쓰지 않는다.
+ */
+export function sameRootTokens(clue: string, word: string, elementary: ReadonlySet<string>): string[] {
+  const out: string[] = [];
+  if (word.length < 4) return out;
+  for (const t of tokenize(clue)) {
+    if (t.length !== word.length || t === word) continue;
+    if (t.slice(0, -1) !== word.slice(0, -1)) continue;
+    if (elementary.has(t) || V5C_FUNCTION_WORDS.has(t)) continue;
+    out.push(t);
+  }
+  return out;
+}

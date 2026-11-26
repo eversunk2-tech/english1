@@ -153,3 +153,19 @@ export function updateRecent(recent: readonly string[], played: readonly string[
   }
   return out;
 }
+
+/**
+ * 한 판의 계획 — 난이도에 따라 풀을 고른다(spec 5.3.1·5.6 v4).
+ * Very Hard면 학년군을 무시하고 Very Hard 풀(부록 D)에서만 정답·오답을 고른다. 그 밖에는 부록 A 풀과 학년군.
+ */
+export function buildGamePlans(
+  pools: { main: readonly Question[]; veryhard: readonly Question[] },
+  band: BandChoice,
+  difficulty: Difficulty,
+  rng: Rng,
+  recent: readonly string[] = [],
+  n: number = GAME.QUESTIONS_PER_GAME,
+): QuestionPlan[] {
+  if (difficulty === 'veryhard') return buildPlans(pools.veryhard, 'all', difficulty, rng, recent, n);
+  return buildPlans(pools.main, band, difficulty, rng, recent, n);
+}

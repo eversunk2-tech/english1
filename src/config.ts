@@ -55,8 +55,8 @@ export interface StageConfig {
   sameTopicDistractors: number;
 }
 
-export type Difficulty = 'easy' | 'normal' | 'hard';
-export const DIFFICULTY_NAMES: readonly Difficulty[] = ['easy', 'normal', 'hard'];
+export type Difficulty = 'easy' | 'normal' | 'hard' | 'veryhard';
+export const DIFFICULTY_NAMES: readonly Difficulty[] = ['easy', 'normal', 'hard', 'veryhard'];
 
 /** 난이도 하나의 규칙 (spec 5.3.2, 5.5) */
 export interface DifficultyConfig {
@@ -70,40 +70,51 @@ export interface DifficultyConfig {
 /** 게임 규칙 (spec 5.2~5.7) */
 export const GAME = deepFreeze({
   QUESTIONS_PER_GAME: 10,
-  /** 난이도별 단계 표 (spec 5.3.2, v2). Easy = v1 값 그대로 */
+  /** 난이도별 단계 표 (spec 5.3.2, v4 값: E/N/H 단계마다 0.5초 빠르게 + Very Hard 새로) */
   DIFFICULTIES: {
     easy: {
       stages: [
-        { fromQuestion: 1, cards: 3, fallMs: 9000, sameTopicDistractors: 0 },
-        { fromQuestion: 4, cards: 4, fallMs: 7500, sameTopicDistractors: 1 },
-        { fromQuestion: 7, cards: 4, fallMs: 6500, sameTopicDistractors: 2 },
+        { fromQuestion: 1, cards: 3, fallMs: 8500, sameTopicDistractors: 0 },
+        { fromQuestion: 4, cards: 4, fallMs: 7000, sameTopicDistractors: 1 },
+        { fromQuestion: 7, cards: 4, fallMs: 6000, sameTopicDistractors: 2 },
       ],
       scoreMultiplier: 1.0,
       wrongPenalty: 10,
     },
     normal: {
       stages: [
-        { fromQuestion: 1, cards: 3, fallMs: 7500, sameTopicDistractors: 1 },
-        { fromQuestion: 4, cards: 4, fallMs: 6500, sameTopicDistractors: 1 },
-        { fromQuestion: 7, cards: 4, fallMs: 5500, sameTopicDistractors: 2 },
+        { fromQuestion: 1, cards: 3, fallMs: 7000, sameTopicDistractors: 1 },
+        { fromQuestion: 4, cards: 4, fallMs: 6000, sameTopicDistractors: 1 },
+        { fromQuestion: 7, cards: 4, fallMs: 5000, sameTopicDistractors: 2 },
       ],
       scoreMultiplier: 1.2,
       wrongPenalty: 20,
     },
     hard: {
       stages: [
-        { fromQuestion: 1, cards: 4, fallMs: 6000, sameTopicDistractors: 1 },
-        { fromQuestion: 4, cards: 4, fallMs: 5000, sameTopicDistractors: 2 },
-        { fromQuestion: 7, cards: 4, fallMs: 4500, sameTopicDistractors: 2 },
+        { fromQuestion: 1, cards: 4, fallMs: 5500, sameTopicDistractors: 1 },
+        { fromQuestion: 4, cards: 4, fallMs: 4500, sameTopicDistractors: 2 },
+        { fromQuestion: 7, cards: 4, fallMs: 4000, sameTopicDistractors: 2 },
       ],
       scoreMultiplier: 1.5,
       wrongPenalty: 30,
+    },
+    /** v4: 학년과 상관없이 Very Hard 전용 풀(부록 D)에서만 정답·오답(spec 5.3.1·5.6) */
+    veryhard: {
+      stages: [
+        { fromQuestion: 1, cards: 4, fallMs: 5000, sameTopicDistractors: 2 },
+        { fromQuestion: 4, cards: 4, fallMs: 4000, sameTopicDistractors: 3 },
+        { fromQuestion: 7, cards: 4, fallMs: 3500, sameTopicDistractors: 3 },
+      ],
+      scoreMultiplier: 2.0,
+      wrongPenalty: 40,
     },
   } as Record<Difficulty, DifficultyConfig>,
   /** 공정성 바닥 (spec 5.3.3): T_need = BASE + n×WORD + MOVE + GRAB, 바닥 = ceil(T_need×100/85/10)×10 */
   FALL_FLOOR: {
     BASE_MS: 300,
-    WORD_MS: { '3-4': 400, '5-6': 350 },
+    /** 낱말당 읽기(v4): 문항 band로 고른다 — Very Hard 문항은 'vh' */
+    WORD_MS: { '3-4': 350, '5-6': 300, vh: 250 },
     MOVE_MS: 1000,
     GRAB_MS: 400,
     COMFORT_P: 0.85,
@@ -171,6 +182,9 @@ export const ASSETS = deepFreeze({
 export const STORAGE_KEYS = deepFreeze({
   bestPrefix: 'catchword.best.',
   recent: 'catchword.recent',
+  /** v4: Very Hard 최근 정답(다른 난이도와 섞이지 않게)·최고 점수(학년과 상관없이 한 칸) */
+  recentVeryHard: 'catchword.recent.veryhard',
+  bestVeryHard: 'catchword.best.veryhard',
   sound: 'catchword.sound',
   /** 마지막으로 고른 난이도 easy|normal|hard (spec 5.5 v2) */
   difficulty: 'catchword.difficulty',

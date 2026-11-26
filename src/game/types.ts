@@ -1,7 +1,8 @@
 // 게임 공통 타입.
 import type { StageConfig } from '../config.ts';
 
-export type Band = '3-4' | '5-6';
+/** 문항의 학년군. 'vh'는 Very Hard 전용 문항(spec 16.4, v4) */
+export type Band = '3-4' | '5-6' | 'vh';
 export type BandChoice = '3-4' | '5-6' | 'all';
 
 export const TOPICS = [

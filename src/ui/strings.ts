@@ -104,6 +104,7 @@ export const DIFFICULTY_LABELS: Record<Difficulty, { en: string; ko: string }> =
   easy: { en: 'Easy', ko: '쉬움' },
   normal: { en: 'Normal', ko: '보통' },
   hard: { en: 'Hard', ko: '어려움' },
+  veryhard: { en: 'Very Hard', ko: '매우 어려움' },
 };
 
 /** 고른 난이도의 한 줄 설명(spec 6.2 v2) */
@@ -111,14 +112,19 @@ export const DIFFICULTY_DESCS: Record<Difficulty, string> = {
   easy: '천천히 떨어져요. 처음 하는 친구에게 좋아요.',
   normal: '조금 빨라요. 비슷한 단어가 섞여 나와요.',
   hard: '빠르고 헷갈리는 단어가 많아요. 도전해 보세요!',
+  veryhard: '중학교 단어가 아주 빠르게 떨어져요. 최고의 도전!',
 };
 
 /** 결과 화면 도전 권유(spec 5.8 v2): 첫 시도 정답 8개 이상일 때 */
 export const CHALLENGE_LINES: Record<Difficulty, string> = {
   easy: '다음엔 Normal에 도전해 볼까요?',
   normal: '다음엔 Hard에 도전해 볼까요?',
-  hard: 'Hard도 거뜬해요! 최고 점수에 도전해 봐요.',
+  hard: '다음엔 Very Hard에 도전해 볼까요?',
+  veryhard: 'Very Hard도 거뜬해요! 최고 점수에 도전해 봐요.',
 };
+
+/** Very Hard를 고르면 흐려진 학년 줄 아래 안내(spec 6.2 v4) */
+export const VERYHARD_BAND_NOTE = 'Very Hard는 학년과 상관없이 중학 단어로 나와요';
 
 export const BAND_LABELS: Record<BandChoice, string> = {
   '3-4': '3~4학년',
@@ -140,7 +146,9 @@ export const V2 = {
   /** 감점 숫자(영어 쪽 짧은 반응, spec 6.1): −20 */
   penalty: (n: number): string => `\u2212${n}`,
   gain: (n: number): string => `+${n}`,
-  resultCombo: (band: BandChoice, d: Difficulty): string => `${BAND_LABELS[band]} · ${DIFFICULTY_LABELS[d].en}`,
+  /** 결과 화면 머리: "5~6학년 · Hard", Very Hard는 "Very Hard · 중학 단어"(spec 5.8 v4) */
+  resultCombo: (band: BandChoice, d: Difficulty): string =>
+    d === 'veryhard' ? `${DIFFICULTY_LABELS.veryhard.en} · 중학 단어` : `${BAND_LABELS[band]} · ${DIFFICULTY_LABELS[d].en}`,
   reviewScore: '점수',
   /** 표 위 요약 줄: "오답 3번 (−60)", 오답이 없으면 "오답 0번" */
   wrongSummary: (count: number, deducted: number): string =>

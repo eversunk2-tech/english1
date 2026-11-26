@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import questionsJson from '../../src/data/questions.json';
+import veryhardJson from '../../src/data/veryhard.json';
 import type { Difficulty } from '../../src/config.ts';
-import { buildPlans } from '../../src/game/questions.ts';
+import { buildGamePlans } from '../../src/game/questions.ts';
 import { mulberry32 } from '../../src/game/rng.ts';
 import { Session } from '../../src/game/session.ts';
 import type { QuestionsFile } from '../../src/game/types.ts';
@@ -10,17 +11,23 @@ const all = (questionsJson as QuestionsFile).questions;
 const VP = { W: 1280, H: 800 };
 
 // spec 5.3.2·5.5를 테스트 안에 따로 적는다
-const MULT: Record<Difficulty, number> = { easy: 1.0, normal: 1.2, hard: 1.5 };
-const PENALTY: Record<Difficulty, number> = { easy: 10, normal: 20, hard: 30 };
-const STAGE_FALL: Record<Difficulty, number[]> = { easy: [9000, 7500, 6500], normal: [7500, 6500, 5500], hard: [6000, 5000, 4500] };
+const MULT: Record<Difficulty, number> = { easy: 1.0, normal: 1.2, hard: 1.5, veryhard: 2.0 };
+const PENALTY: Record<Difficulty, number> = { easy: 10, normal: 20, hard: 30, veryhard: 40 };
+const STAGE_FALL: Record<Difficulty, number[]> = {
+  easy: [8500, 7000, 6000],
+  normal: [7000, 6000, 5000],
+  hard: [5500, 4500, 4000],
+  veryhard: [5000, 4000, 3500],
+};
+const vhq = (veryhardJson as QuestionsFile).questions;
 
 function correctPoints(first: boolean, p: number, combo: number, d: Difficulty): number {
   return Math.round(MULT[d] * ((first ? 100 : 50) + Math.round(50 * (1 - Math.min(1, Math.max(0, p)))) + (combo >= 3 ? 20 : 0)));
 }
 
-function expectedFall(clue: string, band: '3-4' | '5-6', qNo: number, d: Difficulty): number {
+function expectedFall(clue: string, band: '3-4' | '5-6' | 'vh', qNo: number, d: Difficulty): number {
   const n = (clue.toLowerCase().match(/[a-z]+('[a-z]+)?/g) ?? []).length;
-  const need = 300 + n * (band === '3-4' ? 400 : 350) + 1000 + 400;
+  const need = 300 + n * (band === '3-4' ? 350 : band === '5-6' ? 300 : 250) + 1000 + 400;
   const floor = Math.ceil((need * 100) / 85 / 10) * 10;
   const stage = STAGE_FALL[d][qNo <= 3 ? 0 : qNo <= 6 ? 1 : 2]!;
   return Math.max(stage, floor);
@@ -28,7 +35,7 @@ function expectedFall(clue: string, band: '3-4' | '5-6', qNo: number, d: Difficu
 
 function makeSession(seed: number, d: Difficulty = 'easy', camera = false): Session {
   const rng = mulberry32(seed);
-  const plans = buildPlans(all, '3-4', d, rng);
+  const plans = buildGamePlans({ main: all, veryhard: vhq }, '3-4', d, rng);
   return new Session({ plans, rng, viewport: VP, camera, difficulty: d });
 }
 
@@ -55,7 +62,7 @@ function finishQuestion(s: Session): void {
 }
 
 describe('session (spec 5.2~5.8)', () => {
-  for (const d of ['easy', 'normal', 'hard'] as Difficulty[]) {
+  for (const d of ['easy', 'normal', 'hard', 'veryhard'] as Difficulty[]) {
     it(`${d}: 모두 첫 시도 정답 → 10/10, 점수 = 5.5 식(배율·빠르기·콤보), 문제별 떨어지는 시간 = fallMsFor`, () => {
       const s = makeSession(7, d);
       let expected = 0;
@@ -89,7 +96,7 @@ describe('session (spec 5.2~5.8)', () => {
     });
   }
 
-  for (const d of ['easy', 'normal', 'hard'] as Difficulty[]) {
+  for (const d of ['easy', 'normal', 'hard', 'veryhard'] as Difficulty[]) {
     it(`${d}: 오답 1·2번 뒤 정답 = 깎인 합 + 오답 뒤 정답 점수, 오답은 콤보를 끊는다, 문제별 기록`, () => {
       const s = makeSession(3, d);
       // 1·2번 문제 정답으로 콤보 2, 점수 쌓기
@@ -160,6 +167,24 @@ describe('session (spec 5.2~5.8)', () => {
     expect(s.score).toBe(0);
     const e = s.drainEvents().find((x) => x.type === 'wrong');
     expect(e && e.type === 'wrong' ? e.deducted : -1).toBe(15);
+  });
+
+  it('Very Hard: 정답은 Very Hard 풀에서만, 오답 −40, 0점 바닥', () => {
+    const s = makeSession(4, 'veryhard');
+    const words = new Set(vhq.map((q) => q.word));
+    for (const p of s.plans) expect(words.has(p.answer.word)).toBe(true);
+    stepUntilWrongGrabbable(s);
+    s.score = 25;
+    const w = s.cards.find((x) => !x.correct && s.grabbable(x))!;
+    s.grab(w.id);
+    expect(s.score).toBe(0);
+    const e = s.drainEvents().find((x) => x.type === 'wrong');
+    expect(e && e.type === 'wrong' ? e.deducted : -1).toBe(25);
+    s.score = 100;
+    const w2 = s.cards.find((x) => !x.correct && x.id !== w.id && (s.grabbable(x) || x.status === 'falling'))!;
+    for (let i = 0; i < 2000 && !s.grabbable(w2); i++) s.update(16);
+    s.grab(w2.id);
+    expect(s.score).toBe(60);
   });
 
   it('카드 4장 Hard: 오답 3번 → 감점 3번', () => {

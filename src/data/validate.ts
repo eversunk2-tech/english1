@@ -1,9 +1,9 @@
-// spec 7.4: 문항 기계 검사 V1~V9. 순수 — 단위 테스트와 scripts/check-data.mjs가 함께 쓴다.
+// spec 7.4: 문항 기계 검사 V1~V10·V5b, Very Hard 검사 VH-V1~V10(spec 16.4). 순수 — 단위 테스트와 scripts/check-data.mjs가 함께 쓴다.
 import { buildPlans, pickDistractors, avoidIndex, distractorPool } from '../game/questions.ts';
 import { DIFFICULTY_NAMES, GAME } from '../config.ts';
 import { mulberry32 } from '../game/rng.ts';
 import { TOPICS, type BandChoice, type Question, type QuestionsFile } from '../game/types.ts';
-import { clueMentions, lemmas, tokenize } from './words.ts';
+import { clueMentions, derivedRoots, lemmas, sameRootTokens, tokenize } from './words.ts';
 
 export interface ClueExtra {
   secondary: string[];
@@ -11,6 +11,10 @@ export interface ClueExtra {
   proper: string[];
   /** v3(spec 7.6.5): 5~6학년군 정답으로 쓸 수 있는 중학 권장(**) 낱말 */
   answerSecondary?: string[];
+  /** v4(spec 16.4): Very Hard 정답 중 "심화"(기본 어휘 표시 없는 등급) 낱말 */
+  veryhardAdvanced?: string[];
+  /** v4b(spec 7.4 V5b 보완): 접사를 떼면 우연히 초등 낱말이 되는 가짜 어근 — V5b ②를 건너뜀 */
+  notDerived?: string[];
 }
 
 /** V10: 5~6학년군 정답 중 answerSecondary 낱말 비율 상한 */
@@ -66,6 +70,7 @@ export function validateQuestions(
   const errors: string[] = [];
   const vocab = makeVocabSet(vocabLines);
   const answerSecondary = new Set((extra.answerSecondary ?? []).map((w) => w.toLowerCase()));
+  const notDerived = new Set((extra.notDerived ?? []).map((w) => w.toLowerCase()));
   // V5 보완(spec 7.4 v3b)의 "실제 낱말": 초등 목록(부록 B) · clue-extra.json의 목록 · 문항 낱말
   const realWords = new Set<string>([
     ...vocab,
@@ -108,6 +113,12 @@ export function validateQuestions(
     if (toks.length > maxWords) errors.push(`V4 ${at} 설명 낱말 수 ${toks.length} > ${maxWords}`);
     // V5(v3b 보완): ④ "정답 안에 들어 있음"은 실제 낱말(토큰 자신·초등 목록·clue-extra 목록·문항 낱말)일 때만
     if (clueMentions(clue, q.word, isRealWord)) errors.push(`V5 ${at} 설명에 정답(${q.word}) 또는 같은 어근이 들어 있음`);
+    // V5b(spec 7.4 v4, v4b 예외 notDerived): 정답의 어근(base 조각·파생 접사를 뗀 기본형)이 설명에 들어 있으면 실패
+    for (const r of derivedRoots(q.word, q.base, vocab, notDerived)) {
+      if (clueMentions(clue, r, isRealWord)) errors.push(`V5b ${at} 설명에 정답(${q.word})의 어근 "${r}"이 들어 있음`);
+    }
+    // V5c(spec 7.4 v4b): 같은 어근의 다른 낱말(poem ↔ poet)
+    for (const t of sameRootTokens(clue, q.word, vocab)) errors.push(`V5c ${at} 설명 낱말 "${t}"이 정답(${q.word})과 같은 뿌리`);
     // V6
     let secInClue = 0;
     for (const t of toks) {
@@ -180,8 +191,8 @@ export function validateQuestions(
       const d = pickDistractors(q, dPool, maxCards - 1, 2, rng, avoid);
       if (!d) errors.push(`V9 [${q.id}] 학년군 ${band}에서 오답 ${maxCards - 1}개를 고를 수 없음`);
     }
-    // 한 판을 실제로 만들 수 있는가(난이도 3종)
-    for (const d of DIFFICULTY_NAMES) {
+    // 한 판을 실제로 만들 수 있는가(Easy·Normal·Hard — Very Hard는 자기 풀만 쓰므로 validateVeryHard가 본다)
+    for (const d of DIFFICULTY_NAMES.filter((x) => x !== 'veryhard')) {
       try {
         buildPlans(qs, band, d, mulberry32(7));
       } catch (e) {
@@ -197,3 +208,175 @@ export function validateQuestions(
 }
 
 export type { Question };
+
+// ───────────── Very Hard 검사 (spec 16.1·16.4, v4) ─────────────
+
+/** VH-V10: Very Hard 정답 중 "심화" 낱말 비율 상한 */
+export const VERYHARD_ADVANCED_MAX_RATIO = 0.3;
+/** VH-V6: 설명 하나의 ** 낱말 상한 */
+export const VERYHARD_CLUE_SECONDARY_MAX = 3;
+export const VERYHARD_MIN_TOTAL = 90;
+export const VERYHARD_MIN_PER_TOPIC = 3;
+
+export interface VeryHardReport {
+  errors: string[];
+  stats: {
+    total: number;
+    advancedCount: number;
+    advancedRatio: number;
+    tokens: number;
+    /** 설명 토큰 중 초등(*)·중학(**)·허용(고유 명사·언어명·의성어) 비율 */
+    elementaryRatio: number;
+    secondaryRatio: number;
+    allowedRatio: number;
+    maxSecondaryInClue: number;
+    topics: Record<string, number>;
+  };
+}
+
+/**
+ * Very Hard 문항 검사. main은 부록 A 문항(겹침 검사·실제 낱말용), elementaryLines는 부록 B, secondaryLines는 부록 E.
+ */
+export function validateVeryHard(
+  vh: QuestionsFile,
+  main: QuestionsFile,
+  elementaryLines: readonly string[],
+  secondaryLines: readonly string[],
+  extra: ClueExtra,
+): VeryHardReport {
+  const errors: string[] = [];
+  const elementary = makeVocabSet(elementaryLines);
+  const secondary = makeVocabSet(secondaryLines);
+  const advanced = new Set((extra.veryhardAdvanced ?? []).map((w) => w.toLowerCase()));
+  const notDerived = new Set((extra.notDerived ?? []).map((w) => w.toLowerCase()));
+  const allowed = [...extra.proper, ...extra.interjection];
+  const mainWords = new Set(main.questions.map((q) => q.word));
+  const qs = vh.questions;
+  const realWords = new Set<string>(
+    [...elementary, ...secondary, ...extra.secondary, ...allowed, ...advanced, ...qs.map((q) => q.word), ...mainWords].map((w) =>
+      w.toLowerCase(),
+    ),
+  );
+  const isRealWord = (l: string): boolean => realWords.has(l);
+  const ids = new Set<string>();
+  const words = new Set<string>();
+  let tokens = 0;
+  let nElem = 0;
+  let nSec = 0;
+  let nAllowed = 0;
+  let maxSecondaryInClue = 0;
+  const topics: Record<string, number> = {};
+
+  for (const q of qs) {
+    const at = `[${q.id}]`;
+    topics[q.topic] = (topics[q.topic] ?? 0) + 1;
+    // VH-V1
+    const m = /^vh-([a-z]+)-\d{2}$/.exec(q.id);
+    if (!m) errors.push(`VH-V1 ${at} id 형식이 틀림`);
+    else if (m[1] !== q.topic) errors.push(`VH-V1 ${at} id 가운데와 topic(${q.topic})이 다름`);
+    if (ids.has(q.id)) errors.push(`VH-V1 ${at} id 중복`);
+    ids.add(q.id);
+    // VH-V2
+    if (!/^[a-z]{2,11}$/.test(q.word)) errors.push(`VH-V2 ${at} word 형식(${q.word})`);
+    if (words.has(q.word)) errors.push(`VH-V2 ${at} word 중복(${q.word})`);
+    if (mainWords.has(q.word)) errors.push(`VH-V2 ${at} 부록 A 낱말과 겹침(${q.word})`);
+    words.add(q.word);
+    // VH-V3(형식): band·topic·ko
+    if (q.band !== 'vh') errors.push(`VH-V3 ${at} band가 "vh"가 아님(${String(q.band)})`);
+    if (!TOPIC_SET.has(q.topic)) errors.push(`VH-V3 ${at} topic(${q.topic})`);
+    if (typeof q.ko !== 'string' || !/[가-힣]/.test(q.ko)) errors.push(`VH-V3 ${at} ko에 한글이 없음`);
+    // VH-V4 (V4와 같음, 10낱말 이하)
+    const clue = q.clue ?? '';
+    if (!/^[A-Z]/.test(clue)) errors.push(`VH-V4 ${at} 설명이 대문자로 시작하지 않음`);
+    if (!clue.endsWith('.')) errors.push(`VH-V4 ${at} 설명이 .로 끝나지 않음`);
+    if (!/^[A-Za-z ,.'?!]*$/.test(clue)) errors.push(`VH-V4 ${at} 설명에 쓸 수 없는 글자`);
+    const toks = tokenize(clue);
+    if (toks.length > 10) errors.push(`VH-V4 ${at} 설명 낱말 수 ${toks.length} > 10`);
+    // VH-V5 (V5·V5b와 같음)
+    if (clueMentions(clue, q.word, isRealWord)) errors.push(`VH-V5 ${at} 설명에 정답(${q.word}) 또는 같은 어근이 들어 있음`);
+    for (const r of derivedRoots(q.word, q.base, elementary, notDerived)) {
+      if (clueMentions(clue, r, isRealWord)) errors.push(`VH-V5 ${at} 설명에 정답(${q.word})의 어근 "${r}"이 들어 있음(V5b)`);
+    }
+    for (const t of sameRootTokens(clue, q.word, elementary)) errors.push(`VH-V5 ${at} 설명 낱말 "${t}"이 정답(${q.word})과 같은 뿌리(V5c)`);
+    // VH-V6: 토큰마다 초등(*)·중학(**)·허용 목록. ** 낱말 3개까지, 표시 없는 등급은 쓰지 않음
+    let secInClue = 0;
+    for (const t of toks) {
+      tokens += 1;
+      if (inVocab(t, elementary) || isCompound(t, elementary)) {
+        nElem += 1;
+        continue;
+      }
+      if (inList(t, allowed)) {
+        nAllowed += 1;
+        continue;
+      }
+      if (inVocab(t, secondary)) {
+        nSec += 1;
+        secInClue += 1;
+        continue;
+      }
+      errors.push(`VH-V6 ${at} 설명 낱말 "${t}"이 초등·중학 목록·허용 목록에 없음`);
+    }
+    maxSecondaryInClue = Math.max(maxSecondaryInClue, secInClue);
+    if (secInClue > VERYHARD_CLUE_SECONDARY_MAX) {
+      errors.push(`VH-V6 ${at} 설명의 중학(**) 낱말 ${secInClue}개(>${VERYHARD_CLUE_SECONDARY_MAX})`);
+    }
+    // VH-V7: 정답이 부록 E(또는 base가 부록 E)에 있거나 veryhardAdvanced에 있음
+    const wordOk =
+      inVocab(q.word, secondary) ||
+      (q.base !== null && q.base.split('+').every((p) => secondary.has(p.trim().toLowerCase()))) ||
+      advanced.has(q.word);
+    if (!wordOk) errors.push(`VH-V7 ${at} 정답(${q.word})이 중학 목록(부록 E)·심화 목록에 없음`);
+    if (advanced.has(q.word) && inVocab(q.word, secondary)) {
+      errors.push(`VH-V7 ${at} 심화 목록의 정답(${q.word})이 중학 목록에도 있음`);
+    }
+  }
+
+  // V5b 보완(spec 7.4 v4b): notDerived의 낱말은 모두 문항(부록 A·D)의 정답이어야 한다
+  for (const w of notDerived) {
+    if (!words.has(w) && !mainWords.has(w)) errors.push(`V5b notDerived 낱말 "${w}"이 부록 A·D 어느 문항의 정답도 아님`);
+  }
+
+  // VH-V8: avoid가 Very Hard 풀 안
+  for (const q of qs) {
+    for (const a of q.avoid) if (!words.has(a)) errors.push(`VH-V8 [${q.id}] avoid "${a}"가 Very Hard 풀에 없음`);
+  }
+
+  // VH-V10: 심화 비율 ≤ 30%, 목록 낱말은 모두 쓰임
+  const advancedCount = qs.filter((q) => advanced.has(q.word)).length;
+  const advancedRatio = qs.length > 0 ? advancedCount / qs.length : 0;
+  if (advancedRatio > VERYHARD_ADVANCED_MAX_RATIO) {
+    errors.push(`VH-V10 심화 정답 ${advancedCount}/${qs.length} = ${(advancedRatio * 100).toFixed(1)}% > 30%`);
+  }
+  for (const w of advanced) if (!words.has(w)) errors.push(`VH-V10 veryhardAdvanced 낱말 "${w}"이 어느 문항에도 쓰이지 않음`);
+
+  // VH-V9: 문항 ≥ 90, 주제마다 ≥ 3, 모든 문항에서 오답 3개를 고를 수 있고 한 판을 만들 수 있음
+  if (qs.length < VERYHARD_MIN_TOTAL) errors.push(`VH-V9 문항 수 ${qs.length} < ${VERYHARD_MIN_TOTAL}`);
+  for (const [t, n] of Object.entries(topics)) {
+    if (n < VERYHARD_MIN_PER_TOPIC) errors.push(`VH-V9 주제 ${t} 문항 ${n} < ${VERYHARD_MIN_PER_TOPIC}`);
+  }
+  const avoid = avoidIndex(qs);
+  for (const q of qs) {
+    if (!pickDistractors(q, qs, 3, 3, mulberry32(1), avoid)) errors.push(`VH-V9 [${q.id}] 오답 3개를 고를 수 없음`);
+  }
+  try {
+    buildPlans(qs, 'all', 'veryhard', mulberry32(7));
+  } catch (e) {
+    errors.push(`VH-V9 Very Hard 한 판을 만들 수 없음: ${String(e)}`);
+  }
+
+  return {
+    errors,
+    stats: {
+      total: qs.length,
+      advancedCount,
+      advancedRatio,
+      tokens,
+      elementaryRatio: tokens ? nElem / tokens : 1,
+      secondaryRatio: tokens ? nSec / tokens : 0,
+      allowedRatio: tokens ? nAllowed / tokens : 0,
+      maxSecondaryInClue,
+      topics,
+    },
+  };
+}

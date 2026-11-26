@@ -13,6 +13,8 @@
 > v2 난이도·감점 검증(2026-11-26, 11절) 판정: **통과** — 반드시 수정 0건, 권장 1건.
 > v3 단어 수준 검증(2026-11-26, 12절) 판정: **수정 필요** — 문항 1건(nature-14 forest에 함께 맞는 오답 mountain), 권장 7건.
 > 재검토 v3b(2026-11-26, 13절) 판정: **통과** — 12절 지적 모두 고쳐짐, 새 반드시 수정 0건, 새 권장 1건(scientist 설명).
+> v4 Very Hard 검증(2026-11-26, 14절) 판정: **수정 필요** — 문항 1건(vh-food-07 ingredient), 권장 3건.
+> 재검토 v4b(2026-11-26, 15절) 판정: **통과** — 14절 지적 모두 고쳐짐, 새 반드시 수정 0건, 새 권장 1건(아주 작음).
 
 반드시 수정할 것은 3건이다(앱 버그 1, spec 12.2 위반 1, 문항 데이터 1). 나머지 동작(점수, 판정, 배치, 개인정보, 배포 설정)은 spec과 맞았다.
 
@@ -572,3 +574,205 @@ git diff로 본 변경 내용:
 
 ### 13.7 남은 것
 - 12.9와 같다(교실에서 5~6학년이 새 낱말을 "어렵지만 맞힐 만하다"고 느끼는지, 3~4학년으로 옮긴 낱말이 알맞은지).
+
+---
+
+## 14. v4 Very Hard 검증 (2026-11-26)
+
+- 지침: `docs/briefs/review-brief-v4-veryhard.md`. 기준은 승인된 spec v4(0, 5.3~5.8, 6.2, 7.4 V5b, 부록 A people-14, 부록 D·E, 15·16절)다.
+- 변경 범위는 커밋 `370b2b9` 뒤의 `git diff`로 봤다. git은 읽기만 했다.
+- 임시 스크립트·스크린샷: `/private/tmp/claude-501/-Users-sungchul-Desktop-play2-----/7bd2217c-e14d-425c-9176-0b2e64f9c244/scratchpad/review-v4/`
+
+### 14.1 판정: **수정 필요**
+반드시 수정은 1건(Very Hard 문항 데이터 하나)이다. 코드·빠르기·점수·화면·저장은 spec과 맞았다.
+
+### 14.2 직접 돌린 명령과 결과
+
+| 명령 / 검사 | 결과 |
+|---|---|
+| `npm run check` | **종료 코드 0**(로그 끝 `EXIT 0`을 직접 확인). 단위 **161 통과, 1 건너뜀**. 부록 A 230문항 위반 0. Very Hard 94문항 위반 0(심화 23/94 = 24.5%, 설명 초등 92.1%·중학 6.7%·허용 1.2%, 설명당 중학 낱말 최대 3). e2e **108 통과**. |
+| `git diff --stat`(25개 파일 + 새 파일 2개) | `config.ts`(E/N/H 새 값, veryhard, WORD_MS), `questions.ts`(`buildGamePlans`), `words.ts`·`validate.ts`(V5b, VH 검사), `storage.ts`·`params.ts`·`App.ts`·`screens.ts`·`strings.ts`·`styles.css`(화면·키), `questions.json`(people-14), 새 `veryhard.json`·`secondary-2022.txt`, `clue-extra.json`, 테스트. **X1~X5 범위 안이다.** |
+| 데이터 ↔ spec(독립 Python) | `veryhard.json` = 부록 D 94행 모든 칸 같음(band `vh`). 심화 23개 = `veryhardAdvanced`. `secondary-2022.txt` = 부록 E 1,215개 같음. `questions.json` = 부록 A 230행 같음. scientist는 "This person does tests to find out how things work."(avoid science, teacher). 부록 A와 D의 낱말 겹침 0. Very Hard 정답 중 초등(*) 목록에 있는 낱말 0. |
+| 교육과정 원문 PDF 대조 | 부록 E에서 무작위 20개(apart, approach, army, context, count, crisp, disappoint, disgust, even, item, minor, port, principle, receive, shave, sight, source, steal, struggle, villa)가 **모두 `**`**. 심화 23개는 **모두 표시 없이** 실려 있다(insect … translate 23/23). |
+
+### 14.3 독립 계산 (spec 문장만으로 짠 Python ↔ 코드)
+- **바닥 표**: 3~4·5~6·Very Hard × 낱말 3~10이 spec 5.3.3 표와 모두 같다.
+- **떨어지는 시간**: 230문항 × E/N/H + 94문항 × Very Hard, 각 3단계 = 2,352건.
+  - `fallMsFor`, 단계 값, 카드 수, 같은 주제 수의 불일치 **0**.
+  - `0.85 × 떨어지는 시간 < T_need`인 경우 **0**.
+  - 바닥 때문에 늘어나는 수가 spec과 **모두 같다**.
+
+| 조건 | 늘어나는 문항 수 |
+|---|---|
+| Hard 1~3번 | 5~6학년군 13 |
+| Hard 4~6번 | 3~4학년군 91, 5~6학년군 46 |
+| Hard 7~10번 | 3~4학년군 138, 5~6학년군 76 |
+| Normal 7~10번 | 3~4학년군 47, 5~6학년군 28 |
+| Very Hard 4~6번 | 81 |
+| Very Hard 7~10번 | 90 |
+| Easy | 0 |
+
+- 평균·최대도 spec과 같다.
+
+| 7~10번 | 평균 | 최대 |
+|---|---|---|
+| Easy | 6.00초 | 6.00초 |
+| Normal 3~4학년군 · 5~6학년군 | 5.10초 · 5.11초 | 5.53초 |
+| Hard 3~4학년군 · 5~6학년군 | 4.81초 · 4.72초 | 5.53초 |
+| Very Hard | 4.36초 | 4.95초 |
+
+- Very Hard 4~6번은 평균 4.41초, 1~3번은 5.00초다.
+- E/N/H 새 단계 값·카드 수·같은 주제 수가 spec 5.3.2 표와 같다.
+- **무작위 판 4,050개**: Very Hard 1,800판 + E/N/H 2,250판, 학년군 3종. 오답 42,159번 중 3,884번은 0점 바닥 때문에 덜 깎였다.
+  - 최종 점수, 문제별 점수·깎인 점수·○/△/×, 잡은 순간 진행도의 불일치 **0**(배율 ×2.0, 감점 −40 포함). 음수 점수 0.
+  - Very Hard 판의 카드는 모두 Very Hard 풀에서만 나오고, 다른 난이도 판에는 Very Hard 낱말이 0개다.
+
+### 14.4 Very Hard가 "극악"이 아닌지
+- spec 식으로 보면 가장 짧은 3.5초 문제(설명 5낱말 이하)에서도 `0.85 × 3.5초 = 2.975초 ≥ T_need`(5낱말이면 2.95초)가 성립한다. 모든 문항에서 보장이 깨지지 않는다(14.3).
+- 재생 모드에서 실제 잡기 경로로 "잘하는 학생"(spec `T_need`: 0.3초 + 낱말 × 0.25초 + 손 옮기기 1.0초 + 쥐기 0.4초)을 흉내 냈다.
+  - Very Hard: 화면 3종 × 씨앗 4 = **12판·120문제 모두 첫 시도 정답**. 잡은 순간 진행도는 최대 0.71이다.
+  - v4 Hard(5~6·3~4학년군): 8판·80문제 모두 첫 시도 정답. 최대 0.75.
+- 판단: spec 모형대로 읽고 움직이는 학생은 잡을 수 있다. 실제 아이들에게 알맞은지는 교실 확인(X6)이 필요하다.
+
+### 14.5 Very Hard 94문항 사람 눈 검사 (H1~H4)
+- 94개를 모두 읽었다. 문법·철자 오류는 없고, 한국어 뜻도 맞다.
+- grade "성적"은 아이들이 더 자주 아는 "학년" 뜻과 다르지만, 설명이 성적 뜻으로 정해 주므로 괜찮다.
+- 거슬리는 내용은 없다(prison, thief, soldier는 중학 수준에서 무난하다).
+- 판 구성 흉내(Very Hard × 씨앗 6,000, 같은 주제 오답 2~3장)에서 함께 나온 짝:
+
+| 짝(정답 / 함께 나온 오답) | 비율 | 판단 |
+|---|---|---|
+| **ingredient / pepper·mushroom·lemon·strawberry** | **54~55%** | **반드시 수정(M-v4-1)** |
+| snack / strawberry·lemon | 44~47% | **권장 R-v4-1** |
+| goat/sheep, lawyer/judge, ceiling/roof, storm/flood, climate/temperature, helicopter/rocket, polite/grateful, repair/destroy, explain/translate, dictionary/vocabulary/language | 0% | avoid가 막는다 |
+| instrument / orchestra·rhythm, century / anniversary·noon (music·time은 3개뿐이라 100% 함께) | 100% | 설명으로 갈린다. "A piano and a violin are this"는 orchestra가 아니고, "One hundred years"는 anniversary가 아니다. |
+| sweater·scarf·glove·uniform 서로(88~90%), brain/tongue, knee/shoulder, muscle/stomach, wise/calm·polite·generous, soldier/athlete, diary/poem, hotel/castle, explore/escape, explain/whisper, oven/furniture, ladder/roof, frog/snake, insect/frog | 30~54% | 설명이 하나로 정한다(예: "warm top made of wool"은 scarf가 아니고, "think with it"은 tongue이 아니고, "knowledge"는 calm이 아니다). 답이 아니다. |
+
+- **정답·파생이 설명에 노출된 것**:
+  - 기계 검사(V5·V5b)는 0이다.
+  - 사람 눈으로는 **vh-school-03 poem "A poet writes it."**에서 poet이 poem의 같은 어근 낱말이라 답을 알려 준다(scientist와 같은 종류). V5b의 접사 목록(-ist, -er …)으로는 poem↔poet이 잡히지 않는다 → **권장 R-v4-2**.
+- **scientist 새 설명** "This person does tests to find out how things work.": 어근 노출이 없고 뜻도 맞다. teacher·science는 avoid로 빠져 있다. 함께 나오는 engineer는 Very Hard 풀에만 있어 같이 나오지 않는다. **고쳐짐.**
+
+### 14.6 V5b 직접 계산
+- spec 7.4 문장대로 어근을 따로 구했다. 결과가 코드 `derivedRoots`와 **324문항 모두 같다**.
+  - 어근이 있는 문항: teacher→teach, scientist→science, farmer→farm, artist→art, driver→drive, computer→compute, shoes→shoe, socks→sock, birthday→birth/day, busy→bus, beautiful→beauty, dangerous→danger, careful→care, thirsty→thirst, shoulder→should, nervous→nerve.
+- 부록 A·D 전체에서 V5b에 걸리는 설명은 **0**이다.
+- 일부러 넣은 예는 모두 잡힌다: scientist에 "science", farmer에 "farm", teacher에 "teaches", computer에 "compute", nervous에 "nerve".
+- V5b는 검사(`validate.ts`)에서만 쓰고, 오답 고르기(`questions.ts`의 `clueMentions`)에는 쓰지 않는다 → 판 구성에 영향 없음.
+- 가짜 어근 2개(**busy→bus**, **shoulder→should**)가 생긴다. 지금 설명에는 걸리는 것이 없지만, 나중에 busy 설명에 "bus"를 쓰면 엉뚱하게 실패한다 → **권장 R-v4-3**(아주 작음).
+
+### 14.7 화면 (1180×820, 820×1180, 1024×768, 768×1024 — 스크린샷을 직접 열어 봄)
+
+| 확인 | 결과 |
+|---|---|
+| 시작 화면 | 난이도 버튼 4칸이 한 줄(4종 모두 같은 높이 60px). Very Hard에 별 두 개. Very Hard를 고르면 학년 줄 투명도 **0.4** + "Very Hard는 학년과 상관없이 중학 단어로 나와요", 한 줄 설명 "중학교 단어가 아주 빠르게 떨어져요. 최고의 도전!". **세로·가로 스크롤 없음**, 한국어 낱말 가운데 끊김 0, 화면 밖 요소 0. |
+| 놀이 | 설명 띠 배지 `Very Hard`. 94개 설명을 모두 두 줄 안에 그렸고, 11자 낱말(temperature, anniversary) 포함 카드 글자 넘침 0. |
+| 결과 | "Very Hard · 중학 단어", 첫 시도 8개 이상이면 "Very Hard도 거뜬해요! 최고 점수에 도전해 봐요.". Hard 판의 권유는 "다음엔 Very Hard에 도전해 볼까요?". |
+| 저장 | Very Hard 판 뒤 `catchword.best.veryhard`·`catchword.recent.veryhard`만 생긴다. Hard 판은 `catchword.best.5-6.hard`·`catchword.recent`를 쓴다(**서로 섞이지 않음**). `?difficulty=veryhard`는 Very Hard로 고르고 저장한다. |
+
+- 콘솔 오류 0, 사이트 밖 요청 0.
+- 기존 E1~E8도 `npm run check`에서 통과했다.
+
+### 14.8 Build가 스스로 정한 것·비율 차이
+
+| 항목 | 판단 |
+|---|---|
+| `veryhard.json`의 `version: 1` | 괜찮음. 새 파일의 첫 판이다. |
+| VH-V3 추가(band `vh`, topic, ko 한글) | 괜찮음. V3와 같은 형식 검사로, 빠졌던 것을 채운 것이다. |
+| VH-V7 보강(심화 목록 낱말이 중학 목록에도 있으면 실패) | 괜찮음. 등급이 섞이지 않게 막는다. |
+| 비율 92.1/6.7(Build) vs 92.0/6.8(Plan) | 원인을 찾았다. vh-music-03 rhythm 설명의 **"beat"** 한 낱말을 Build는 초등 낱말 두 개의 합성("be"+"at", V6 ⓑ 규칙)으로 쳐서 초등에 넣었고, Plan은 `**` 낱말로 셌다. 751낱말 중 1개 차이이고, 설명당 중학 낱말 수 제한(3개)에도 영향이 없다. 문제 아님. |
+
+### 14.9 반드시 수정 (1건)
+- **M-v4-1 `vh-food-07 ingredient`** "Things we mix to make a dish."
+  - 같은 주제의 pepper·mushroom·lemon·strawberry가 이 문제의 **54~55%**에 함께 나온다. 이것들도 글자 그대로 "요리를 만들려고 섞는 것"이라 맞는 답이 된다(v1의 bird↔duck과 같은 수준).
+  - insect("Ants and bees are this")나 furniture("Beds, chairs, and tables are this")처럼 **예를 들어 범주를 가리키는** 설명이 아니어서, 카드 하나하나가 답처럼 보인다.
+  - 재현: `buildGamePlans`를 Very Hard × 씨앗 6,000으로 돌린다.
+  - 고치는 방향(Plan): 예를 들어 "Eggs, flour, and sugar for a cake are these."처럼 예를 들어 범주로 만든다. flour가 목록 밖이면 "Eggs, milk, and sugar for a cake are these."로 쓴다. 또는 avoid에 `pepper,mushroom,lemon,strawberry`를 더한다(이러면 food 같은 주제 오답 후보가 snack 하나만 남는다).
+
+### 14.10 권장 (3건)
+- **R-v4-1 `vh-food-06 snack`** "A small amount of food between meals.": strawberry·lemon(44~47%)도 사이에 먹는 "적은 양의 음식"이 될 수 있다 → avoid에 `strawberry`(필요하면 `lemon`)를 더하거나, 쿠키처럼 대표 예를 넣는다.
+- **R-v4-2 `vh-school-03 poem`** "A poet writes it. It has short lines.": poet이 poem의 같은 어근이라 답을 알려 준다(사용자가 scientist를 고친 것과 같은 종류) → 예를 들어 "Beautiful words in short lines, like a song."(모두 초등 낱말. "written"은 V6 기본형 규칙으로 write가 되지 않으므로 쓰지 않는다).
+- **R-v4-3 V5b 가짜 어근**: busy→bus, shoulder→should는 진짜 파생이 아니다. 지금 걸리는 문항은 없다. 나중에 오검을 막으려면 V5b 예외 목록을 두거나, 어근 후보를 "접사를 떼면 뜻이 이어지는 것"으로 사람이 확인한 목록으로 바꾼다(검사 규칙이라 spec 7.4 문장도 함께 바꿔야 한다). 급하지 않다.
+
+### 14.11 사용자 결정 필요
+- 부록 D는 사용자가 승인한 표다. **M-v4-1(ingredient 설명 바꾸기 또는 avoid 추가)**과, 원하면 **R-v4-1(snack)·R-v4-2(poem)**를 고칠지 정해 주셔야 Plan이 부록 D를 고칠 수 있다. 권장안: 세 개 모두 고친다.
+
+### 14.12 남은 것 — 교실 확인(X6) 체크 항목
+1. [ ] 학생 몇 명이 Easy·Normal·Hard·Very Hard를 각각 2판 하고, 결과 화면의 ○ 수로 첫 시도 정답률을 적는다(목표 Easy 85~90%, Normal 약 75%, Hard 55~65%, Very Hard 40~55%).
+2. [ ] Very Hard 7~10번 짧은 설명 문제(3.5초)에서 "손이 못 따라간다"는 말이 나오는지, 놓침(×)이 판마다 3개를 넘는지 본다(넘으면 단계 값을 0.5초 늘림).
+3. [ ] Very Hard 낱말(중학 ** 71개, 심화 23개)을 잘하는 5~6학년이 "어렵지만 맞힐 만하다"고 느끼는지 본다. 심화 낱말(vocabulary, anniversary, orchestra 등)은 따로 물어본다.
+4. [ ] 시작 화면에서 Very Hard를 누르면 학년 줄이 흐려지고 안내가 나오는지, 다른 난이도로 돌아오면 원래대로인지 본다.
+5. [ ] Very Hard 최고 점수가 학년과 상관없이 한 칸으로 나오는지 본다(3~4/5~6을 바꿔 가며 확인).
+6. [ ] 전체가 0.5초씩 빨라진 Easy·Normal이 저학년에게 너무 빠르지 않은지 본다.
+
+---
+
+## 15. 재검토 v4b (2026-11-26)
+
+- 지침: `docs/briefs/review-fix-brief-v4b.md`. 기준은 고쳐진 spec이다(15절 v4b 표, 7.4 V5b 예외·V5c, 16.4 `notDerived`, 16.8 X7, Very Hard 평균 4.38/4.42초).
+- 변경 범위는 `370b2b9` 뒤의 `git diff`로 봤다(v4 전체가 아직 커밋 전). git은 읽기만 했다.
+- 임시 스크립트·스크린샷: `/private/tmp/claude-501/-Users-sungchul-Desktop-play2-----/7bd2217c-e14d-425c-9176-0b2e64f9c244/scratchpad/review-v4b/`
+
+### 15.1 판정: **통과**
+반드시 수정 0건, 새 권장 1건(검사 규칙 설명의 작은 정정)이다.
+
+### 15.2 직접 돌린 명령과 결과
+
+| 명령 / 검사 | 결과 |
+|---|---|
+| `npm run check` | **종료 코드 0**(로그 끝 `EXIT 0` 직접 확인). 단위 **163 통과, 1 건너뜀**. 부록 A 위반 0. Very Hard 94문항 위반 0(설명 756낱말: 초등 92.6%·중학 6.2%·허용 1.2%, spec 15절 수치와 같음). e2e **108 통과**. |
+| 이번 수정분 범위 | `veryhard.json` 3문항 설명, `clue-extra.json` `notDerived`, `words.ts`(`derivedRoots` 예외, `sameRootTokens`), `validate.ts`(V5b 예외·V5c를 부록 A와 Very Hard 둘 다에), `check-data`, `data.test`. **X7 범위 안이다.** |
+| 데이터 ↔ spec | `veryhard.json` = 부록 D 94행 모든 칸 같음(14.2와 같은 독립 스크립트). `notDerived` = `["busy","shoulder"]`. |
+
+### 15.3 지난 지적별 결과
+
+| 지적 | 결과 | 확인 |
+|---|---|---|
+| **M-v4-1** ingredient | **고쳐짐** | 새 설명 "Eggs, milk, and sugar for a cake are these."<br>pepper·mushroom·lemon·strawberry·snack이 53~55% 함께 나오지만, 이제 insect·furniture처럼 **예를 든 범주**(케이크 재료)를 묻는다. 이 카드들은 eggs·milk·sugar가 아니라 **답이 아니다**. recipe는 avoid로 0%.<br>설명 낱말 egg·milk·sugar·cake는 모두 초등 낱말이고 Very Hard 정답이 아니라 노출·혼동이 없다. |
+| R-v4-1 snack | 고쳐짐 | 새 설명 "Cookies and chips are this. We eat it between meals."<br>strawberry·lemon·mushroom·pepper·recipe·ingredient가 41~46% 함께 나오지만 "cookies and chips"가 범주를 정해 답이 아니다.<br>chips(chip은 중학 `**`)와 cookie(초등)는 Very Hard 정답이 아니다. |
+| R-v4-2 poem | 고쳐짐 | 새 설명 "Beautiful words in short lines, like a song."<br>poet 노출이 사라졌다. diary·language·dictionary·vocabulary·grade·laboratory가 40~46% 함께 나오지만 "노래 같은 짧은 줄의 아름다운 말"은 poem뿐이다. rhythm은 1%이고 역시 답이 아니다. 설명 낱말은 모두 초등이다. |
+| R-v4-3 V5b 가짜 어근 | 고쳐짐(단, 15.5 참고) | `notDerived`로 busy·shoulder의 접사 떼기를 건너뛴다(어근 없음). farmer→farm, birthday→birth·day 같은 진짜 어근은 그대로 나온다. |
+
+- 영어: 세 설명 모두 읽을 만하다.
+  - "Cookies and chips are this. We eat it between meals."의 "it"은 복수를 받아 "them"이 더 자연스럽다. 기존 Very Hard 문항도 "… are this." 꼴을 쓰고 뜻 전달에 문제가 없어 고칠 필요는 없다(참고).
+
+### 15.4 V5b 예외·V5c 직접 계산 (spec 7.4 문장대로 Python/Node로 따로 짬)
+- **V5c**: 부록 A 230 + 부록 D 94문항에서 걸리는 설명 **0**.
+  - 내 계산과 코드 `sameRootTokens`의 결과가 324문항 모두 같다.
+  - 모든 정답 × 모든 설명 낱말로 넓혀 보면 걸리는 짝은 **bear ↔ beat 하나뿐**이다(같은 문항에 함께 나오지 않음). spec 7.4의 Plan 확인과 같다.
+- 일부러 넣은 예:
+
+| 예 | 결과 |
+|---|---|
+| poem + "poet" | 잡힘 |
+| thirsty + "this" | 통과 |
+| airport + "airplanes" | 통과(길이가 다름) |
+| thief + "this"·"things" | 통과 |
+| busy + "bus" | V5c·V5b는 통과 |
+
+- **오답 고르기·판 구성 불변**: 오답 빼기에 쓰는 `clueMentions`(기본 규칙)의 결과가 커밋 `370b2b9`의 `words.ts`와 324 × 324 쌍 모두 같다. V5b·V5c는 `validate.ts`에서만 쓴다.
+
+### 15.5 새로 찾은 것
+- **반드시 수정: 없음.**
+- **권장 1건 — R-v4b-1 (아주 작음, 문서 정정)**: `notDerived` 예외는 V5b에서만 효과가 있다.
+  - 실제로 busy 설명에 "bus"를 넣거나 shoulder 설명에 "should"를 넣으면, **v1부터 있던 V5 자체**(②: busy의 어간 bus로 시작, ③: shoulder가 should로 시작)가 여전히 실패시킨다.
+  - 직접 확인: "You ride a bus." → busy V5 실패, "You should rest it." → shoulder V5 실패.
+  - `data.test`도 주석에 이를 적어 두었다. 하지만 spec 7.4 문장 "busy 설명에 'bus'가 있어도 V5b 통과"는 V5 전체로는 통과하지 않는다는 뜻으로 오해될 수 있다.
+  - 지금 데이터에는 영향이 없다. 다음에 spec을 고칠 때 "V5b만 통과, V5 ②·③은 여전히 잡음"으로 한 줄 덧붙이면 된다.
+  - V5까지 풀지는 않는다(넓게 잡는 쪽이 안전).
+
+### 15.6 회귀 (14절 결론 다시 확인)
+
+| 확인 | 결과 |
+|---|---|
+| 떨어지는 시간(독립 계산, 2,352건) | 불일치 0, 최소 시간 보장 위반 0. Very Hard 7~10번 평균 **4.38초**·최대 4.95초, 4~6번 평균 **4.42초**, 1~3번 5.00초 — **spec 고친 수치와 같다**. 바닥 때문에 늘어나는 수(Very Hard 81/90, Hard 13·91·46·138·76, Normal 47·28, Easy 0)도 그대로다. |
+| 점수(무작위 4,050판) | 최종·문제별·진행도 불일치 0, 음수 0 |
+| "잘하는 학생" 재생 흉내 | Very Hard 10판(새 씨앗 5개 × 화면 2종)·100문제 모두 첫 시도 정답(카드 진행도 최대 0.73) |
+| 화면 4종 | 시작 4칸 60px·학년 줄 0.4·안내, 스크롤·끊김·넘침 0. 94개 설명 두 줄 이내·11자 카드 넘침 0. 결과 "Very Hard · 중학 단어"·권유, 저장 키 분리, `?difficulty=veryhard`. 결과 스크린샷 직접 확인. |
+| 콘솔·요청 | 콘솔 오류 0, 사이트 밖 요청 0 |
+
+### 15.7 사용자 결정 필요
+- 없음(R-v4b-1은 다음 spec 정리 때 한 줄 고치면 되는 문서 정정).
+
+### 15.8 남은 것
+- 14.12의 교실 확인(X6) 체크 항목 그대로.

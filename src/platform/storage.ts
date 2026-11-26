@@ -21,6 +21,8 @@ function set(key: string, value: string): void {
 
 /** 최고 점수 키: catchword.best.<band>.<difficulty> (spec 5.5 v2) */
 export function bestKey(band: BandChoice, d: Difficulty): string {
+  // Very Hard는 학년과 상관없이 한 칸(spec 5.5 v4)
+  if (d === 'veryhard') return STORAGE_KEYS.bestVeryHard;
   return `${STORAGE_KEYS.bestPrefix}${band}.${d}`;
 }
 
@@ -56,17 +58,22 @@ export function saveDifficulty(d: Difficulty): void {
   if ((DIFFICULTY_NAMES as readonly string[]).includes(d)) set(STORAGE_KEYS.difficulty, d);
 }
 
-export function loadRecent(): string[] {
+/** 최근 정답 목록. Very Hard는 따로(catchword.recent.veryhard, spec 5.5·5.6 v4) */
+function recentKey(d?: Difficulty): string {
+  return d === 'veryhard' ? STORAGE_KEYS.recentVeryHard : STORAGE_KEYS.recent;
+}
+
+export function loadRecent(d?: Difficulty): string[] {
   try {
-    const v = JSON.parse(get(STORAGE_KEYS.recent) ?? '[]');
+    const v = JSON.parse(get(recentKey(d)) ?? '[]');
     return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
   } catch {
     return [];
   }
 }
 
-export function saveRecent(words: readonly string[]): void {
-  set(STORAGE_KEYS.recent, JSON.stringify(words));
+export function saveRecent(words: readonly string[], d?: Difficulty): void {
+  set(recentKey(d), JSON.stringify(words));
 }
 
 export function loadSound(): boolean {

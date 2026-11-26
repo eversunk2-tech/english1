@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { CHALLENGE_LINES, DIFFICULTY_DESCS, DIFFICULTY_LABELS, ERROR_MESSAGES, PRIVACY_NOTICE, S, V2, signed } from '../../src/ui/strings.ts';
+import { CHALLENGE_LINES, DIFFICULTY_DESCS, DIFFICULTY_LABELS, ERROR_MESSAGES, PRIVACY_NOTICE, S, V2, VERYHARD_BAND_NOTE, signed } from '../../src/ui/strings.ts';
 
 const spec = readFileSync(resolve(__dirname, '..', '..', 'spec.md'), 'utf8');
 
@@ -54,10 +54,11 @@ describe('strings (spec 6·8.2·9)', () => {
   });
 
   it('v2 난이도 문구가 spec 5.8·6.2와 글자 그대로 같다', () => {
-    for (const d of ['easy', 'normal', 'hard'] as const) {
+    for (const d of ['easy', 'normal', 'hard', 'veryhard'] as const) {
       expect(spec.includes(`"${DIFFICULTY_DESCS[d]}"`), DIFFICULTY_DESCS[d]).toBe(true);
       expect(spec.includes(`"${CHALLENGE_LINES[d]}"`), CHALLENGE_LINES[d]).toBe(true);
       expect(spec.includes(`\`${DIFFICULTY_LABELS[d].en}\`/`) || spec.includes(`/\`${DIFFICULTY_LABELS[d].en}\``)).toBe(true);
+      expect(spec.includes(`\`${DIFFICULTY_LABELS[d].ko}\``), DIFFICULTY_LABELS[d].ko).toBe(true);
       expect(spec.includes(`[${DIFFICULTY_LABELS[d].en} ${DIFFICULTY_LABELS[d].ko}]`)).toBe(true);
     }
     expect(V2.penalty(20)).toBe('\u221220');
@@ -72,6 +73,12 @@ describe('strings (spec 6·8.2·9)', () => {
     expect(V2.wrongWords(['cat'])).toBe('오답: cat');
     expect(spec.includes('"오답: cat"')).toBe(true);
     expect(V2.resultCombo('5-6', 'hard')).toBe('5~6학년 · Hard');
+    // v4: Very Hard 결과 머리·안내·권유
+    expect(V2.resultCombo('3-4', 'veryhard')).toBe('Very Hard · 중학 단어');
+    expect(spec.includes('"Very Hard · 중학 단어"')).toBe(true);
+    expect(spec.includes(`"${VERYHARD_BAND_NOTE}"`)).toBe(true);
+    expect(CHALLENGE_LINES.hard).toBe('다음엔 Very Hard에 도전해 볼까요?');
+    expect(DIFFICULTY_LABELS.veryhard).toEqual({ en: 'Very Hard', ko: '매우 어려움' });
     expect(spec.includes('"5~6학년 · Hard"')).toBe(true);
     expect([S.great, S.goodJob, S.tryAgain, S.newRecord, S.startCard, S.score]).toEqual([
       'Great!', 'Good job!', 'Try again!', 'New record!', 'START', 'Score',

@@ -1,6 +1,8 @@
 {
   "secondary": ["pet", "wing", "ride", "bug", "honey", "round", "lay", "sweet", "lot", "person", "through", "plant", "other", "wheel", "string", "shoot", "net", "once", "thin", "wild", "pray", "loud", "truth", "stamp", "happen", "piece", "planet", "meal", "bow"],
-  "interjection": ["meow", "woof", "oink", "quack"],
-  "proper": ["monday", "tuesday", "saturday", "sunday", "christmas", "mars", "italian"],
-  "answerSecondary": ["giraffe", "dolphin", "whale", "medicine", "fever", "dentist", "calendar", "island", "desert", "planet", "airport", "museum", "village", "hungry", "angry", "invent"]
+  "interjection": ["meow", "woof", "oink", "quack", "ribbit"],
+  "proper": ["monday", "tuesday", "saturday", "sunday", "christmas", "mars", "italian", "english", "korean", "chinese", "pacific", "asia", "africa"],
+  "answerSecondary": ["giraffe", "dolphin", "whale", "medicine", "fever", "dentist", "calendar", "island", "desert", "planet", "airport", "museum", "village", "hungry", "angry", "invent"],
+  "notDerived": ["busy", "shoulder"],
+  "veryhardAdvanced": ["insect", "goat", "ingredient", "thumb", "athlete", "passenger", "professor", "vocabulary", "ladder", "continent", "harbor", "tunnel", "gallery", "passport", "submarine", "orchestra", "rhythm", "anniversary", "generous", "grateful", "celebrate", "explore", "translate"]
 }

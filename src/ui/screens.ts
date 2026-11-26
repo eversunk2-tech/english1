@@ -5,7 +5,7 @@ import { DIFFICULTY_NAMES, type Difficulty } from '../config.ts';
 import { tokenize } from '../data/words.ts';
 import { h, ICONS, keepWords, svg } from './dom.ts';
 import { errorMessage, type AppError } from '../camera/errors.ts';
-import { DIFFICULTY_DESCS, DIFFICULTY_LABELS, MARKS, S, V2, signed } from './strings.ts';
+import { DIFFICULTY_DESCS, DIFFICULTY_LABELS, MARKS, S, V2, VERYHARD_BAND_NOTE, signed } from './strings.ts';
 
 export interface StartHandlers {
   band: BandChoice;
@@ -65,6 +65,18 @@ export class Screens {
       }, label);
     // 난이도 줄(spec 6.2 v2): 큰 영어 + 작은 한국어, Hard에는 별 아이콘
     const descEl = h('p', { class: 'diff-desc', id: 'difficulty-desc', 'aria-live': 'polite' }, keepWords(DIFFICULTY_DESCS[o.difficulty]));
+    // Very Hard면 학년 줄을 흐리게(누를 수는 있음) + 안내(spec 6.2 v4)
+    const bandNote = h('p', { class: 'band-note', id: 'band-note', hidden: o.difficulty !== 'veryhard' }, keepWords(VERYHARD_BAND_NOTE));
+    const bandRow = h('div', { class: `opt-row band-row${o.difficulty === 'veryhard' ? ' dimmed' : ''}`, role: 'group', 'aria-label': S.bandLabel, id: 'band-row' },
+      h('span', { class: 'opt-label' }, S.bandLabel),
+      bandBtn('3-4', S.band34),
+      bandBtn('5-6', S.band56),
+      bandBtn('all', S.bandAll),
+    );
+    const setVeryHardLook = (vh: boolean): void => {
+      bandRow.classList.toggle('dimmed', vh);
+      bandNote.hidden = !vh;
+    };
     const diffBtn = (d: Difficulty): HTMLButtonElement =>
       h('button', {
         type: 'button',
@@ -77,9 +89,15 @@ export class Screens {
             el.setAttribute('aria-pressed', String(el.dataset.difficulty === d));
           }
           descEl.replaceChildren(...keepWords(DIFFICULTY_DESCS[d]));
+          setVeryHardLook(d === 'veryhard');
         },
       },
-        h('span', { class: 'diff-en', lang: 'en' }, DIFFICULTY_LABELS[d].en, d === 'hard' ? svg(ICONS.star, 'icon star') : null),
+        // Hard 별 하나, Very Hard 별 둘(색만으로 구분하지 않게). 영어 낱말은 띄어쓰기에서만 줄바꿈
+        h('span', { class: 'diff-en', lang: 'en' },
+          h('span', { class: 'diff-en-text' }, keepWords(DIFFICULTY_LABELS[d].en)),
+          d === 'hard' || d === 'veryhard' ? svg(ICONS.star, 'icon star') : null,
+          d === 'veryhard' ? svg(ICONS.star, 'icon star') : null,
+        ),
         h('span', { class: 'diff-ko' }, DIFFICULTY_LABELS[d].ko),
       );
     this.set(
@@ -89,12 +107,7 @@ export class Screens {
       h(
         'div',
         { class: 'options' },
-        h('div', { class: 'opt-row', role: 'group', 'aria-label': S.bandLabel },
-          h('span', { class: 'opt-label' }, S.bandLabel),
-          bandBtn('3-4', S.band34),
-          bandBtn('5-6', S.band56),
-          bandBtn('all', S.bandAll),
-        ),
+        h('div', { class: 'band-block' }, bandRow, bandNote),
         h('div', { class: 'opt-row', role: 'group', 'aria-label': S.soundLabel },
           h('span', { class: 'opt-label' }, svg(ICONS.sound), S.soundLabel),
           soundBtn(true, S.soundOn),

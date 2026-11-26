@@ -1,9 +1,10 @@
 // 화면 상태 기계(start → loading → handcheck → countdown → playing ⇄ paused → result, error)와 rAF 루프 하나(spec 11).
 import { GAME } from '../config.ts';
 import questionsData from '../data/questions.json';
+import veryhardData from '../data/veryhard.json';
 import { Camera } from '../camera/camera.ts';
 import { classifyCameraError, type AppError, type ErrorKind } from '../camera/errors.ts';
-import { buildPlans, updateRecent } from '../game/questions.ts';
+import { buildGamePlans, updateRecent } from '../game/questions.ts';
 import { mulberry32, randomSeed } from '../game/rng.ts';
 import { Session, type SessionEvent } from '../game/session.ts';
 import { cardMetrics } from '../game/layout.ts';
@@ -45,6 +46,8 @@ export type ScreenName = 'start' | 'loading' | 'handcheck' | 'countdown' | 'play
 export type Mode = 'camera' | 'pointer' | 'replay';
 
 const ALL_QUESTIONS = (questionsData as QuestionsFile).questions;
+/** v4: Very Hard 전용 풀(부록 D) */
+const VERYHARD_QUESTIONS = (veryhardData as QuestionsFile).questions;
 const STEP_MS = 1000 / 60;
 
 interface Els {
@@ -332,7 +335,14 @@ export class App {
   private startGame(): void {
     const rng = mulberry32((this.seedBase + this.gameCount * 7919) >>> 0);
     this.gameCount += 1;
-    const plans = buildPlans(ALL_QUESTIONS, this.band, this.difficulty, rng, loadRecent());
+    // Very Hard면 학년 무시하고 Very Hard 풀만, 최근 목록도 따로(spec 5.6 v4)
+    const plans = buildGamePlans(
+      { main: ALL_QUESTIONS, veryhard: VERYHARD_QUESTIONS },
+      this.band,
+      this.difficulty,
+      rng,
+      loadRecent(this.difficulty),
+    );
     this.session = new Session({ plans, rng, viewport: this.vp, camera: this.mode !== 'pointer', difficulty: this.difficulty });
     this.hud.setDifficulty(DIFFICULTY_LABELS[this.difficulty].en, this.difficulty);
     this.effects.clear();
@@ -404,7 +414,7 @@ export class App {
     const newRecord = s.score > best;
     if (newRecord) saveBest(this.band, d, s.score);
     const wrong = s.wrongSummary;
-    saveRecent(updateRecent(loadRecent(), s.plans.map((p) => p.answer.word)));
+    saveRecent(updateRecent(loadRecent(d), s.plans.map((p) => p.answer.word)), d);
     this.lastResult = { best: Math.max(best, s.score), newRecord };
     releaseWakeLock();
     this.hud.clearTransient();

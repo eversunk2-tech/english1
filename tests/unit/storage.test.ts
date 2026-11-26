@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { bestKey, loadBest, loadDifficulty, migrateBest, saveBest, saveDifficulty } from '../../src/platform/storage.ts';
+import { bestKey, loadBest, loadDifficulty, loadRecent, migrateBest, saveBest, saveDifficulty, saveRecent } from '../../src/platform/storage.ts';
 
 class FakeStorage {
   m = new Map<string, string>();
@@ -29,6 +29,24 @@ describe('storage v2 (spec 5.5)', () => {
     expect(store.getItem('catchword.best.5-6.hard')).toBe('1234');
     expect(loadBest('5-6', 'hard')).toBe(1234);
     expect(loadBest('5-6', 'normal')).toBe(0);
+  });
+
+  it('Very Hard 최고 점수·최근 목록은 학년과 상관없이 따로(v4)', () => {
+    expect(bestKey('3-4', 'veryhard')).toBe('catchword.best.veryhard');
+    expect(bestKey('5-6', 'veryhard')).toBe('catchword.best.veryhard');
+    saveBest('5-6', 'veryhard', 3000);
+    expect(store.getItem('catchword.best.veryhard')).toBe('3000');
+    expect(loadBest('3-4', 'veryhard')).toBe(3000);
+    expect(loadBest('3-4', 'hard')).toBe(0);
+    saveRecent(['zebra', 'frog'], 'veryhard');
+    saveRecent(['cat']);
+    expect(store.getItem('catchword.recent.veryhard')).toBe('["zebra","frog"]');
+    expect(store.getItem('catchword.recent')).toBe('["cat"]');
+    expect(loadRecent('veryhard')).toEqual(['zebra', 'frog']);
+    expect(loadRecent('hard')).toEqual(['cat']);
+    expect(loadRecent()).toEqual(['cat']);
+    saveDifficulty('veryhard');
+    expect(loadDifficulty()).toBe('veryhard');
   });
 
   it('v1 키만 있으면 Easy로 한 번 옮기고 옛 키는 남긴다', () => {

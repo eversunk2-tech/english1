@@ -865,3 +865,38 @@ body {
     font-size: 14px;
   }
 }
+
+/* ───── v4 Very Hard (spec 6.2) ───── */
+.band-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.band-row.dimmed {
+  opacity: 0.4;
+}
+
+.band-note {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fca5a5;
+}
+
+.band-note[hidden] {
+  display: none;
+}
+
+.diff-en-text {
+  text-align: center;
+}
+
+.seg-diff.diff-veryhard {
+  min-width: 128px;
+}
+
+.diff-badge.diff-veryhard {
+  background: #f5d0fe;
+}

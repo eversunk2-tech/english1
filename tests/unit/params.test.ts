@@ -19,6 +19,7 @@ describe('params (spec 11·12.2)', () => {
   it('?difficulty=easy|normal|hard (v2), 이상한 값은 무시', () => {
     expect(parseParams('?difficulty=hard').difficulty).toBe('hard');
     expect(parseParams('?difficulty=Easy').difficulty).toBe('easy');
+    expect(parseParams('?difficulty=veryhard').difficulty).toBe('veryhard');
     expect(parseParams('?difficulty=x').difficulty).toBe(null);
     expect(parseParams('').difficulty).toBe(null);
   });
