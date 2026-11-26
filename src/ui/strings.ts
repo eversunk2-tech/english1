@@ -27,6 +27,12 @@ export const ERROR_MESSAGES: Record<ErrorKind, string> = {
 export const PRIVACY_NOTICE =
   '카메라 영상은 이 태블릿 안에서 손 위치를 찾는 데만 쓰여요. 저장하거나 다른 곳으로 보내지 않아요.';
 
+/** spec 9절 v7: 개인정보 안내 둘째 줄(영어 읽어 주기와 인터넷 목소리) */
+export const PRIVACY_VOICE_NOTICE = '영어 읽어 주기는 인터넷 목소리(Google 등)를 쓸 수 있어요. 이때 영어 문제 문장만 보내져요.';
+
+/** spec 5.9.1 디버그·5.9.3 ①: ?debug=1 화면에서 애플 기기 안 보통 목소리일 때만 보이는 한 줄 */
+export const VOICE_QUALITY_HINT = '더 자연스러운 목소리: 고품질 영어 목소리를 내려받으세요';
+
 export const S = {
   // 시작 화면 (spec 6.2)
   title: 'Catch the Word!',
@@ -42,6 +48,7 @@ export const S = {
   startTouch: '터치로 하기',
   standHint: '태블릿을 가슴 높이에 세우고, 한 걸음 반(1~1.5m) 떨어져 서요',
   privacy: PRIVACY_NOTICE,
+  privacyVoice: PRIVACY_VOICE_NOTICE,
   cameraOn: '카메라 켜짐',
 
   // 준비 화면

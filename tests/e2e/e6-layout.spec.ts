@@ -76,7 +76,7 @@ test('E6 v2·v4: 시작 화면이 4종 화면에서 스크롤 없이 들어가�
       // 난이도 4칸이 한 줄(같은 높이)
       const tops = await page.locator('[data-difficulty]').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
       expect(new Set(tops).size, `${tag} 한 줄`).toBe(1);
-      for (const sel of ['.subtitle', '#difficulty-desc', '.stand-hint', '#privacy', ...(d === 'veryhard' ? ['#band-note'] : [])]) {
+      for (const sel of ['.subtitle', '#difficulty-desc', '.stand-hint', '#privacy', '#privacy-voice', ...(d === 'veryhard' ? ['#band-note'] : [])]) {
         for (const [before, after] of await lineBreaks(page, sel)) {
           expect(/\s/.test(before), `${tag} ${sel}: "${before}" | "${after}"`).toBe(true);
         }

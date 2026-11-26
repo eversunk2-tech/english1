@@ -20,6 +20,7 @@
   - 2026-11-26 **Plan v5(영어 목소리)**(지침 `docs/briefs/plan-brief-v5-voice.md`, 사용자 "고치기"): 5.9 목소리 고르기 규칙(5.9.1 새로), 11 파일, 12.1·12.2(E9)·12.4-12 테스트, 13 Y1~Y4, 부록 C 자료. 15절.
   - 2026-11-26 Plan 수정 v4b 덧붙임(Build 보고): V5c 문장 다듬음(길이 같음·끝 한 글자·초등 낱말·기능어 제외), Very Hard 7~10번 평균 4.36→4.38초로 5.3.3·16.2·16.1·14.3·v4 요약 수치 고침.
   - 2026-11-26 **Plan 수정 v4b**(Review 14절 반영, 지침 `docs/briefs/plan-fix-brief-v4b.md`, 사용자 결정 "모두 고치기"): 부록 D 3문항(ingredient·snack·poem) 설명, 7.4 V5b 가짜 어근 예외·V5c, 16.4 `notDerived`, 16.8 X7. 15절.
+  - 2026-11-26 **Plan v7(맥 영어 발음 — Google 음성 우선)**(지침 `docs/briefs/plan-brief-v7-voice.md`, 사용자 "Google 음성 우선"): 5.9.1 고르는 순서(A → N → G → B → C, `lang-only` 없앰, `wait` 새로), 5.9.2(새: 기다렸다 말하기, 인터넷 목소리 1.5초 감시와 기기 안 목소리로 다시 말하기), 5.9.3(새: Safari·iPad 고품질 목소리 안내), 0·9 개인정보(인터넷 목소리 문구), 11, 12.1·12.2(E9)·12.4-12, 13 Z1~Z5, 14.4(새 갈림길 U1·U2), 15, 부록 C. (v6 UI 디자인은 일시정지 상태라 17절을 비워 둔다 — 이 개정은 17절을 쓰지 않는다.) 같은 날 덧붙임(사용자 결정 14.4 — U1 "윈도는 지금 그대로", U2 "디버그 화면 + 안내 문서"): 5.9.1에 **윈도 목록 규칙**(목록에 `Microsoft ` 목소리가 있으면 순서 A → N → B → G → C — 윈도는 v5 결과 그대로), 12.1 ⑦⑧·⑱⑲, 12.2 E9 ⑥, 12.4-13 ⑤, 13 Z1·Z4, 14.4 결정됨, 15.
   - 2026-11-26 Plan v4 반영(지침 `docs/briefs/plan-fix-brief-v4.md`): 16절 값을 본문에 바꿔 끼움 — 0, 5.3(5.3.1~5.3.5, 수치 다시 계산), 5.5, 5.6, 5.8, 6.2, 7.4(V5b 확정), 부록 A people-14, 부록 D·E 확정. 15절.
 
 ### v4 변경 요약 — Very Hard 모드 + 전체 난이도 올리기 (사용자 승인 2026-11-26, 14.3 X1~X10 모두 추천안대로 — 본문에 반영됨, 자세한 근거는 16절)
@@ -68,7 +69,7 @@
 | 문항 | **이 문서 부록 A에 230문항을 확정해 둔다**(3~4학년군 143, 5~6학년군 87, 15개 주제 — v3, 2026-11-26. v1은 161문항). Build는 그대로 JSON으로 옮기고, 검사 스크립트로 기계 검사, Review는 사람 눈 검사. 근거: 2022 개정 영어과 교육과정 [별표 3] 기본 어휘 중 초등 권장(*) 800개. |
 | 화면 문구 | 안내·버튼·오류는 **한국어**, 퀴즈(설명·단어)와 짧은 칭찬(Great! 등)은 **영어**. |
 | 카메라 대체 | 카메라가 없거나 거부되면 **터치/마우스로 하기**(같은 게임, 누르기 = 잡기). 개발·검증용 `?input=pointer`, `?input=replay`. |
-| 개인정보 | 영상은 기기 안에서만 처리, 저장·전송 없음. 사이트 밖으로 나가는 요청 0개를 자동 테스트로 확인. 시작 화면에 안내. |
+| 개인정보 | 영상은 기기 안에서만 처리, 저장·전송 없음. 사이트 밖으로 나가는 요청 0개를 자동 테스트로 확인. 시작 화면에 안내. v7: 영어 읽어 주기에 브라우저의 인터넷 목소리(Chrome의 Google 등)를 쓰면 영어 문장만 그 회사로 갈 수 있다는 한 줄을 더한다(9절). |
 | 배포 | GitHub Actions → GitHub Pages, 주소 `https://eversunk2-tech.github.io/english1/`. Vite `base: './'`(상대 경로). |
 | 검증 | 순수 함수 단위 테스트(Vitest, 합성 손 좌표) + 문항 검사 스크립트 + Playwright(터치 모드 한 판, 랜드마크 재생, 카메라 오류 흉내, 실제 MediaPipe 적재 확인) + 사람이 태블릿에서 체크리스트. |
 
@@ -417,39 +418,95 @@ R_OPEN = 1.80, R_FIST = 0.90                              [추정]
 
 ### 5.9 소리 [추천: 14절 3번]
 - 효과음: Web Audio로 짧게 합성(파일 없음) — 잡기 "딸깍", 정답(올라가는 두 음), 오답(낮은 음), 카운트다운. 첫 터치 때 `AudioContext.resume()`.
-- 영어 읽어 주기(Web Speech API `speechSynthesis`): 문제 시작 때 설명을 한 번, 정답을 잡았을 때 단어를 한 번. `rate 0.9`, `pitch 1`(기본값). 목소리는 아래 5.9.1 규칙으로 고른다(v5). API가 없거나 영어 목소리가 하나도 없으면 조용히 건너뜀. iPad Safari는 첫 발화가 사용자 동작 안에서 일어나야 하므로[추정] 시작 버튼을 누를 때 빈 발화(`' '`)를 한 번 한다.
+- 영어 읽어 주기(Web Speech API `speechSynthesis`): 문제 시작 때 설명을 한 번, 정답을 잡았을 때 단어를 한 번. `rate 0.9`, `pitch 1`(기본값). 목소리는 아래 5.9.1 규칙으로 고른다(v5). API가 없거나 쓸 영어 목소리가 없으면 조용히 건너뜀(v7: 목소리를 정하지 않고 말하는 일은 없다 — 5.9.2). iPad Safari는 첫 발화가 사용자 동작 안에서 일어나야 하므로[추정] 시작 버튼을 누를 때 빈 발화(`' '`)를 한 번 한다.
   - v1의 규칙("`lang`이 `en-US`인 첫 목소리")은 v5에서 바뀌었다 — macOS·iPadOS는 목소리 목록이 이름순이라 첫 en-US 목소리가 장난용 **Albert**(일부러 쉰 목소리)가 되어 "목이 쉰 이상한 목소리"로 들렸다(사용자 피드백, 코디네이터 확인).
 - 시작 화면 토글: 소리 켬/끔(효과음과 읽어 주기를 함께). 기본 켬. 설정은 `localStorage` `catchword.sound`.
 
-#### 5.9.1 영어 목소리 고르기 (v5, 2026-11-26 — 사용자 "고치기") (`src/audio/voicePick.ts`, 순수 함수)
-- **입력·출력**: `chooseVoice(voices: {name, lang, default, localService, voiceURI}[])` → `{ mode: 'voice', voice }` | `{ mode: 'lang-only' }` | `{ mode: 'skip' }`.
-  - `voice`: 그 목소리로 말한다(`u.voice = voice; u.lang = voice.lang`).
-  - `lang-only`: 목소리를 정하지 않고 `u.lang = 'en-US'`만 준다(브라우저가 기본 영어 목소리를 고름). 목록이 아직 비어 있을 때와 영어 목소리가 장난용뿐일 때.
-  - `skip`: 목록에 영어 목소리가 하나도 없으면(장난용도 없음) 말하지 않는다(지금과 같음).
-- **이름·언어 정리**: `lang`은 `_`를 `-`로 바꾸고 소문자(`en_US` → `en-us`). 이름은 소문자로 바꾼 전체(`full`)와, 거기서 ` - `부터 끝까지와 첫 ` (`부터 끝까지를 지우고 앞의 `microsoft `·`apple `을 뗀 **기본 이름**(`base`)을 함께 쓴다. 예: `Eddy (영어(미국))` → `eddy`, `Samantha (Enhanced)` → `samantha`(full에는 `enhanced`가 남음), `Microsoft Zira - English (United States)` → `zira`. 영어 목소리 = 정리한 `lang`이 `en`으로 시작.
-- **① 장난용 제외(어느 경우에도 고르지 않음)** — 애플 novelty 목소리, `base`가 다음 중 하나: `albert, bad news, bahh, bells, boing, bubbles, cellos, good news, jester, organ, superstar, trinoids, whisper, wobble, zarvox` + 옛 이름 `deranged, hysterical, pipe organ, princess`.
-  - 근거: 이 맥(macOS 27.2.1)의 `say -v '?'` 영어 목록과 코디네이터가 배포 사이트에서 본 en-US 28개 목록 [확인, 2026-11-26]. Wikipedia PlainTalk가 Whisper·Zarvox·Trinoids·Cellos·Good News·Bad News·Pipe Organ·Albert·Bells·Boing·Bubbles를 novelty로, Princess → Superstar 개명을 적음 [확인]. Deranged → Wobble, Hysterical → Jester, Pipe Organ → Organ 개명은 사용자 게시판 글 [추정].
-- **② 맨 뒤로(다른 목소리가 없을 때만)** — 사람 목소리지만 기계음이 강하거나 캐릭터 목소리: 애플 Eloquence 계열 `eddy, flo, grandma, grandpa, reed, rocko, sandy, shelley`(이 중 grandma·grandpa·rocko는 노인·굵은 캐릭터 목소리)와 옛 MacinTalk `fred, junior, kathy, ralph`(Junior는 아이 캐릭터).
-  - 근거: Wikipedia PlainTalk(Fred·Kathy·Ralph = 옛 표준 목소리, Junior = 아이 목소리) [확인]. 음질 판단은 [추정]. 빼지 않는 이유: 이것뿐인 기기에서 아무 소리도 안 나는 것보다 낫다.
-- **③ 좋은 목소리 등급**(높을수록 먼저):
-  - A: `full`에 `premium`·`enhanced`(애플 고품질 내려받기 목소리) 또는 `natural`(마이크로소프트 자연 음성, 예: `Microsoft Aria Online (Natural) - English (United States)`)이 들어 있음 [추정: 이름 표기].
-  - B: 알려진 성인 표준 목소리 — 애플 `samantha, ava, allison, susan, tom, nathan, zoe, evan, joelle, nicky, noelle, daniel, kate, serena, arthur, martha, karen, lee, moira, tessa, rishi, veena, aman, tara`, 구글(`full`이 `google `으로 시작, 예: `Google US English`, `Google UK English Female`), 마이크로소프트 `zira, david, mark, hazel, george` [추정: 이 맥 목록 + 널리 알려진 이름].
-  - C: 그 밖의 알 수 없는 이름(안드로이드의 `English United States` 같은 기기 목소리 등).
-  - D: ②의 맨 뒤 목록.
-- **④ 순서**: 영어 목소리 중 ①을 뺀 것을 다음 순서로 줄 세워 첫 번째를 고른다.
-  1. D 등급이 아닌 것이 먼저(D는 언어와 상관없이 맨 뒤 — en-GB의 Daniel이 en-US의 Eddy보다 먼저).
-  2. 언어: `en-us` → `en-gb` → 그 밖의 `en-*`(교과서가 대체로 미국 영어 [추정]).
-  3. 등급: A → B → C.
+#### 5.9.1 영어 목소리 고르기 (v5 → **v7**, 2026-11-26 — 사용자 "고치기" → "Google 음성 우선") (`src/audio/voicePick.ts`, 순수 함수)
+- **v7에서 바뀐 것(요약)**: ① Google 목소리를 별도 등급(G)으로 올려 표준 목소리(Samantha 등)보다 먼저 고른다 — **단 윈도(목록에 Microsoft 목소리가 있는 브라우저)에서는 지금(v5)처럼 Microsoft 목소리가 먼저**(사용자 결정 U1 "윈도는 지금 그대로") ② 목소리를 정하지 않고 `lang`만 주고 말하는 `lang-only`를 **없앤다**(맥 기본 목소리가 한국어 "유나"라서 콩글리쉬가 될 수 있음) — 목록이 아직 없으면 **잠깐 기다렸다** 말하고, 끝내 쓸 영어 목소리가 없으면 말하지 않는다 ③ 인터넷 목소리(Google·Microsoft Online)가 1.5초 안에 말을 시작하지 못하거나 오류가 나면 **기기 안 목소리로 다시** 말하고, 그 뒤로는 그 페이지에서 인터넷 목소리를 쓰지 않는다(5.9.2).
+- **왜 바꾸나(v7 근거)**:
+  - 사용자의 실제 맥 Chrome(Chrome 158, macOS 27.2.1, 시스템 언어 ko-KR)에 목소리 199개, en-US에 `Google US English`(localService=false)가 있는데 v5 규칙은 같은 B 등급이면 기기 안 목소리 먼저라서 **Samantha**를 골랐다 [확인: 코디네이터 2026-11-26]. Samantha는 macOS의 오래된 compact 음성이라 억양이 단조롭다 [추정: 음질 판단]. 윈도에서 "원어민 느낌"으로 들린 것은 Chrome이면 Microsoft David, Edge면 Microsoft Aria Online (Natural)였다(v5 규칙 ⑦⑧).
+  - 이 맥의 기본 목소리(`default: true`)는 한국어 **"유나"(ko-KR)** [확인]. v5는 빈 목록·장난용뿐일 때 `lang-only`로 말했다 → 브라우저·OS가 기본 목소리로 영어를 읽으면 콩글리쉬가 된다. 실제로 유나가 읽는지는 소리를 듣지 못해 확인하지 못했다(같은 맥 Chrome에서 `lang-only` 발화는 4ms 만에 시작 = 기기 안 목소리인 것만 확인, 어느 목소리인지는 모름) [추정] — 그래도 막는 쪽으로 설계한다.
+  - Google 목소리가 말을 시작하기까지(같은 맥 Chrome, 이 맥의 인터넷, 사용자 동작 뒤, 4회): **232~448ms**, Samantha 4ms [확인: Plan이 2026-11-26 배포 사이트 페이지에서 `onstart`까지 시간을 잼, 소리 0.01].
+- **입력·출력**: `chooseVoice(voices, opts?: { excludeRemote?: boolean })` → `{ mode: 'voice', voice, grade }` | `{ mode: 'wait' }` | `{ mode: 'skip' }`.
+  - `voice`: 그 목소리로 말한다(`u.voice = voice; u.lang = voice.lang`). **목소리를 정하지 않은 발화(`u.voice` 없음)는 v7부터 만들지 않는다**(예외: 시작 버튼의 소리 0 빈 발화 `prime()`).
+  - `wait`(새): 목록이 **비어 있음**(아직 안 옴). `Speech`가 잠깐 기다린다(5.9.2).
+  - `skip`: 목록은 있는데 쓸 영어 목소리가 없음 — 영어 목소리가 없거나, **장난용뿐이거나**(v5는 `lang-only` → v7 `skip`), `excludeRemote`로 인터넷 목소리를 빼고 나니 남은 것이 없음.
+  - `excludeRemote: true`이면 `localService === false`인 목소리를 모두 뺀 뒤 고른다(5.9.2의 "인터넷 목소리 끔" 뒤).
+- **이름·언어 정리**(v5와 같음): `lang`은 `_`를 `-`로 바꾸고 소문자(`en_US` → `en-us`). 이름은 소문자로 바꾼 전체(`full`)와, 거기서 ` - `부터 끝까지와 첫 ` (`부터 끝까지를 지우고 앞의 `microsoft `·`apple `을 뗀 **기본 이름**(`base`)을 함께 쓴다. 예: `Eddy (영어(미국))` → `eddy`, `Samantha (Enhanced)` → `samantha`(full에는 `enhanced`가 남음), `Microsoft Zira - English (United States)` → `zira`. 영어 목소리 = 정리한 `lang`이 `en`으로 시작. **한국어 기본 목소리(유나 등)는 `lang`이 `ko`라 처음부터 후보가 아니다** — `default: true`는 영어 목소리들 사이에서만 순서에 쓴다.
+- **① 장난용 제외(어느 경우에도 고르지 않음)** — v5와 같음: `base`가 `albert, bad news, bahh, bells, boing, bubbles, cellos, good news, jester, organ, superstar, trinoids, whisper, wobble, zarvox` + 옛 이름 `deranged, hysterical, pipe organ, princess`. (근거는 v5 그대로: 이 맥 `say -v '?'`, Wikipedia PlainTalk [확인], 옛 이름 개명 [추정].)
+- **② 맨 뒤(다른 목소리가 없을 때만)** — v5와 같음: `eddy, flo, grandma, grandpa, reed, rocko, sandy, shelley, fred, junior, kathy, ralph`(D 등급).
+- **③ 좋은 목소리 등급**(v7, 높을수록 먼저, 위에서부터 먼저 맞는 것):
+  | 등급 | 조건 | 예 | 어디서 |
+  |---|---|---|---|
+  | D | `base`가 ② 목록 | Eddy, Grandpa, Fred | 맥·iPad |
+  | **A** | `full`에 `premium` 또는 `enhanced` | Samantha (Enhanced), Ava (Premium) | 맥·iPad(사용자가 내려받은 기기 안 고품질 목소리) |
+  | **N**(새) | `full`에 `natural` | Microsoft Aria Online (Natural) - English (United States) | 윈도·맥의 **Edge**(인터넷) |
+  | **G**(새) | `full`이 `google `으로 시작 | Google US English, Google UK English Female | **Chrome**(인터넷) |
+  | B | `base`가 알려진 성인 표준 목록(v5와 같음, 구글은 G로 옮김) | Samantha, Daniel, Microsoft David·Zira·Mark | 맥·iPad·윈도 |
+  | C | 그 밖 | English United States(안드로이드) | |
+  - v5의 A에 있던 `natural`은 N으로 나눈다(A와 N의 순서만 생김). v5의 B에 있던 구글은 G로 올린다.
+  - **A가 N·G보다 먼저인 이유**: 내려받은 애플 고품질 목소리는 음질이 인터넷 목소리와 비슷하거나 낫고[추정], 기기 안이라 인터넷이 끊겨도 되고 문장이 밖으로 나가지 않는다. 이 목소리를 내려받은 것은 사용자(교사)가 일부러 한 일이다.
+  - **N이 G보다 먼저인 이유**: Microsoft Online (Natural)은 신경망 음성이라 Google US English보다 새롭고 자연스럽다[추정]. 실제로는 **한 브라우저 목록에 둘이 함께 있지 않다** — Google 목소리는 Google Chrome에만, Microsoft Online (Natural)은 Edge에만 있다[추정: 2026-11-26 사용자 맥 Chrome 목록에 Natural 없음 확인, Edge 목록은 v5 사용자 보고·널리 알려진 사실]. 그래서 이 순서는 윈도·맥 어느 쪽에서도 지금 고르는 결과를 바꾸지 않는다(Edge는 v5와 같이 Aria).
+  - **윈도는 지금 그대로(사용자 결정 U1, 2026-11-26)**: 윈도에서는 Microsoft 목소리를 계속 쓴다 — Chrome → Microsoft David 등 기기 안 목소리, Edge → Microsoft Aria Online (Natural). Google 우선은 맥, 그리고 Google 목소리가 있는 그 밖의 비윈도 환경에만.
+  - **윈도를 어떻게 알아보나 — 목록으로 판단(UA·platform을 보지 않음)**: 목록 전체(언어 상관없이) 중 `full`이 `microsoft `로 시작하는 목소리가 하나라도 있으면 **"Microsoft 목록"**으로 보고 ④-3의 등급 순서를 **A → N → B → G → C**로 쓴다(G를 B 뒤로). 없으면 **A → N → G → B → C**.
+    - 근거 ① 순수 함수(`chooseVoice`) 안에서 끝나 단위 테스트가 목록만으로 윈도 경우를 만들 수 있다. UA·`navigator.platform`은 코드 밖 값을 넣어야 하고, UA 줄이기(User-Agent reduction)·`userAgentData`가 Safari·Firefox에 없음 등으로 브라우저마다 다르다 [추정].
+    - ② 실제로 Google 목소리와 Microsoft 목소리가 **한 목록에 함께 나오는 것은 윈도의 Google Chrome뿐**이다: 윈도 Chrome = 윈도 기기 안 Microsoft 목소리(David·Zira·Mark, 한국어 윈도는 Heami 등) + Google 목소리, 맥 Chrome = 애플 목소리 + Google(Microsoft 없음 — 2026-11-26 사용자 맥 Chrome 199개 목록에서 확인 [확인]), 안드로이드·크롬OS·리눅스 Chrome = 기기 목소리 + Google(Microsoft 없음) [추정], Edge = Microsoft(Online Natural 포함) + 기기 목소리(Google 없음) [추정]. 그래서 이 규칙이 결과를 바꾸는 곳은 윈도 Chrome 하나이고, 거기서는 v5와 같은 David가 나온다. 맥 Edge도 Microsoft 목록으로 보지만 Google이 없으므로 결과(Aria)가 같다.
+    - ③ "Microsoft 목록"이면 v5 순서와 결과가 같다: v5는 Google을 B로 두고 같은 B면 기기 안 먼저였으므로 David > Google, Natural(v5 A) > 나머지 — v7의 A → N → B → G와 같은 결과(윈도에는 Enhanced/Premium이 없음).
+    - 언어 상관없이 세는 이유: 영어 Microsoft 목소리가 없는 한국어 윈도(`Microsoft Heami` ko-KR만)에서도 윈도로 알아본다. 이때 영어 목소리는 Google뿐이라 결과는 Google US English(v5와 같음).
+    - 잘못 알아볼 수 있는 경우: 비윈도인데 목록에 Microsoft 이름이 있는 경우(맥 Edge 등)는 Google이 없어 결과가 같고, 윈도인데 Microsoft 목소리가 하나도 없는 경우는 없다고 본다(윈도 기본 목소리) [추정]. UA를 함께 보지 않는다.
+  - 윈도 Chrome에서 Google 목소리를 쓰지 않으므로 윈도 Chrome에서는 문장이 Google로 가지 않는다. 윈도 Edge의 Aria는 v5와 같이 인터넷 목소리(Microsoft)라 5.9.2 감시가 적용된다 — 실패하면 David로(v5에는 없던 대비, 평소 소리는 같음).
+- **④ 순서**: 영어 목소리 중 ①을 빼고(`excludeRemote`이면 인터넷 목소리도 빼고) 다음 순서로 줄 세워 첫 번째를 고른다.
+  1. D 등급이 아닌 것이 먼저(D는 언어와 상관없이 맨 뒤 — v5와 같음).
+  2. 언어: `en-us` → `en-gb` → 그 밖의 `en-*`(v5와 같음. 그래서 맥 Chrome에서 en-US Samantha(B)가 en-GB Google UK English Female(G)보다 먼저 — 미국 영어를 지킨다).
+  3. 등급: **A → N → G → B → C**. 단 "Microsoft 목록"(목록에 `microsoft `로 시작하는 목소리가 하나라도 있음 — 윈도)이면 **A → N → B → G → C**(위 "윈도는 지금 그대로").
   4. `default`가 true인 것.
-  5. `localService`가 true인 것(같은 언어·등급이면 기기 안 목소리 — 인터넷이 없어도 되고 문장이 밖으로 나가지 않음. 마이크로소프트 자연 음성처럼 원격이라도 A 등급이면 3번에서 이미 앞섬).
+  5. `localService`가 true인 것(이제 같은 등급 안의 동점 처리일 뿐 — A·B·C·D는 대개 기기 안, N·G는 모두 인터넷이라 거의 쓰이지 않음).
   6. 목록에 나온 순서.
-- **목록이 늦게 오는 경우**: 크롬 등은 처음 `getVoices()`가 빈 배열이고 나중에 `voiceschanged`로 채워진다 [추정 — MDN 예제는 처음 한 번 읽고 `voiceschanged`에서 다시 읽음(확인), 빈 배열이라는 문장은 MDN에 없음]. 그래서
-  - `Speech`는 만들 때 `voiceschanged`를 듣고, 목록이 바뀔 때마다 `chooseVoice`를 다시 돌려 고른 목소리를 바꾼다.
-  - 고른 결과가 `voice`일 때만 기억한다. `lang-only`·`skip`은 기억하지 않고 다음 `say()`에서 다시 고른다. 지금 코드는 빈 목록이면 첫 설명을 건너뛴다 → 고침: 빈 목록이면 `lang-only`로 말한다.
-  - `prime()`(시작 버튼)에서 `getVoices()`를 한 번 불러 목록 적재를 재촉한다(지금과 같음).
-- **속도·높이**: `rate 0.9` 그대로(배우는 아이에게 조금 느리게, 표준 목소리에서 자연스러운 범위 [추정]), `pitch` 1 그대로(높이를 바꾸면 사람 목소리가 오히려 부자연스러움 [추정]).
-- **디버그**: `?debug=1` 화면에 고른 목소리 `name (lang, local/remote, 등급)`과 mode를 보인다(교실에서 어떤 목소리였는지 사진으로 남기기).
-- 사용자 결정이 더 필요한 갈림길은 없다(목소리 직접 고르기 기능은 사용자가 고르지 않음) — 이 절대로 바로 Build할 수 있다.
+- **기기별로 고르는 것(v7 기대값, 12.1 테스트와 같음)**
+  | 기기·브라우저 | v5 | **v7** | 인터넷이 안 될 때(5.9.2) |
+  |---|---|---|---|
+  | 맥 Chrome(이 맥 목록) | Samantha (B) | **Google US English (G)** | Samantha |
+  | 맥 Chrome + 고품질 내려받음 | Samantha (Enhanced) | Samantha (Enhanced) (A) | (같음, 기기 안) |
+  | 맥·iPad Safari(Google 없음) | Samantha | Samantha (B), 내려받았으면 Enhanced/Premium (A) | (같음) |
+  | 윈도 Chrome | Microsoft David (B) | **Microsoft David (B) — 그대로**(Microsoft 목록, U1) | Microsoft David(기기 안이라 영향 없음) |
+  | 한국어 윈도 Chrome(영어 Microsoft 목소리 없음) | Google US English | 같음 (G) | 쓸 영어 목소리 없음 → 건너뜀 |
+  | 윈도·맥 Edge | Microsoft Aria Online (Natural) | 같음 (N) | Microsoft David 등 기기 안 목소리(윈도) / Samantha(맥) |
+  | 안드로이드 Chrome | English United States (C)(기기 목록) | 같음(안드로이드 Chrome 목록에 Google 이름이 있으면 G) [추정] | 기기 안 목소리 |
+- **목록이 늦게 오는 경우**: 크롬 등은 처음 `getVoices()`가 빈 배열일 수 있고 나중에 `voiceschanged`로 채워진다 [추정 — MDN 예제가 `voiceschanged`에서 다시 읽음(확인)]. 처리는 5.9.2.
+- **속도·높이**: `rate 0.9`, `pitch 1` 그대로(v5와 같음). Google 목소리에서도 같은 값.
+- **디버그**: `?debug=1` 화면·`state().voice`에 `name (lang, local/remote, 등급) · voice`(등급 글자는 A/N/G/B/C/D), 기다리는 중이면 `wait`, 없으면 `skip`. 인터넷 목소리를 끈 뒤에는 끝에 ` · 인터넷 목소리 끔`을 붙인다. 예: `Google US English (en-US, remote, G) · voice`, `Samantha (en-US, local, B) · voice · 인터넷 목소리 끔`. 고른 목소리가 애플 기기 안 목소리인데 A 등급이 아니면(B·C·D이고 local) 디버그 화면에 한 줄 더: "더 자연스러운 목소리: 고품질 영어 목소리를 내려받으세요(5.9.3)".
+
+#### 5.9.2 말하기 순서 — 기다렸다 말하기, 인터넷 목소리 실패 대비 (v7, `src/audio/speech.ts`)
+- **값**(`src/config.ts`의 `SPEECH`, 깊게 얼림): `RATE 0.9`, `PITCH 1`, `VOICE_WAIT_MS 1000`, `REMOTE_START_TIMEOUT_MS 1500`. `speech.ts`의 `SPEECH_RATE`·`SPEECH_PITCH`는 이 값을 다시 내보낸다(기존 테스트 호환).
+- **목록 미리 받기**: `Speech`를 만들 때(페이지가 열릴 때) `getVoices()`를 한 번 불러 적재를 재촉하고 `voiceschanged`를 듣는다. 시작 버튼의 `prime()`에서도 한 번 더(지금과 같음). 첫 설명은 시작 버튼 → (터치) START 카드 또는 (카메라) 준비·손 확인 뒤에 나오므로 보통 몇 초 여유가 있다. 그래도 목록이 늦으면 아래 "기다리기"가 첫 설명을 지킨다(v5의 "첫 설명이 빠지지 않게"를 `lang-only` 없이 지킴).
+- **`say(text)`** — 부를 때마다 번호(`token`)를 하나 올린다. 새 `say()`나 `cancel()`이 오면 앞의 기다림·감시·다시 말하기는 모두 무효(마지막 것만 산다).
+  1. `chooseVoice(getVoices(), { excludeRemote: this.remoteOff })`.
+  2. `voice` → 바로 말한다(아래 "말하기").
+  3. `wait`(빈 목록) → 이 문장을 **기다리는 문장**으로 둔다(앞에 기다리던 문장은 버림). `voiceschanged`가 오면 다시 골라 `voice`이면 그 목소리로 말한다. `VOICE_WAIT_MS`(1초) 안에 `voice`가 안 나오면 **그 문장은 말하지 않는다**(skip). 다음 `say()`는 다시 1번부터.
+  4. `skip` → 말하지 않는다.
+- **끝내 영어 목소리가 없을 때 건너뛰는 이유(lang-only를 남기지 않는 이유)**: ① 목소리를 정하지 않고 말하면 브라우저가 기본 목소리(이 맥은 한국어 유나)를 쓸 수 있어 바로 이번 문제(콩글리쉬)가 된다 ② 설명 글은 항상 화면에 보이고 게임은 소리 없이도 그대로 된다(소리 끔과 같음) ③ 장난용뿐인 목록에서 `lang-only`는 브라우저가 Albert 같은 장난용을 고를 수도 있다. 잃는 것: 목록을 끝내 주지 않으면서 말은 되는 브라우저에서 읽어 주기가 없어진다 — 현재 주요 브라우저(Chrome·Safari·Edge·Samsung Internet)는 목록을 준다[추정], 12.4-12에서 확인.
+- **말하기**: `cancel()` → 새 `SpeechSynthesisUtterance(text)`, `voice`·`lang`·`rate`·`pitch`를 넣고 `speak()`. **발화 객체를 `Speech`의 필드에 잡아 둔다**(끝날 때까지) — Chrome은 참조가 없는 발화의 `onstart`·`onend`를 놓칠 수 있다[추정: 널리 알려진 Chromium 문제].
+- **인터넷 목소리 감시**(고른 목소리의 `localService === false`일 때만 — G·N 등):
+  - `speak()` 뒤 `REMOTE_START_TIMEOUT_MS`(1.5초) 안에 `onstart`가 오지 않으면 → **실패**.
+  - `onstart` 전에 `onerror`가 오고 `error`가 `interrupted`·`canceled`가 아니면(예: `network`, `synthesis-failed`, `synthesis-unavailable`, `audio-busy`) → 바로 **실패**.
+  - 실패하면: `this.remoteOff = true`(이 페이지가 열려 있는 동안 인터넷 목소리를 쓰지 않음. 새로고침하면 다시 시도) → `cancel()` → `excludeRemote`로 다시 골라 **같은 문장을 기기 안 목소리로 한 번 다시** 말한다(그 사이 새 `say()`/`cancel()`이 없었을 때만). 다시 고른 결과가 `skip`이면 말하지 않는다.
+  - 실패가 아닌 것: `interrupted`·`canceled` 오류(우리 `cancel()`이나 다음 `say()`가 끊은 것 — 같은 맥 Chrome에서 Google 발화 도중 `cancel()`하면 `interrupted`가 오는 것을 확인 [확인 2026-11-26]), **`onstart` 없이 `onend`만 온 경우**(같은 맥 Chrome에서 사용자 동작 전의 발화는 `onstart` 없이 0ms에 `onend`만 옴 [확인 2026-11-26] — 자동 재생 막힘이지 네트워크 실패가 아님. 다시 말하지 않고 인터넷 목소리도 끄지 않는다).
+  - `onstart` 뒤의 `onerror`(말하다 끊김)는 `remoteOff = true`만 하고 다시 말하지 않는다(이미 일부를 들었고, 다음 문장부터 기기 안 목소리).
+  - **1.5초로 정한 근거**: 이 맥에서 Google 시작 232~448ms [확인] → 가장 느린 값의 3배 남짓. 학교 와이파이가 느리면 더 걸릴 수 있어 너무 짧으면 멀쩡한 Google을 끄게 되고, 너무 길면 끊긴 망에서 첫 설명이 늦게 나온다. [추정 — 12.4-12에서 교실 망으로 다시 잼]
+  - 인터넷 목소리를 끈 뒤 다시 켜는 기능은 두지 않는다(새로고침으로 충분, 교실에서 망이 들쭉날쭉할 때 문제마다 1.5초씩 늦어지는 것을 막는다).
+- **게임 진행에 미치는 영향: 없음.** 읽어 주기는 "말해 달라고 맡기기"일 뿐이고 카드 떨어짐·시간·점수(5.2·5.3.3)는 소리를 기다리지 않는다. 공정성 바닥(5.3.3)은 화면의 설명 글을 **읽는** 시간으로 잡았다(듣는 시간 아님). 가장 나쁜 경우 소리가 늦는 정도: 목록 기다리기 ≤ 1초(대개 0, 첫 문장만), 인터넷 목소리 실패 ≤ 1.5초(그 페이지에서 한 번만). 정답을 잡으면 지금처럼 단어를 읽으며 앞 설명을 끊는다(새 `say()`).
+- **`cancel()`**(일시정지·처음으로·결과): 기다리는 문장·감시 타이머를 지우고 `speechSynthesis.cancel()`.
+- **`prime()`**: 지금과 같이 소리 0인 빈 발화(목소리 지정 없음 — 소리가 0이라 콩글리쉬 문제 없음, 감시 안 함) + `getVoices()`.
+- 타이머는 `globalThis.setTimeout`/`clearTimeout`을 쓴다(단위 테스트가 `vi.useFakeTimers()`로 돌림). 게임 시계(`?clock=manual`)와는 상관없다.
+
+#### 5.9.3 Google 목소리가 없는 곳(맥·iPad Safari) — 고품질 목소리 안내 (v7)
+- Safari에는 Google 목소리가 없다 [확인: 코디네이터]. 여기서 고를 수 있는 가장 좋은 소리는 사용자가 내려받은 애플 고품질 목소리(A 등급, 이름에 `(Enhanced)`·`(Premium)`)다. 내려받으면 5.9.1 규칙이 자동으로 고른다(코드에서 할 일 없음).
+- 내려받는 곳(한국어 화면):
+  - **맥**: Apple 메뉴 > 시스템 설정 > 손쉬운 사용 > 읽기 및 말하기 > "시스템 음성" 옆 ⓘ > 영어(미국)에서 목소리(예: Samantha, Ava) 옆 내려받기 [확인: 애플 지원 한국어 쪽 경로. "향상된/고품질" 표기는 그 쪽에 없음 — 목록에서 보이는 이름 표기는 [추정]].
+  - **iPad**: 설정 > 손쉬운 사용 > 읽기 및 말하기 > 음성 > 영어 > 목소리 고르기(고품질·향상된 버전 내려받기) [추정 — 12.4-12에서 실제 iPad로 확인].
+  - 내려받은 뒤 브라우저를 다시 열어야 목록에 나올 수 있다 [추정].
+- **어디에 안내하나 [사용자 결정 U2 "디버그 화면 + 안내 문서", 2026-11-26]**: ① `?debug=1` 화면 한 줄(5.9.1 디버그 — 고른 목소리가 애플 기기 안 보통 목소리일 때만 "더 자연스러운 목소리: 고품질 영어 목소리를 내려받으세요") ② 교사용 안내: 저장소 `README.md`에 "영어 목소리" 짧은 절(위 경로, Chrome에서는 Google 목소리를 자동으로 씀, 인터넷 목소리와 개인정보 9절). **시작 화면에는 새 문구를 넣지 않는다** — 화면이 이미 꽉 차 있고(E6 스크롤 없음), 아이가 읽는 화면에 기기 설정 이야기는 맞지 않는다.
 
 ---
 
@@ -637,6 +694,10 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 - 카메라 영상은 **이 기기 브라우저 안에서만** 손 위치를 찾는 데 쓰고, **저장하지 않고 어디에도 보내지 않는다.** 화면을 캡처하거나 녹화하는 코드가 없다. 서버·분석 도구·광고·외부 글꼴·외부 CDN 호출 없음.
 - `localStorage`에는 학년군별 최고 점수, 최근 정답 단어, 소리 설정만 둔다(개인을 알아볼 정보 없음).
 - 시작 화면 안내(항상 보임, 앞에 SVG 카메라 아이콘): **"카메라 영상은 이 태블릿 안에서 손 위치를 찾는 데만 쓰여요. 저장하거나 다른 곳으로 보내지 않아요."**
+- **영어 읽어 주기와 인터넷 목소리(v7)**: 읽어 주기는 브라우저에 들어 있는 목소리를 쓴다(5.9). 그중 **인터넷 목소리**(`localService === false` — Chrome의 Google 목소리, Edge의 Microsoft Online (Natural) 목소리)를 고르면 **브라우저가 읽을 문장(영어 설명·정답 단어)만** 그 회사 서버로 보내 소리를 받아 온다 [확인: MDN `localService` = 원격 합성 여부. 실제로 무엇이 오가는지는 브라우저 몫이라 확인하지 못함 — 추정]. 카메라 영상·손 좌표·점수·저장값은 보내지 않는다. 소리를 끄면 읽어 주기를 하지 않으므로 아무것도 가지 않는다. 사용자는 이 점을 듣고 "Google 음성 우선"을 골랐다(15절).
+  - 시작 화면 안내 둘째 줄(v7, 항상 보임, 첫 줄 바로 아래, 같은 글자 크기 또는 한 단계 작게, 앞에 SVG 스피커 아이콘): **"영어 읽어 주기는 인터넷 목소리(Google 등)를 쓸 수 있어요. 이때 영어 문제 문장만 보내져요."** (`strings.ts`의 `PRIVACY_VOICE_NOTICE`. 첫 줄 `PRIVACY_NOTICE`는 바꾸지 않는다.) "쓸 수 있어요"라고 쓴 이유: Safari처럼 인터넷 목소리가 없는 기기, 인터넷 목소리를 끈 뒤(5.9.2)에도 문장이 틀리지 않게.
+  - 시작 화면이 스크롤 없이 들어가야 하는 조건(6.2, E6)은 그대로 — 넘치면 두 줄 모두 글자를 한 단계 줄이고, 그래도 넘치면 부제·서는 방법 줄을 줄이는 6.2의 순서를 따른다.
+  - **E1·E7 검사는 그대로 유지된다**: 두 검사는 **페이지가 낸 요청**(Playwright `request` 사건)의 출처를 본다. 브라우저 내장 음성의 통신은 페이지의 `fetch`·XHR이 아니라 브라우저 자체 기능이라 페이지 요청에 잡히지 않고 CSP `connect-src`의 대상도 아니다 [추정]. 게다가 E9는 `speechSynthesis`를 가짜로 바꾸고, Playwright의 Chromium에는 Google 목소리가 없다 [추정]. 그래서 "사이트 밖 요청 0" 문장과 CSP 값은 바꾸지 않는다. 위 문장 "서버·분석 도구·광고·외부 글꼴·외부 CDN 호출 없음"은 **페이지**에 대한 말로 그대로 맞다.
 - 카메라가 켜져 있는 동안 화면 구석에 작은 "카메라 켜짐" 표시.
 - 디버그 녹화(`?debug=1&record=1`, 12.3)는 **손 좌표 숫자만** JSON으로 기기에 내려받게 하며(영상 아님), 사용자가 버튼을 눌러야만 만든다. 일반 화면에는 이 기능이 없다.
 - 보장 방법: E2E 테스트가 페이지가 낸 **모든 요청의 출처가 사이트와 같은지** 검사한다(12.2 E1). 추가로 `index.html`에 CSP 메타 태그를 시도한다:
@@ -666,6 +727,7 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 ```
 영어게임/                          (저장소 english1의 루트)
 ├─ CLAUDE.md, spec.md, review.md(Review가 작성)
+├─ README.md                       (v7, 14.4 U2 결정) 교사용 짧은 안내 — "영어 목소리" 절(5.9.3)
 ├─ docs/briefs/                    지침 파일(기존)
 ├─ index.html                      #app 뼈대, CSP 메타, <video>, <canvas>, DOM 화면 자리
 ├─ package.json, package-lock.json
@@ -685,7 +747,7 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 │  └─ serve-dist.mjs               dist/를 /english1/ 아래로 주는 작은 정적 서버(E2E용, .wasm은 application/wasm)
 ├─ src/
 │  ├─ main.ts                      시작점: URL 매개변수 읽고 App 만들기
-│  ├─ config.ts                    HAND(4.6)·GAME(5.3~5.5)·PERF(10절) 상수 전부 — v2: GAME.DIFFICULTIES{easy,normal,hard}{stages, scoreMultiplier}, GAME.FALL_FLOOR{BASE_MS 300, WORD_MS {"3-4":400,"5-6":350}, MOVE_MS 1000, GRAB_MS 400, COMFORT_P 0.85}, GAME.DEFAULT_DIFFICULTY 'normal'(모두 깊게 얼림)
+│  ├─ config.ts                    HAND(4.6)·GAME(5.3~5.5)·PERF(10절)·SPEECH(5.9.2, v7) 상수 전부 — v2: GAME.DIFFICULTIES{easy,normal,hard}{stages, scoreMultiplier}, GAME.FALL_FLOOR{BASE_MS 300, WORD_MS {"3-4":400,"5-6":350}, MOVE_MS 1000, GRAB_MS 400, COMFORT_P 0.85}, GAME.DEFAULT_DIFFICULTY 'normal'(모두 깊게 얼림)
 │  ├─ styles.css
 │  ├─ app/App.ts                   화면 상태 기계(start→loading→handcheck→playing⇄paused→result, error), 한 개의 rAF 루프
 │  ├─ app/params.ts                ?input=camera|pointer|replay, ?band, ?seed, ?debug=1, ?test=1, ?delegate=CPU|GPU, ?clock=manual(`?test=1`이 함께 있을 때만 켜짐 — 없으면 무시), ?difficulty=easy|normal|hard(v2)
@@ -713,8 +775,8 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 │  ├─ ui/hud.ts                    설명 띠·점수·문제 번호
 │  ├─ ui/strings.ts                모든 화면 문구(6.1)
 │  ├─ audio/sfx.ts                 Web Audio 효과음
-│  ├─ audio/speech.ts              영어 읽어 주기(v5: voiceschanged 듣기, chooseVoice 결과 적용)
-│  ├─ audio/voicePick.ts           5.9.1 목소리 고르기(순수, v5)
+│  ├─ audio/speech.ts              영어 읽어 주기(v5: voiceschanged 듣기, chooseVoice 결과 적용 · v7: 5.9.2 기다렸다 말하기, 인터넷 목소리 감시·기기 안 목소리로 다시 말하기)
+│  ├─ audio/voicePick.ts           5.9.1 목소리 고르기(순수, v5 · v7: 등급 A/N/G/B/C/D, wait/skip, excludeRemote)
 │  ├─ platform/wakeLock.ts
 │  ├─ platform/storage.ts          localStorage try/catch 감싸기
 │  ├─ debug/debugOverlay.ts        ?debug=1: 21점 뼈대, 손가락별 c_f·C·상태, fps(그리기·인식), 검사 ms, 영상 크기, delegate, 고른 목소리(v5)
@@ -748,9 +810,9 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 | `session.test.ts` | 가짜 시계로 한 판: 정답·오답·놓침 점수(5.5, v2 배율 포함 — 세 난이도 각각), v2 감점: 오답 1·2·3번 뒤 정답 = 깎인 합 + 오답 뒤 정답 점수, 점수 0에서 오답 → 0 유지·깎인 양 0, 점수 15에서 Normal 오답 → 0·깎인 양 15, 오답 뒤 놓침 = 감점만, 오답이 콤보를 끊음, START·AGAIN 카드는 감점 없음, 문제별 기록(얻은 점수·깎인 점수·오답 단어), 문제별 실제 떨어지는 시간 = fallMsFor, 콤보, 3초 손 없음 → 자동 일시정지, dt 100ms 자르기, 10문제 뒤 결과 |
 | `data.test.ts` | `validate.ts`가 V1~V9 위반 0, **부록 A와 JSON이 같음**(테스트가 `spec.md`의 부록 A 표를 직접 읽어 230문항(v3)의 모든 칸을 JSON과 비교), 위반 예시(정답이 든 설명, 11낱말 설명 등)를 일부러 넣으면 잡아냄 |
 | `assets.test.ts` | `public/models/hand_landmarker.task` SHA-256 = 2.4 값, `package.json`의 tasks-vision 버전 = `1.2.3` |
-| `strings.test.ts` | 8.2·9절 문구가 strings.ts에 그대로 있음 |
-| `voicePick.test.ts`(v5) | ① 이 맥 en-US 28개(Albert, Bad News, Bahh, Bells, Boing, Bubbles, Cellos, Eddy, Flo, Fred, Good News, Grandma, Grandpa, Jester, Junior, Kathy, Organ, Ralph, Reed, Rocko, Samantha, Sandy, Shelley, Superstar, Trinoids, Whisper, Wobble, Zarvox) + 다른 언어 섞음 → Samantha ② 같은 목록을 `say` 표기(`Eddy (영어(미국))`, `Samantha (영어(미국))`, lang `en_US`)로 → Samantha ③ 장난용만(Albert, Bells, Zarvox) → `lang-only` ④ 빈 목록 → `lang-only` ⑤ ko-KR·ja-JP만 → `skip` ⑥ 안드로이드 예(`한국어 대한민국` ko-KR default, `English United States` en-US local, `English United Kingdom` en-GB) → English United States ⑦ 윈도 크롬 예(Microsoft David·Zira·Mark local, Google US English·Google UK English Female remote) → Microsoft David(같은 B 등급에서 local 먼저, 그다음 목록 순서) ⑧ 엣지 예(⑦ + `Microsoft Aria Online (Natural) - English (United States)` remote) → Aria ⑨ `Samantha`·`Samantha (Enhanced)` → Samantha (Enhanced) ⑩ en-US는 Eddy·Flo뿐 + en-GB Daniel → Daniel ⑪ 대소문자·`_`/`-`가 섞인 lang(`EN_us`) 처리 |
-| `speech.test.ts`(v5) | 가짜 `speechSynthesis`(빈 목록 → `voiceschanged` 뒤 목록)로: 첫 `say()`는 lang-only로 말함(건너뛰지 않음), 목록이 온 뒤 `say()`는 Samantha, 목록이 다시 바뀌면 다시 고름, `rate 0.9` |
+| `strings.test.ts` | 8.2·9절 문구가 strings.ts에 그대로 있음(v7: `PRIVACY_VOICE_NOTICE` 포함) |
+| `voicePick.test.ts`(v5 → v7) | 목록 예는 `tests/helpers/voices.ts`에 둔다(v7: `macChromeVoices()`·`windowsChromeVoices()`·`edgeVoices()` 추가). ① 이 맥 en-US 28개(Albert, Bad News, Bahh, Bells, Boing, Bubbles, Cellos, Eddy, Flo, Fred, Good News, Grandma, Grandpa, Jester, Junior, Kathy, Organ, Ralph, Reed, Rocko, Samantha, Sandy, Shelley, Superstar, Trinoids, Whisper, Wobble, Zarvox) + 다른 언어 섞음(**맥 Safari 예상 목록** — Google 없음) → Samantha ② 같은 목록을 `say` 표기(`Eddy (영어(미국))`, `Samantha (영어(미국))`, lang `en_US`)로 → Samantha ③ 장난용만(Albert, Bells, Zarvox) → **`skip`**(v5 `lang-only`) ④ 빈 목록 → **`wait`**(v5 `lang-only`) ⑤ ko-KR·ja-JP만 → `skip` ⑥ 안드로이드 예(`한국어 대한민국` ko-KR default, `English United States` en-US local, `English United Kingdom` en-GB) → English United States ⑦ **윈도 크롬 예**(Microsoft David·Zira·Mark local, Google US English·Google UK English Female remote) → **Microsoft David**(v5와 같음 — Microsoft 목록, U1), Google을 목록 맨 앞에 두어도 David, `excludeRemote` → David ⑧ **엣지 예**(Microsoft David·Zira·Mark local + `Microsoft Aria Online (Natural) - English (United States)`·`Microsoft Jenny Online (Natural) - English (United States)`·`Microsoft Sonia Online (Natural) - English (United Kingdom)` remote, Google 없음) → Aria, `excludeRemote` → David. 일부러 Google US English를 더해도 Aria(N이 G·B보다 먼저) ⑨ `Samantha`·`Samantha (Enhanced)` → Samantha (Enhanced) ⑩ en-US는 Eddy·Flo뿐 + en-GB Daniel → Daniel, Daniel이 없으면 Eddy ⑪ 대소문자·`_`/`-`가 섞인 lang(`EN_us`) 처리 ⑫ **이 맥 Chrome 목록**(`유나` ko-KR default local + ①의 en-US 28개 + `Daniel` en-GB local + remote: `Google Deutsch` de-DE, `Google US English` en-US, `Google UK English Female`·`Google UK English Male` en-GB, `Google 한국의` ko-KR, `Google 日本語` ja-JP) → **Google US English**(grade G), `excludeRemote` → Samantha ⑬ ⑫ + `Samantha (Enhanced)` local → Samantha (Enhanced)(A가 G보다 먼저) ⑭ ⑫에서 en-US를 모두 뺀 목록 → **Google UK English Female**(같은 en-gb 안에서 G가 Daniel(B)보다 먼저, Female·Male은 목록 순서) ⑮ **기본이 한국어인 목록**: 어떤 목록에서도 결과가 ko-* 목소리가 아님 — `유나` default + 영어 없음 → `skip`, `유나` default + 장난용뿐 → `skip`, `유나` default + Samantha → Samantha ⑯ `excludeRemote`인데 영어가 모두 remote(Google US English·Google UK English Female만) → `skip` ⑰ 등급: `voiceGrade`가 Samantha (Enhanced)=A, Microsoft Aria Online (Natural)=N, Google US English=G, Google UK English Female=G, Samantha=B, English United States=C, Grandpa (영어(미국))=D; `describeChoice`가 `Google US English (en-US, remote, G) · voice` ⑱ **한국어 윈도 크롬 예**(`Microsoft Heami - Korean (Korean)` ko-KR local default + Google US English·Google UK English Female·`Google 한국의` remote) → Google US English(영어 Microsoft 목소리가 없으니 v5와 같음), `excludeRemote` → `skip` ⑲ **윈도 판별은 목록으로만**: ⑫(맥 Chrome 목록)에 `Microsoft Zira - English (United States)` en-US local 하나를 **맨 앞에** 더하면 → Zira(Microsoft 목록이 되어 B가 G보다 먼저), **맨 뒤에** 더하면 → Samantha(Zira와 같은 B — 목록 순서, Review 17절), 어느 쪽이든 Google이 아님. ⑫ 그대로면 Google US English. `chooseVoice`는 UA·`navigator`를 읽지 않음(인자만) |
+| `speech.test.ts`(v5 → v7) | 가짜 `speechSynthesis`(목록 바꾸기 + `voiceschanged`, 발화마다 `onstart`/`onend`/`onerror`를 테스트가 정해서 부름 — remote 목소리는 "제때 시작"·"시작 안 함"·"`network` 오류"·"`onstart` 없이 `onend`" 중 고름) + `vi.useFakeTimers()`로: ① 빈 목록에서 `say()` → 바로 말하지 않음, 300ms 뒤 `voiceschanged`(맥 Chrome 목록) → 그 문장을 Google US English로 말함, `u.voice`가 null인 발화 0 ② 빈 목록에서 1000ms 동안 목록이 안 옴 → 아무것도 말하지 않음(`describe()` = `skip`), 그 뒤 목록이 오고 `say()` → 말함 ③ 기다리는 중 새 `say('b')` → `b`만 말함 ④ 기다리는 중 `cancel()` → 목록이 와도 말하지 않음 ⑤ remote가 1500ms 안에 시작 안 함 → 1500ms에 `cancel()` 뒤 **같은 문장**을 Samantha로 말함, 다음 `say()`는 Google을 거치지 않고 바로 Samantha, `describe()` 끝에 `인터넷 목소리 끔` ⑥ remote가 1499ms에 `onstart` → 다시 말하지 않음, 인터넷 목소리 그대로 ⑦ remote `onerror('network')`(시작 전) → 타이머를 기다리지 않고 바로 Samantha로 다시 ⑧ `onerror('interrupted')`·`('canceled')` → 다시 말하지 않고 인터넷 목소리 그대로 ⑨ `onstart` 없이 `onend`(사용자 동작 전 흉내) → 다시 말하지 않고 인터넷 목소리 그대로 ⑩ `onstart` 뒤 `onerror('network')` → 다시 말하지 않음, 다음 `say()`부터 Samantha ⑪ remote 감시 중 새 `say('b')` → 앞 문장의 1500ms 타이머가 와도 아무것도 다시 말하지 않음 ⑫ 장난용만 → 말하지 않음, 한국어만 → 말하지 않음(어떤 경우에도 `u.voice`가 null이거나 ko-*인 발화 0 — `prime()`의 소리 0 빈 발화만 예외) ⑬ local 목소리(Samantha)는 감시 타이머를 걸지 않음 ⑭ `rate 0.9`·`pitch 1`, 소리 끔이면 말하지 않음 ⑮ 고품질 목소리를 내려받아 목록이 바뀜 → 다시 고름(v5와 같음) |
 
 ### 12.2 자동 — 브라우저 테스트(Playwright, chromium)
 - 설정: `webServer`가 `node scripts/serve-dist.mjs --dir dist --prefix /english1/ --port ${E2E_PORT:-4173} --host 127.0.0.1`(`reuseExistingServer: false`). `baseURL = http://127.0.0.1:4173/english1/`. 프로젝트: `tablet-landscape`(1180×820, hasTouch), `tablet-portrait`(820×1180, hasTouch), `small-landscape`(1024×768).
@@ -764,8 +826,8 @@ interface HandSource { start(): Promise<void>; poll(now: number): HandFrame | nu
 | E4 | 카메라 오류 흉내(`addInitScript`로 `getUserMedia`를 각 DOMException으로 거부시키기, `mediaDevices` 없애기): 8.2 문구가 뜨고 [터치로 하기]로 게임이 시작됨. |
 | E5 | 실제 MediaPipe 적재: chromium 인자 `--use-fake-ui-for-media-stream --use-fake-device-for-media-stream`, 권한 `camera` 부여 → [카메라로 시작] → 30초 안에 손 확인 화면, 디버그 훅으로 검사 횟수 > 10, 오류 0. `?delegate=CPU`로 한 번 더. (가짜 카메라 무늬에는 손이 없으므로 손 0개가 정상.) |
 | E6 | 배치: 세 화면 크기에서 가장 긴 설명(10낱말)·가장 긴 단어(10자)가 넘치지 않음(설명 띠 두 줄 이내, 카드 글자 폭 ≤ 카드 폭 − 24). v2: 시작 화면이 1024×768·1180×820·768×1024·820×1180에서 스크롤 없이 들어가고(문서 높이 ≤ 창 높이), 난이도 버튼 세 개가 모두 보이고 높이 ≥ 56px, 한국어 글자가 낱말 중간에서 줄바꿈되지 않음. |
-| E7 | 개인정보 문구가 시작 화면에 보임, 터치 모드에서 `getUserMedia`가 불리지 않음. |
-| E9(v5) | 목소리: `addInitScript`로 `speechSynthesis.getVoices`가 이 맥 목록(voicePick ①)을 돌려주고 `speak`가 넘겨받은 `utterance.voice?.name`을 기록하게 바꾼 뒤 터치 모드 한 판 → 설명 읽기에 쓴 목소리가 모두 Samantha, Albert 0회. 처음 빈 목록 → 0.5초 뒤 `voiceschanged`로 목록을 주는 경우에도 첫 설명이 건너뛰어지지 않음 |
+| E7 | 개인정보 문구가 시작 화면에 보임(v7: 둘째 줄 `PRIVACY_VOICE_NOTICE`도), 터치 모드에서 `getUserMedia`가 불리지 않음. |
+| E9(v5 → v7) | 목소리: `addInitScript`로 `speechSynthesis.getVoices`가 정한 목록을 돌려주고, `speak`가 넘겨받은 `{text, voice?.name, lang, rate, pitch}`를 기록하며, 발화의 `onstart`·`onend`를 흉내(local은 바로, remote는 설정에 따라 "바로 시작" 또는 "시작 안 함")하게 바꾼 뒤 터치 모드 한 판(`?input=pointer&seed=7&test=1&clock=manual&difficulty=easy&debug=1`). **모든 경우에 공통: 소리가 있는(빈 글자가 아닌) 발화 중 `voice`가 null이거나 ko-*인 것 0개, Albert 0회.** ① **맥 Safari 목록**(voicePick ①, Google 없음) → 설명·단어 읽기 모두 Samantha(v5 E9 그대로) ② **맥 Chrome 목록**(voicePick ⑫, remote 바로 시작) → 모두 Google US English, `state().voice` = `Google US English (en-US, remote, G) · voice` ③ **맥 Chrome 목록 + 인터넷 끊김**(remote는 시작 안 함) → 첫 설명은 Google US English로 한 번, 약 1.5초 뒤(실제 시간, `expect.poll`) 같은 문장을 Samantha로 다시, 그 뒤 모든 발화가 Samantha, `state().voice`가 `· 인터넷 목소리 끔`으로 끝남, 게임은 10문제 끝까지(소리와 상관없이 문제가 진행됨) ④ 처음 빈 목록 → 0.5초 뒤 `voiceschanged`로 맥 Chrome 목록 → 첫 설명이 건너뛰어지지 않고 Google US English로(목소리 null 발화 0 — v5의 lang-only 기대를 바꿈) ⑤ 목록이 끝내 빈 채 → 소리가 있는 발화 0개, 결과 화면까지 한 판이 정상으로 끝남, 콘솔 오류 0 ⑥ **윈도 Chrome 목록**(voicePick ⑦, remote 바로 시작) → 모두 Microsoft David, Google 0회(U1 "윈도는 지금 그대로") |
 | E8(v2) | 난이도: ① 시작 화면에서 Hard를 누르고 새로고침 → Hard가 선택돼 있음(`catchword.difficulty`) ② `?difficulty=easy`가 기억한 값보다 우선 ③ 설명 띠 배지·결과 화면에 고른 난이도 표시 ④ Hard·Normal·Easy 각각 터치 모드 한 판(`seed` 고정, 문제마다 오답 0~2번 섞어 누름): 점수 = 독립 계산(배율·감점·0점 바닥 포함), `state()`의 문제별 `fallMs`·카드 수가 5.3.2·5.3.3 식과 같음 ⑤ 최고 점수가 `catchword.best.<band>.<difficulty>`에 저장되고, v1 키만 있는 상태로 열면 Easy 최고 점수로 옮겨짐 ⑥ 첫 시도 8/10 이상이면 도전 권유 문구 |
 
 ### 12.3 실제 손 녹화 재생(선택, S7)
@@ -785,6 +847,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 10. 배포 주소에서 `.wasm` 응답 형식(application/wasm)과 첫 준비 시간.
 11. (v2) 학생 3~5명이 Easy·Normal·Hard를 각각 2판: 첫 시도 정답률이 5.3.5 목표 근처인지, Hard에서 "너무 빨라 손이 못 따라간다"는 문제가 없는지, 긴 설명 문제(8~10낱말)에서 읽고 잡을 시간이 되는지. `?debug=1` 결과 화면의 문제별 잡은 시각을 사진으로 남긴다.
 12. (v5) 영어 읽어 주기 목소리: iPad Safari·맥 Safari·맥 크롬·안드로이드 크롬에서 각각 한 판 들어 보고, 쉰 목소리·노래·로봇 소리가 아닌 자연스러운 성인 목소리인지 확인한다. `?debug=1` 화면의 "고른 목소리"를 사진으로 남긴다(예: iPad → Samantha 또는 내려받은 고품질 목소리). 이상하면 그 기기의 목소리 이름을 알려 주면 Plan이 5.9.1 목록을 고친다.
+13. (v7) 맥 발음 확인 — ① 맥 Chrome `?debug=1`: 고른 목소리 `Google US English (en-US, remote, G)`, 한 판 들어 보고 윈도 PC와 비슷한 원어민 억양인지(한국어 억양·콩글리쉬가 아닌지) ② 같은 맥 Chrome에서 와이파이를 끈 채 새로고침 → 첫 설명이 약 1.5초 안에 Samantha로 들리고 디버그에 `인터넷 목소리 끔`, 그 뒤 문제는 바로 Samantha ③ 맥 Safari: Samantha(또는 내려받은 고품질 목소리) — 5.9.3 경로로 Samantha 고품질(또는 Ava)을 내려받고 Safari를 다시 연 뒤 디버그에 `(Enhanced)`/`(Premium)`·등급 A가 나오는지(나오지 않으면 Safari가 고품질 목소리를 페이지에 주지 않는 것 — 보고) ④ iPad Safari: 같은 확인 + 5.9.3 iPad 경로가 맞는지 ⑤ 윈도 Chrome: `Microsoft David`(U1 — 이전과 같음), 윈도 Edge: Aria — 둘 다 이전과 같은 목소리·소리인지 ⑥ 학교 와이파이에서 Google 시작이 1.5초 안에 되는지(디버그에 `인터넷 목소리 끔`이 뜨지 않는지 — 뜨면 그 망에서 늦은 것, `REMOTE_START_TIMEOUT_MS` 조정 근거) ⑦ 어느 기기에서도 한국어 목소리(유나 등)로 영어를 읽는 일이 없는지.
 
 ---
 
@@ -817,9 +880,19 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | 단계 | 할 일 | 완료 기준 |
 |---|---|---|
 | Y1 순수 함수 | `src/audio/voicePick.ts`(`chooseVoice`, 5.9.1) + `voicePick.test.ts` ①~⑪ | 단위 테스트 통과 |
-| Y2 Speech 연결 | `speech.ts`: `voiceschanged` 듣기, `voice`만 기억, 빈 목록은 `lang-only`로 말하기, 디버그 표시 + `speech.test.ts` | 단위 테스트 통과, 이 맥 Safari·크롬에서 `?debug=1`의 고른 목소리가 Samantha(또는 고품질 목소리) |
+| Y2 Speech 연결 | `speech.ts`: `voiceschanged` 듣기, `voice`만 기억, 빈 목록은 `lang-only`로 말하기(**v7에서 없앰 — 5.9.2·Z2**), 디버그 표시 + `speech.test.ts` | 단위 테스트 통과, 이 맥 Safari·크롬에서 `?debug=1`의 고른 목소리가 Samantha(또는 고품질 목소리) |
 | Y3 브라우저 테스트 | E9 | `npm run check` 통과 |
 | Y4 사람 확인 | 12.4-12 | 기기별 고른 목소리 이름 보고 |
+
+- **v7(맥 영어 발음 — Google 음성 우선) Build 단계** — 14.4 U1·U2 결정됨(2026-11-26), **바로 Build 가능**. 각 단계 끝에 `npm run typecheck && npm test`, 마지막에 `npm run check`. v6(UI 디자인)은 일시정지 상태라 v6과 겹치는 파일이 없다(시작 화면 개인정보 줄 하나만 `screens.ts`·`styles.css`를 건드림).
+
+| 단계 | 할 일 | 완료 기준 |
+|---|---|---|
+| Z1 고르기 규칙 | `voicePick.ts`: 등급 A/N/G/B/C/D(5.9.1 ③ 표), 순서 A → N → G → B → C(목록에 `microsoft `로 시작하는 목소리가 있으면 A → N → B → G → C — 윈도 그대로, UA는 보지 않음), `wait`(빈 목록)·`skip`(장난용뿐 포함), `excludeRemote` 선택 인자, `describeChoice` 등급 글자. `lang-only` 타입을 없앤다. `tests/helpers/voices.ts`에 `macChromeVoices()`·`windowsChromeVoices()`·`edgeVoices()` | `voicePick.test.ts` ①~⑰ 통과(v5의 ③④ 기대값은 v7 값으로 바꿈, ⑦ 윈도 Chrome은 v5와 같이 David) |
+| Z2 말하기 순서 | `config.ts` `SPEECH`(5.9.2 값), `speech.ts`: 만들 때 `getVoices()`, `token`(마지막 것만 산다), `wait` → 최대 1초 기다렸다 말하기, 발화 객체 잡아 두기, remote 감시(1.5초·`onerror`) → `remoteOff` + 기기 안 목소리로 같은 문장 한 번 다시, `interrupted`/`canceled`/`onstart` 없는 `onend`는 실패 아님, `cancel()`이 기다림·타이머를 지움, `describe()`의 `· 인터넷 목소리 끔`. `prime()`은 그대로 | `speech.test.ts` ①~⑮ 통과. `App.ts`의 `say()`·`cancel()`·`prime()` 부르는 곳은 바꾸지 않아도 됨(바꿨다면 보고) |
+| Z3 개인정보 문구 | `strings.ts` `PRIVACY_VOICE_NOTICE`(9절 문장 그대로), 시작 화면 개인정보 안내 둘째 줄(스피커 SVG 아이콘, `keepWords`), `styles.css` 줄 간격·크기 | `strings.test` 통과, E6(화면 4종 스크롤 없음·어절 끊김 없음)·E7(둘째 줄 보임)·E1 통과, 시작 화면 4종 스크린샷을 보고에 첨부 |
+| Z4 디버그·안내·E9 | `?debug=1` 목소리 줄(등급 글자, `인터넷 목소리 끔`, 애플 보통 목소리일 때 고품질 안내 한 줄 — 5.9.1 디버그), (U2 결정) `README.md` "영어 목소리" 절(5.9.3 경로, Chrome은 Google 목소리를 자동으로 씀, 인터넷 목소리와 9절 개인정보, 소리 끔이면 보내지 않음), E9 ①~⑤ | `npm run check` 전부 통과. 사용자의 실제 맥 Chrome에서 배포 전 로컬 빌드(`?debug=1`)의 고른 목소리가 `Google US English (en-US, remote, G)`인지 확인할 수 있으면 확인(못 하면 보고) |
+| Z5 사람 확인 | 12.4-13(맥 Chrome 소리·와이파이 끊고 대체, 맥·iPad Safari 고품질 목소리, 윈도 Chrome·Edge, 학교 와이파이 시작 시간) | 기기별 고른 목소리 이름·들은 느낌 보고 → 이상하면 Plan이 5.9.1·5.9.2 값을 고침 |
 
 - **v4(Very Hard·전체 난이도) Build 단계는 16.8의 X1~X6**(Plan 몫 X1·X2·X5는 2026-11-26 완료, Build 몫이 남음).
 
@@ -897,6 +970,15 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | X9 | 버튼 이름·모양 | ① `Very Hard` + "매우 어려움", 별 두 개 ② `Expert`/"도전" 등 다른 이름 | **①** — 사용자가 쓴 이름 그대로 |
 | X10 | scientist 설명·V5b(덧붙임) | ① 설명을 "This person does tests to find out how things work."로 바꾸고 V5b 검사 추가 ② 그대로 둠 | **①** |
 
+### 14.4 v7(맥 영어 발음 — Google 음성 우선) 사용자 확인 — 2026-11-26 결정됨, 바로 Build 가능
+(사용자는 이미 "Google 음성 우선"을 골랐다 — 퀴즈 문장이 Google로 간다는 설명을 듣고 고름. 아래 두 가지는 그 결정에서 따라 나온 작은 갈림길이다. 나머지(고르는 순서, 유나 막기 = 1초 기다렸다 말하고 없으면 건너뛰기, 인터넷 목소리 1.5초 감시, 개인정보 둘째 줄 문구)는 5.9.1~5.9.3·9절 근거로 Plan이 정했다.)
+
+| # | 갈림길 | 선택지 | Plan 추천 | **사용자 결정(2026-11-26)** |
+|---|---|---|---|---|
+| U1 | 윈도 Chrome에도 Google 우선을 적용하나 | ① 모든 기기에 같은 규칙(윈도 Chrome: David → Google US English) ② 윈도에서는 지금(v5)처럼 Microsoft 목소리 먼저 | ① | **② "윈도는 지금 그대로"** — 윈도 Chrome → David, Edge → Aria. 판별은 목록 기반(목록에 `Microsoft ` 목소리가 있으면 A → N → B → G → C, 5.9.1) |
+| U2 | Safari·iPad 고품질 목소리 안내를 어디에 | ① `?debug=1` 화면 한 줄 + 저장소 `README.md` 교사용 "영어 목소리" 절 ② ① + 시작 화면에도 한 줄 ③ `?debug=1`만 | ① | **① "디버그 화면 + 안내 문서"**(추천안) — 시작 화면에는 새 문구 없음(개인정보 둘째 줄만) |
+
+- 더 물을 갈림길 없음 — **바로 Build(13절 Z1~Z5) 가능.**
 ---
 
 ## 15. 결정 기록
@@ -1041,6 +1123,8 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 
   - Plan 확인: 저장소 `validateQuestions` 부록 A 위반 0, `validateVeryHard` 94문항 위반 0(심화 24.5%, 설명 초등 92.6%·중학 6.2%·허용 1.2%, 설명당 중학 낱말 최대 3). V5c를 Plan이 따로 계산: 고친 데이터 0(같은 날 다듬은 V5c로 다시 계산해도 0). 판 구성 흉내(저장소 `buildGamePlans`, Very Hard × 씨앗 6,000): 오류 0. 세 문항에 같은 주제 오답(ingredient: lemon·pepper·strawberry·mushroom·snack 51~57%, snack: mushroom·strawberry·ingredient·lemon·recipe·pepper 42~48%, poem: diary·language·dictionary·grade·vocabulary·laboratory 40~48%)이 함께 나오지만, 바뀐 설명은 예로 든 범주(재료·간식)나 "노래 같은 짧은 줄의 아름다운 말"을 가리켜 이 오답들은 답이 되지 않는다.
 - 2026-11-26 **Plan v5(영어 목소리)**: 사용자 원문 "영어 스피킹이 목이 쉬고 뭔가 이상한 느낌의 목소리인데 목소리 점검해줘" → 코디네이터 점검(원인: en-US 첫 목소리 = macOS·iPadOS 장난용 "Albert") → 사용자 **"고치기"**(자동으로 자연스러운 목소리 고르기 안. 목소리 직접 선택 기능은 고르지 않음). Plan이 고른 것: 5.9.1(장난용 제외 목록, 맨 뒤 목록, 좋은 목소리 등급, 언어·등급·default·local 순서, 빈 목록·`voiceschanged` 처리, `rate 0.9`·`pitch 1` 그대로). 더 물을 갈림길 없음 — 바로 Build(Y1~Y4).
+- 2026-11-26 **Plan v7(맥 영어 발음 — Google 음성 우선)**: 사용자 원문 "윈도우pc에서는 원어민 느낌으로 발음이 좋은데, 애플기기(맥북)에서는 발음이 콩글리쉬 느낌으로 엄청 안좋아. 이유가 뭐야? 윈도우pc의 발음 처럼 되도록 해줘" → 코디네이터 점검(원인 ① 맥 Chrome에 Google US English(인터넷 음성)가 있는데 v5 규칙이 같은 등급이면 기기 안 목소리를 먼저 골라 오래된 Samantha를 씀 ② 이 맥의 기본 목소리가 한국어 "유나"라 목소리 없이 `lang`만 주고 말하면 콩글리쉬가 될 수 있음) → 퀴즈 문장이 Google 서버로 간다는 점을 듣고 사용자 **"Google 음성 우선"**. Plan이 고른 것: 5.9.1 등급 A(애플 고품질) → N(Microsoft Natural) → G(Google) → B → C → D, `lang-only` 없앰(`wait` 1초 → 없으면 건너뜀, 장난용뿐도 건너뜀), 5.9.2 인터넷 목소리 1.5초 감시 → 기기 안 목소리로 같은 문장 다시 + 그 페이지에서 인터넷 목소리 끔, 9절 시작 화면 둘째 줄 "영어 읽어 주기는 인터넷 목소리(Google 등)를 쓸 수 있어요. 이때 영어 문제 문장만 보내져요.", 5.9.3 Safari·iPad 고품질 목소리 안내. 사용자 확인 2개(14.4 U1 윈도 Chrome 적용, U2 안내 위치).
+- 2026-11-26 **사용자 결정(14.4)**: U1 원문 **"윈도는 지금 그대로"**(Plan 추천 ①이 아님) → 윈도에서는 Microsoft 목소리를 계속 씀(Chrome → David, Edge → Aria), Google 우선은 맥 등 비윈도에만. Plan이 고른 판별 방법: UA·platform이 아닌 **목록 기반**(목록에 `Microsoft `로 시작하는 목소리가 하나라도 있으면 등급 순서 A → N → B → G → C — 근거 5.9.1). U2 원문 **"디버그 화면 + 안내 문서"**(추천안) → `?debug=1` 한 줄 + `README.md` 교사용 "영어 목소리" 절. 더 물을 것 없음 — 바로 Build(Z1~Z5).
 
 
 ---
@@ -1398,6 +1482,10 @@ a, about, above, across, act, add, address, adult, aeroplane, afraid, after, aft
 | (v5) 애플 novelty·MacinTalk 목소리 이름(Whisper, Zarvox, Trinoids, Cellos, Good News, Bad News, Pipe Organ, Albert, Bells, Boing, Bubbles; Princess → Superstar; Fred·Kathy·Ralph·Junior) | https://en.wikipedia.org/wiki/PlainTalk |
 | (v5) 맥 목소리 내려받기 안내(고품질 변형 이름은 이 쪽에 없음) | https://support.apple.com/guide/mac-help/mchlp2290/mac |
 | (v5) 이 맥(macOS 27.2.1)의 실제 영어 목소리: `say -v '?'`(Albert … Zarvox, Samantha 2개, Eddy·Flo·Grandma·Grandpa·Reed·Rocko·Sandy·Shelley는 `이름 (영어(미국))`·`(영어(영국))` 표기) | 로컬 명령, 2026-11-26 |
+| (v7) 맥 목소리 바꾸기·내려받기 한국어 경로: Apple 메뉴 > 시스템 설정 > 손쉬운 사용 > 읽기 및 말하기 > "시스템 음성" 옆 ⓘ(고품질·Enhanced 표기는 이 쪽에 없음) | https://support.apple.com/ko-kr/guide/mac-help/mchlp2290/mac |
+| (v7) iPad 손쉬운 사용 안내(VoiceOver 쪽 — 읽기 및 말하기 목소리 내려받기 경로는 이 쪽에 없어 확인 못 함) | https://support.apple.com/ko-kr/guide/ipad/ipad9a246898/ipados |
+| (v7) 사용자 맥 Chrome 158 목소리 목록(199개, en-US `Google US English` localService=false, 기본 목소리 `유나` ko-KR, Microsoft Online (Natural) 없음) — 코디네이터 확인 + Plan 다시 확인 | 배포 사이트 `?test=1&debug=1`, 2026-11-26 |
+| (v7) 같은 Chrome에서 발화 시작 시간(사용자 동작 뒤, 소리 0.01, 설명 "A big animal with a very long nose."): Google US English 448·232·293ms, Google UK English Female 298ms, Samantha 4ms, 목소리 없이 lang만 4ms. 사용자 동작 전 발화는 `onstart` 없이 0ms에 `onend`. Google 발화를 100ms 뒤 `cancel()` → `error: interrupted`, 이어 Samantha가 바로 시작 | Plan이 페이지에서 `speechSynthesis`로 잼, 2026-11-26 |
 | 형제 프로젝트 참고(읽기만): spec 형식, Vite 8/TS 6/Vitest 5, Pages 워크플로 | `/Users/sungchul/Desktop/play2/selectio game/`, `/Users/sungchul/Desktop/play2/game2/.github/workflows/pages.yml` |
 
 **확인하지 못한 것**: 2022 개정 교육과정의 초등 문장 길이 기준(V4의 8/10낱말은 추정), iPad Safari에서 GPU 대리 실행이 실제로 되는지·속도, 어린이 손에서의 임계값(4.6), GitHub Pages의 `.wasm` MIME과 캐시 시간, 트레일링 슬래시 넘겨주기 — 모두 S2·S7과 12.4에서 확인한다.

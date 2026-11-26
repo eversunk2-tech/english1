@@ -126,7 +126,10 @@ export class Screens {
         h('button', { type: 'button', class: 'btn btn-ghost', id: 'btn-touch', onclick: () => o.onTouch() }, svg(ICONS.hand), S.startTouch),
       ),
       h('p', { class: 'stand-hint' }, svg(ICONS.stand, 'icon stand'), h('span', {}, keepWords(S.standHint))),
-      h('p', { class: 'privacy', id: 'privacy' }, svg(ICONS.camera), h('span', {}, keepWords(S.privacy))),
+      h('div', { class: 'privacy-box' },
+        h('p', { class: 'privacy', id: 'privacy' }, svg(ICONS.camera), h('span', {}, keepWords(S.privacy))),
+        h('p', { class: 'privacy privacy-voice', id: 'privacy-voice' }, svg(ICONS.sound), h('span', {}, keepWords(S.privacyVoice))),
+      ),
     );
   }
 

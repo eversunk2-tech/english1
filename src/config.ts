@@ -170,6 +170,16 @@ export const PERF = deepFreeze({
   PARTICLES_MAX: 120,
 } as const);
 
+/** 영어 읽어 주기 (spec 5.9.2, v7) */
+export const SPEECH = deepFreeze({
+  RATE: 0.9,
+  PITCH: 1,
+  /** 목록이 비어 있을 때(wait) 기다리는 가장 긴 시간 */
+  VOICE_WAIT_MS: 1000,
+  /** 인터넷 목소리가 이 안에 onstart를 내지 못하면 실패 → 기기 안 목소리로 다시 */
+  REMOTE_START_TIMEOUT_MS: 1500,
+} as const);
+
 /** 손 인식 파일 (spec 2.4) */
 export const ASSETS = deepFreeze({
   MEDIAPIPE_VERSION: '1.2.3',

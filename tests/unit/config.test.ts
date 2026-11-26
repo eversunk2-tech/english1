@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { ASSETS, GAME, HAND, LAYOUT, PERF, STORAGE_KEYS } from '../../src/config.ts';
+import { ASSETS, GAME, HAND, LAYOUT, PERF, SPEECH, STORAGE_KEYS } from '../../src/config.ts';
 
 describe('config는 실행 중 바꿀 수 없다 (spec 12.2, review M2)', () => {
   it('모든 상수 객체가 깊게 얼어 있다', () => {
-    for (const o of [HAND, GAME, LAYOUT, PERF, ASSETS, STORAGE_KEYS]) expect(Object.isFrozen(o)).toBe(true);
+    for (const o of [HAND, GAME, LAYOUT, PERF, ASSETS, STORAGE_KEYS, SPEECH]) expect(Object.isFrozen(o)).toBe(true);
     expect(Object.isFrozen(GAME.DIFFICULTIES)).toBe(true);
     for (const d of ['easy', 'normal', 'hard', 'veryhard'] as const) {
       expect(Object.isFrozen(GAME.DIFFICULTIES[d])).toBe(true);

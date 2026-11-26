@@ -2,6 +2,7 @@
 import type { Track } from '../hand/handTracks.ts';
 import type { MediapipeStats } from '../hand/mediapipeSource.ts';
 import { drawSkeleton, trackColor } from '../render/canvasRenderer.ts';
+import { VOICE_QUALITY_HINT } from '../ui/strings.ts';
 
 export class DebugOverlay {
   private readonly panel: HTMLElement;
@@ -33,8 +34,10 @@ export class DebugOverlay {
     mode: string;
     screen: string;
     blocked: number;
-    /** v5: 고른 영어 목소리(spec 5.9.1) */
+    /** v5: 고른 영어 목소리(spec 5.9.1) — v7: 등급 A/N/G/B/C/D, wait/skip, ` · 인터넷 목소리 끔` */
     voice: string;
+    /** v7(5.9.1 디버그·5.9.3): 애플 기기 안 보통 목소리면 고품질 목소리 안내 한 줄 */
+    voiceHint?: boolean;
   }): void {
     const lines: string[] = [];
     lines.push(`screen ${info.screen}  input ${info.mode}  draw ${info.renderFps} fps`);
@@ -47,6 +50,7 @@ export class DebugOverlay {
     }
     lines.push(`blocked external requests ${info.blocked}`);
     lines.push(`voice ${info.voice}`);
+    if (info.voiceHint) lines.push(VOICE_QUALITY_HINT);
     for (const t of info.tracks) {
       const f = t.fist;
       const cs = f ? f.curls.map((c) => c.toFixed(2)).join(' ') : '-';

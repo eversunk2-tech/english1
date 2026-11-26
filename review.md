@@ -16,6 +16,7 @@
 > v4 Very Hard 검증(2026-11-26, 14절) 판정: **수정 필요** — 문항 1건(vh-food-07 ingredient), 권장 3건.
 > 재검토 v4b(2026-11-26, 15절) 판정: **통과** — 14절 지적 모두 고쳐짐, 새 반드시 수정 0건, 새 권장 1건(아주 작음).
 > v5 목소리 고르기 검증(2026-11-26, 16절) 판정: **통과** — 반드시 수정 0건, 권장 0건(교실·iPad 확인 항목 2개).
+> v7 맥 영어 발음 검증(2026-11-26, 17절) 판정: **통과** — 반드시 수정 0건, 권장 2건(spec ⑲ 문장, README 안드로이드 줄).
 
 반드시 수정할 것은 3건이다(앱 버그 1, spec 12.2 위반 1, 문항 데이터 1). 나머지 동작(점수, 판정, 배치, 개인정보, 배포 설정)은 spec과 맞았다.
 
@@ -858,3 +859,73 @@ git diff로 본 변경 내용:
 4. [ ] 정답을 잡으면 그 단어를 같은 목소리로 읽어 준다. 속도가 아이에게 알맞다(조금 느린 편).
 5. [ ] 시작 화면에서 소리 [끔]이면 읽어 주기도 효과음도 나지 않는다.
 6. [ ] (선택) iPad 설정 › 손쉬운 사용 › 읽기 및 말하기 › 음성 › 영어에서 "Samantha (향상됨)" 같은 고품질 목소리를 내려받으면 게임이 그 목소리를 먼저 고르는지 들어 본다.
+
+---
+
+## 17. v7 맥 영어 발음 검증 (2026-11-26)
+
+- 작성: Review 서브에이전트(지침 `docs/briefs/review-brief-v7-voice.md`, 사용자 일시정지 → "이어서 해줘" 뒤 이어서 끝냄). 기준: spec 5.9.1~5.9.3, 9절, 12.1 voicePick ①~⑲·speech ①~⑮, 12.2 E9 ①~⑥, 13절 Z1~Z5.
+- 임시 파일: `/private/tmp/claude-501/-Users-sungchul-Desktop-play2-----/7bd2217c-e14d-425c-9176-0b2e64f9c244/scratchpad/review-v7/` (`indep.mts` 독립 구현, `speechfuzz.mts`·`modes.mts` 말하기 흐름, `realgame.mjs` 실제 Chrome, `shots.mjs`·`start-*.png` 화면). 띄운 서버(4391)·브라우저는 모두 껐다. 사용자 Chrome 창은 쓰지 않았다(Playwright 새 프로필).
+
+### 17.1 판정: **통과**
+반드시 수정 0건. 권장 2건(문서). Build가 spec과 다르게 한 ⑲은 **Build 쪽이 spec 규칙상 옳다**(spec 문장이 부정확).
+
+### 17.2 돌린 명령과 결과
+| 명령 | 결과 |
+|---|---|
+| `npm run check` (종료 코드 직접) | **EXIT=0** — typecheck 통과, 단위 **206 통과 / 1 건너뜀**(18 파일), check:data 통과(230문항 + Very Hard), e2e **126 통과**(1.3분) |
+| `git diff --stat c230978` | src 8파일(voicePick·speech·config·App·debugOverlay·screens·strings·styles), tests 8파일, spec.md(Plan), 새 README.md — 지침 범위 밖 변경 없음 |
+| `node indep.mts` | 독립 구현 vs `chooseVoice` 무작위 **40,000건**(목록 0~8개 × excludeRemote 있음/없음; Microsoft·Google·Natural·Enhanced/Premium·장난용·D·한국어 기본·`say` 표기·`EN_us`) **불일치 0**. 분포: A 9652, B 14954, N 2710, G 1531, C 2457, D 1335, wait 3678, skip 3683. 고른 목소리가 영어 아님·장난용·(excludeRemote인데) 인터넷인 경우 0. spec 예시 ①③④⑤⑦⑧⑫⑬⑭⑮⑯⑱⑲ 모두 일치 |
+| 같은 스크립트 — 윈도 목록 v5 대비 | Microsoft 목소리가 든 무작위 목록 4,999개에서 v5(c230978)와 v7 결과 **차이 0**(빈 목록·장난용뿐의 lang-only→skip 제외). 영어 Microsoft 목소리가 있는데 Google을 고른 경우 1건 = `Google US English`(en-US) + `Microsoft Hazel`(en-GB)뿐인 목록 — 언어(en-us 먼저)가 등급보다 앞이라 v5와 같은 결과, 문제 아님 |
+| `node speechfuzz.mts` | 가짜 타이머·가짜 synth로 무작위 3,000판 × 25동작(say·cancel·목록 바꿈(빈/맥 Chrome/Google뿐/장난용뿐/한국어뿐/윈도/Edge/Safari)·소리 켬끔·prime·인터넷 상태 바꿈(정상/시작 안 함/network 오류/onstart 없는 onend/시작 뒤 오류/1.4~1.7초 늦음)·시간 진행, cancel은 동기·비동기 interrupted/canceled). 소리 있는 발화 12,230개 중 **목소리 null 0, ko-* 0, 장난용 0**, 같은 문장 3회 이상 0(다시 말하기 377회 모두 "인터넷 → 기기 안" 순서), 인터넷 목소리 끈 뒤 인터넷 발화 0, 옛 문장(새 say·cancel 뒤) 발화 0, 끝난 뒤 `waitTimer`·`watchTimer`·`pending` 남음 0, `voiceschanged` 리스너 1개 |
+| `node modes.mts` (5.9.2 표 한 줄씩) | onstart 1499ms → 다시 안 함 / 1501ms·시작 안 함 → **1500ms에** Samantha로 같은 문장, 이후 Samantha·`· 인터넷 목소리 끔` / `network`·`synthesis-failed`(시작 전) → 50ms에 바로 Samantha / `interrupted`·`canceled`·onstart 없는 onend → 다시 안 함, 인터넷 그대로 / 시작 뒤 `network` → 다시 안 함, 다음 문장부터 Samantha — **spec 5.9.2와 모두 같음** |
+
+### 17.3 실제 Chrome (Playwright `channel:'chrome'`, Chrome 158, 새 프로필, headless, `--mute-audio`)
+- Playwright 기본 인자로는 목소리 180개·Google 0개(Build 보고 ⑥ 재현). `ignoreDefaultArgs`로 `--disable-component-extensions-with-background-pages`·`--disable-extensions`·`--disable-component-update`·`--disable-background-networking`을 빼면 **199개, Google US English(en-US, localService false) 등**, 기본 목소리 `유나` ko-KR — 사용자 맥 목록(spec 부록 C)과 같다.
+- `?input=pointer&seed=7&test=1&clock=manual&difficulty=easy&debug=1`, 1180×820, 한 판(10문제, 마우스로 정답 클릭):
+
+| 경우 | 시작 전 `state().voice` | 소리 있는 발화 | 결과 |
+|---|---|---|---|
+| 인터넷 정상 | `Google US English (en-US, remote, G) · voice` | 20개 모두 **Google US English**, onstart 260~541ms, null·ko 0 | 결과 화면, 콘솔 오류 0, 사이트 밖 요청 0, 디버그에 안내 줄 없음 |
+| 오프라인 에뮬레이션(`setOffline`) | 같음 | 첫 설명 Google 1회 → **1502ms에 canceled → 같은 문장 Samantha**(onstart 21ms), 그 뒤 20개 모두 Samantha | `· 인터넷 목소리 끔`, 디버그에 "더 자연스러운 목소리: 고품질 영어 목소리를 내려받으세요" 한 줄, 결과 화면까지 정상. 콘솔 오류 2건은 오프라인 때문에 `favicon.svg`(같은 출처) 받기 실패 — 앱 문제 아님 |
+| 죽은 프록시(`--proxy-server=127.0.0.1:9`, 브라우저 전체 망 끊김) | 같음 | 위와 같음(1502ms에 Samantha로 다시, 그 뒤 모두 Samantha) | 콘솔 오류 0, 사이트 밖 요청 0 |
+
+- 시작 버튼·START 카드에서 `prime()`의 소리 0 빈 발화 2개(목소리 없음, volume 0)만 목소리 미지정 — spec 허용 예외.
+- 게임 진행은 소리를 기다리지 않았다(수동 시계로 문제가 그대로 진행, 10문제 끝까지).
+
+### 17.4 윈도 그대로(U1)
+- 윈도 Chrome 목록 → Microsoft David(Google을 맨 앞에 둬도, excludeRemote도 David), Edge → Aria, Edge+excludeRemote → David, 한국어 윈도 → Google US English(v5와 같음). 무작위 윈도 목록 v5 대비 차이 0(위 17.2). E9 ⑥(Google 0회) 통과.
+- **⑲ 판단**: ⑫(맥 Chrome 목록)에 `Microsoft Zira` en-US local을 **뒤에** 더하면 Microsoft 목록이 되어 B가 G보다 먼저가 되고, Zira·Samantha가 같은 en-us·B·default 아님·local이라 ④-6 목록 순서로 **Samantha**. 앞에 더하면 Zira. 독립 구현도 같다. spec 12.1 ⑲의 "→ Zira"는 더하는 자리를 빼먹은 문장이고 Build(`tests/unit/voicePick.test.ts:136`)가 옳다. 핵심(목록만으로 윈도 판별, G가 B 뒤)은 둘 다 지켜진다.
+
+### 17.5 화면(시작 화면 4종, 스크린샷 직접 열어 봄 — `start-1180x820.png` 등)
+| 크기 | 둘째 줄 글자 | 크기(첫 줄/둘째 줄) | 줄바꿈 | 스크롤 |
+|---|---|---|---|---|
+| 1180×820 | spec 9절 글자 그대로 | 16/15px | 한 줄(끊김 없음) | 없음(820=820) |
+| 820×1180 | 그대로 | 16/15px | 한 줄 | 없음 |
+| 1024×768 | 그대로 | 14/13px | 한 줄 | 없음 |
+| 768×1024 | 그대로 | 16/15px | 한 줄 | 없음 |
+- 앞에 스피커 SVG 아이콘, 첫 줄 바로 아래, "한 단계 작게" — spec 9절과 맞음. **한 상자에 묶은 임시안은 괜찮다**: 두 줄 모두 개인정보 안내라 한 덩어리로 읽히고, 상자가 하나라 화면이 덜 어수선하다. 사용자에게 따로 물을 만큼의 일은 아니다(바꾸고 싶으면 v6 UI 때 함께).
+- 1024×768의 둘째 줄 13px은 작지만 교사·보호자용 안내 문장이고 대비가 충분해 읽힌다.
+- 디버그 안내 한 줄: Google(G, remote)일 때 없음, Samantha(B, local)일 때 있음 — 실제 Chrome에서 확인. Android "English United States"(C)는 애플 목소리가 아니라 안 뜸(코드 `isAppleVoice`). "(5.9.3)" 꼬리를 뺀 것(Build ②)은 아이 화면이 아닌 디버그 줄이라 문제 없음.
+
+### 17.6 README.md
+- 맥 경로·`?debug=1` 표시 예·1.5초 대체·소리 끔이면 보내지 않음·시작 화면 문구 — spec 5.9.2·5.9.3·9절과 같다. 사실과 다른 경로·동작 없음(아래 권장 1건 제외). iPad 경로는 spec도 [추정]이고 README가 "버전에 따라 다를 수 있음"을 달아 둠.
+
+### 17.7 반드시 수정
+- 없음.
+
+### 17.8 권장 (배포를 막지 않음)
+1. **spec 12.1 voicePick ⑲ 문장**: "⑫에 Zira를 더하면 → Zira"를 "⑫ **앞에** Zira를 더하면 → Zira, 뒤에 더하면 → Samantha(같은 B·local이라 목록 순서). 어느 쪽이든 Google이 아님"으로 고친다(코디네이터/Plan 몫 — Review는 spec을 고치지 않음).
+2. **README.md:16** "맥·안드로이드 등의 **Chrome** → Google 목소리를 자동으로" — 안드로이드 Chrome 목록에 Google 이름 목소리가 있는지는 spec 5.9.1 표에서도 [추정](기기 목소리 "English United States"일 수 있음). "맥 Chrome"으로 줄이거나 "안드로이드는 기기 목소리일 수 있어요"를 덧붙인다. 맥 Chrome에서 고품질(Enhanced) 목소리를 내려받았으면 그것을 먼저 쓴다는 점도 한 줄 더하면 정확해진다.
+
+### 17.9 사용자 결정 필요
+- 없음(한 상자 임시안은 그대로 두어도 됨).
+
+### 17.10 사람이 들어 볼 체크(자동으로 확인 못 한 것 — 실제 소리)
+1. [ ] **맥 Chrome** `?debug=1`: `voice Google US English (en-US, remote, G) · voice`, 한 판 들어 보고 윈도 PC처럼 원어민 억양인지(콩글리쉬가 아닌지).
+2. [ ] **맥 Chrome + 와이파이 끄고 새로고침**: 첫 설명이 약 1.5초 뒤 Samantha로 들리고 디버그에 `인터넷 목소리 끔`, 그 뒤 문제는 바로 Samantha.
+3. [ ] **맥 Safari**: Samantha(디버그에 고품질 안내 줄). 고품질 목소리를 내려받고 Safari를 다시 연 뒤 `(Enhanced)`/`(Premium)`·등급 A가 나오는지.
+4. [ ] **iPad Safari**: 같은 확인 + README의 iPad 내려받기 경로가 실제 메뉴와 맞는지.
+5. [ ] **윈도 Chrome**: `Microsoft David`(이전과 같은 소리), **윈도 Edge**: Aria.
+6. [ ] **학교 와이파이**에서 맥 Chrome이 `인터넷 목소리 끔` 없이 Google로 읽는지(뜨면 그 망이 1.5초보다 느린 것 — 알려 주세요).
+7. [ ] 어느 기기에서도 한국어 목소리(유나 등)로 영어를 읽지 않는지.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { CHALLENGE_LINES, DIFFICULTY_DESCS, DIFFICULTY_LABELS, ERROR_MESSAGES, PRIVACY_NOTICE, S, V2, VERYHARD_BAND_NOTE, signed } from '../../src/ui/strings.ts';
+import { CHALLENGE_LINES, DIFFICULTY_DESCS, DIFFICULTY_LABELS, ERROR_MESSAGES, PRIVACY_NOTICE, PRIVACY_VOICE_NOTICE, S, V2, VOICE_QUALITY_HINT, VERYHARD_BAND_NOTE, signed } from '../../src/ui/strings.ts';
 
 const spec = readFileSync(resolve(__dirname, '..', '..', 'spec.md'), 'utf8');
 
@@ -25,6 +25,18 @@ describe('strings (spec 6·8.2·9)', () => {
   it('9절 개인정보 안내가 spec과 같다', () => {
     expect(PRIVACY_NOTICE).toBe('카메라 영상은 이 태블릿 안에서 손 위치를 찾는 데만 쓰여요. 저장하거나 다른 곳으로 보내지 않아요.');
     expect(spec.includes(`**"${PRIVACY_NOTICE}"**`)).toBe(true);
+  });
+
+  it('9절 v7 개인정보 안내 둘째 줄(PRIVACY_VOICE_NOTICE)이 spec과 같다', () => {
+    expect(PRIVACY_VOICE_NOTICE).toBe('영어 읽어 주기는 인터넷 목소리(Google 등)를 쓸 수 있어요. 이때 영어 문제 문장만 보내져요.');
+    expect(spec.includes(`**"${PRIVACY_VOICE_NOTICE}"**`)).toBe(true);
+    expect(S.privacyVoice).toBe(PRIVACY_VOICE_NOTICE);
+    expect(S.privacy).toBe(PRIVACY_NOTICE);
+  });
+
+  it('5.9.3 ① 디버그 고품질 목소리 안내 줄이 spec과 같다', () => {
+    expect(VOICE_QUALITY_HINT).toBe('더 자연스러운 목소리: 고품질 영어 목소리를 내려받으세요');
+    expect(spec.includes(`"${VOICE_QUALITY_HINT}")`)).toBe(true);
   });
 
   it('6절 문구', () => {

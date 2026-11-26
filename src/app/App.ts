@@ -750,6 +750,7 @@ export class App {
         screen: this.screen,
         blocked: blockedRequestCount(),
         voice: this.speech.describe(),
+        voiceHint: this.speech.qualityHint(),
       });
     }
     if (this.screen !== 'start' && this.screen !== 'loading' && this.screen !== 'error') drawCursors(cctx, cursors);

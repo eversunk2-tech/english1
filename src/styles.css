@@ -433,12 +433,24 @@ body {
   color: var(--muted);
 }
 
-.privacy {
-  padding: 10px 14px;
+/* 개인정보 안내 두 줄(spec 9절 v7): 카메라 줄 + 영어 읽어 주기(인터넷 목소리) 줄을 한 상자에 */
+.privacy-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 720px;
+  padding: 8px 14px;
   border-radius: 12px;
   background: rgba(15, 23, 42, 0.7);
+}
+
+.privacy {
   color: var(--white);
   text-align: left;
+}
+
+.privacy-voice {
+  font-size: 15px;
 }
 
 .spinner {
@@ -863,6 +875,13 @@ body {
   .screen-start .stand-hint,
   .screen-start .privacy {
     font-size: 14px;
+  }
+  .screen-start .privacy-voice {
+    font-size: 13px;
+  }
+  .screen-start .privacy-box {
+    padding: 6px 12px;
+    gap: 2px;
   }
 }
 
