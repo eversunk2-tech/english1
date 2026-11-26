@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { lineBreaks, state, step } from './helpers.ts';
+import { CAMERA_TEST_TIMEOUT_MS, SLOW_DETECT_MS, expectCameraVideoPlaying, expectDetectCountAbove, lineBreaks, state, step } from './helpers.ts';
 
 const CASES: { name: string; text: string }[] = [
   { name: 'NotAllowedError', text: "카메라 사용이 허락되지 않았어요. 주소창 옆(또는 설정 › Safari › 카메라)에서 카메라를 '허용'으로 바꾼 뒤 [다시 시도]를 눌러 주세요." },
@@ -91,6 +91,7 @@ test.describe('E4 카메라 트랙이 중간에 끊김(review R3)', () => {
   test.use({ permissions: ['camera'] });
 
   test('트랙 ended → busy 문구, [다시 시도]는 카메라만 다시 열고 모델은 다시 받지 않음', async ({ page }) => {
+    test.setTimeout(CAMERA_TEST_TIMEOUT_MS);
     let modelRequests = 0;
     page.on('request', (r) => {
       if (r.url().includes('models/hand_landmarker.task')) modelRequests += 1;
@@ -111,19 +112,22 @@ test.describe('E4 카메라 트랙이 중간에 끊김(review R3)', () => {
     expect((await state(page)).cameraActive).toBe(false);
     await page.click('#btn-retry');
     await expect.poll(async () => (await state(page)).screen, { timeout: 15_000 }).toBe('handcheck');
-    const s = await state(page);
-    expect(s.cameraActive).toBe(true);
-    const n = s.detectCount;
-    await expect.poll(async () => (await state(page)).detectCount, { timeout: 10_000 }).toBeGreaterThan(n + 3);
+    expect((await state(page)).cameraActive).toBe(true);
+    // 새 트랙의 영상이 실제로 재생 중인지 먼저 본 뒤, 그 뒤로 검사가 4번 더 도는지 본다(느린 CI 예산은 helpers.ts SLOW_DETECT_MS)
+    await expectCameraVideoPlaying(page);
+    const n = (await state(page)).detectCount;
+    await expectDetectCountAbove(page, n + 3);
     expect(modelRequests).toBe(1);
   });
 
   test('우리가 끈 카메라([처음으로])는 오류 화면으로 가지 않음', async ({ page }) => {
+    test.setTimeout(CAMERA_TEST_TIMEOUT_MS);
     await page.goto('./?test=1');
     await page.click('#btn-camera');
     await expect.poll(async () => (await state(page)).screen, { timeout: 30_000 }).toBe('handcheck');
     await page.click('#start-card');
-    await expect.poll(async () => (await state(page)).screen, { timeout: 10_000 }).toBe('playing');
+    // 3·2·1(게임 시계 3초)은 프레임마다 많아야 1초씩 가므로 느린 CI에서는 프레임 3~4개 = 검사 3~4번 시간이 든다
+    await expect.poll(async () => (await state(page)).screen, { timeout: 4 * SLOW_DETECT_MS + 10_000 }).toBe('playing');
     await page.click('#pause-btn');
     await page.click('#btn-home');
     await page.waitForTimeout(300);

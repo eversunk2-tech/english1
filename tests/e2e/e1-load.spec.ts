@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { state, watchPage } from './helpers.ts';
+import { CAMERA_TEST_TIMEOUT_MS, expectCameraVideoPlaying, expectDetectCountAbove, state, watchPage } from './helpers.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -19,6 +19,7 @@ test.describe('E1 첫 화면·같은 출처', () => {
   });
 
   test('/english1/에서 열리고 400 이상 응답·콘솔 오류 0, 모든 요청이 같은 출처(카메라 준비까지)', async ({ page, baseURL }) => {
+    test.setTimeout(CAMERA_TEST_TIMEOUT_MS);
     const origin = new URL(baseURL!).origin;
     const w = watchPage(page, origin);
     const res = await page.goto('./?test=1');
@@ -27,7 +28,9 @@ test.describe('E1 첫 화면·같은 출처', () => {
     await expect(page.locator('h1')).toHaveText('Catch the Word!');
     await page.click('#btn-camera');
     await expect.poll(async () => (await state(page)).screen, { timeout: 30_000 }).toBe('handcheck');
-    await expect.poll(async () => (await state(page)).detectCount, { timeout: 20_000 }).toBeGreaterThan(3);
+    // 느린 CI 예산은 helpers.ts SLOW_DETECT_MS
+    await expectCameraVideoPlaying(page);
+    await expectDetectCountAbove(page, 3);
     expect(w.bad, w.bad.join('\n')).toEqual([]);
     expect(w.errors, w.errors.join('\n')).toEqual([]);
     expect(w.external, w.external.join('\n')).toEqual([]);

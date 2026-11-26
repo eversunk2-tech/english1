@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { CAMERA_TEST_TIMEOUT_MS, expectCameraVideoPlaying, expectDetectCountAbove } from './helpers.ts';
 
 // E5: 실제 MediaPipe 적재(가짜 카메라). 가짜 카메라 무늬에는 손이 없으므로 손 0개가 정상.
 test.use({
@@ -11,6 +12,7 @@ function isMediapipeInfo(text: string): boolean {
 
 for (const delegate of ['auto', 'CPU'] as const) {
   test(`E5 MediaPipe 적재 (delegate=${delegate})`, async ({ page, baseURL }) => {
+    test.setTimeout(CAMERA_TEST_TIMEOUT_MS);
     const errors: string[] = [];
     const external: string[] = [];
     const origin = new URL(baseURL ?? '').origin;
@@ -29,9 +31,9 @@ for (const delegate of ['auto', 'CPU'] as const) {
     await expect
       .poll(async () => page.evaluate(() => window.__eg?.state().screen), { timeout: 30_000 })
       .toBe('handcheck');
-    await expect
-      .poll(async () => page.evaluate(() => window.__eg?.state().detectCount ?? 0), { timeout: 20_000 })
-      .toBeGreaterThan(10);
+    // 느린 CI 예산은 helpers.ts SLOW_DETECT_MS
+    await expectCameraVideoPlaying(page);
+    await expectDetectCountAbove(page, 10);
     const st = await page.evaluate(() => window.__eg?.state());
     expect(st?.tracks.length).toBe(0);
     if (delegate === 'CPU') expect(st?.delegate).toBe('CPU');

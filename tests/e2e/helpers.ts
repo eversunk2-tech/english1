@@ -33,6 +33,50 @@ export async function step(page: Page, ms: number): Promise<void> {
   await page.evaluate((m) => window.__eg!.clock.step(m), ms);
 }
 
+/**
+ * 실제 카메라 손 인식(E1·E4 R3·E5)의 느린 기기 시간 예산.
+ * 검사(detectForVideo)는 게임 루프 안에서 프레임마다 많아야 1번 돌고, 도는 동안 주 스레드를 붙잡는다.
+ * CI(GitHub ubuntu, GPU 없음 → WebGL이 소프트웨어 SwiftShader)에서 두 작업자가 MediaPipe를 함께 돌리면
+ * 프레임 하나(= 검사 하나)에 약 1.5~3초까지 걸렸다(run 45790148325 attempt 1 trace: 게임 시계가 프레임마다
+ * 상한 1000ms씩, 검사 수는 프레임마다 1씩 늘고, state() 한 번에 1.5~4.7초). 그래서 검사 1번에 4초, 여기에
+ * 첫 검사·state() 지연 몫으로 10초를 더 준다. 인식이 멈추면(검사 수 그대로) 이 시간이 지나 여전히 실패한다.
+ */
+export const SLOW_DETECT_MS = 4_000;
+const DETECT_SLACK_MS = 10_000;
+/** 카메라 시험 한 개의 시간 제한: 준비 30초 + 다시 시도 15초 + 영상 15초 + 검사 대기(최대 11번 × 4초 + 10초)에 여유 */
+export const CAMERA_TEST_TIMEOUT_MS = 150_000;
+
+/** #camera-video에 살아 있는 트랙이 붙어 있고 새 프레임이 들어와 재생 시각이 앞으로 가는지 기다린다 */
+export async function expectCameraVideoPlaying(page: Page): Promise<void> {
+  const clock = (): Promise<{ t: number; ready: number; live: boolean }> =>
+    page.evaluate(() => {
+      const v = document.getElementById('camera-video') as HTMLVideoElement;
+      const s = v.srcObject as MediaStream | null;
+      return { t: v.currentTime, ready: v.readyState, live: !!s && s.getVideoTracks().some((tr) => tr.readyState === 'live') };
+    });
+  const t0 = (await clock()).t;
+  await expect
+    .poll(
+      async () => {
+        const c = await clock();
+        return c.live && c.ready >= 2 && c.t > t0;
+      },
+      { message: '카메라 영상에 새 프레임이 들어오지 않음(재생 시각이 그대로)', timeout: 15_000 },
+    )
+    .toBe(true);
+}
+
+/** detectCount가 threshold를 넘을 때까지 기다린다. 시간 제한은 아직 필요한 검사 수 × SLOW_DETECT_MS + 10초 */
+export async function expectDetectCountAbove(page: Page, threshold: number): Promise<void> {
+  const need = Math.max(1, threshold + 1 - (await state(page)).detectCount);
+  await expect
+    .poll(async () => (await state(page)).detectCount, {
+      message: `손 인식 검사 수가 ${threshold}를 넘지 않음(인식이 멈췄을 수 있음)`,
+      timeout: need * SLOW_DETECT_MS + DETECT_SLACK_MS,
+    })
+    .toBeGreaterThan(threshold);
+}
+
 /** 조건이 맞을 때까지 수동 시계를 chunk씩 진행 */
 export async function stepUntil(
   page: Page,
