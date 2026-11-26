@@ -1190,7 +1190,9 @@
       "ko": "택시",
       "clue": "A car with a driver. You pay to ride it.",
       "avoid": [
-        "bus"
+        "bus",
+        "subway",
+        "train"
       ],
       "base": null
     },

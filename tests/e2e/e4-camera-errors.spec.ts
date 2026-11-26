@@ -130,3 +130,57 @@ test.describe('E4 카메라 트랙이 중간에 끊김(review R3)', () => {
     expect((await state(page)).screen).toBe('start');
   });
 });
+
+/** 요소 안 글자의 줄바꿈 위치마다 [앞 글자, 뒤 글자]를 돌려준다(Range로 글자마다 위치를 잰다) */
+async function lineBreaks(page: import('@playwright/test').Page, selector: string): Promise<[string, string][]> {
+  return page.evaluate((sel) => {
+    const el = document.querySelector(sel)!;
+    const chars: { ch: string; top: number }[] = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const t = n.textContent ?? '';
+      for (let i = 0; i < t.length; i++) {
+        const r = document.createRange();
+        r.setStart(n, i);
+        r.setEnd(n, i + 1);
+        const rect = r.getClientRects()[0];
+        chars.push({ ch: t[i]!, top: rect ? rect.top : NaN });
+      }
+    }
+    const out: [string, string][] = [];
+    let lastTop = NaN;
+    let prev = '';
+    for (const c of chars) {
+      if (/\s/.test(c.ch) || Number.isNaN(c.top)) {
+        prev = c.ch;
+        continue;
+      }
+      if (!Number.isNaN(lastTop) && c.top > lastTop + 2) out.push([prev, c.ch]);
+      lastTop = c.top;
+      prev = c.ch;
+    }
+    return out;
+  }, selector);
+}
+
+test('E4 N1: 한국어 오류 문구가 낱말 가운데서 줄이 바뀌지 않는다(띄어쓰기에서만)', async ({ page }) => {
+  const kinds = ['insecure', 'denied', 'notfound', 'busy', 'download', 'init', 'other'] as const;
+  const sizes = [page.viewportSize()!, { width: 1180, height: 820 }, { width: 820, height: 1180 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 600, height: 900 }];
+  await page.goto('./?test=1&clock=manual');
+  let checked = 0;
+  for (const size of sizes) {
+    await page.setViewportSize(size);
+    for (const k of kinds) {
+      await page.evaluate((kind) => window.__eg!.forceError(kind), k);
+      for (const sel of ['#error-msg', '#error-title']) {
+        const breaks = await lineBreaks(page, sel);
+        for (const [before, after] of breaks) {
+          checked += 1;
+          // 줄이 바뀐 곳 바로 앞이 띄어쓰기여야 한다
+          expect(/\s/.test(before), `${size.width}×${size.height} ${k} ${sel}: "${before}" | "${after}"`).toBe(true);
+        }
+      }
+    }
+  }
+  expect(checked).toBeGreaterThan(0);
+});

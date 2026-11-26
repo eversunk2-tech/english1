@@ -10,6 +10,7 @@
 - **개정 기록**
   - 2026-11-26 Plan v1 작성. 사용자 결정: GitHub 저장소 이름 `english1`(15절).
   - 2026-11-26 Plan 수정 v1(Review v1 반영, 지침 `docs/briefs/plan-fix-brief-v1.md`): 부록 A 17문항의 설명·avoid 고침(사용자 결정 "15개 모두 고치기" + taxi·cannot), 임시 문구 3개 확정·오류 화면 제목 "시작하지 못했어요"(사용자 결정 "3개 승인 + 오류 제목 변경") — 5.1·5.7·5.8·6.2·8.2. 같은 날 덧붙임: time-09 tomorrow 설명 변경(사용자 결정 "바꾸기"). Review 권장 반영: `engines.node` `>=22.18`(2.3), `?clock=manual`은 `?test=1`일 때만(11·12.2), 카메라 트랙 `ended` → 오류 화면(3.1·8.2). 자세한 것은 15절.
+  - 2026-11-26 Plan 수정 v2(Review 재검토 N2, 지침 `docs/briefs/plan-fix-brief-v2.md`): 부록 A transport-06 taxi의 avoid `bus` → `bus,subway,train`(사용자 결정 "고치기", 방법은 코디네이터 선택). 15절.
   - 2026-11-26 사용자가 14절 12개 항목을 모두 추천안대로 승인(15절).
 
 ---
@@ -642,6 +643,10 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | time-09 tomorrow | Today is Monday. It will be Tuesday. / — | Today is Monday, so Tuesday will be this. / — | "It"이 가리키는 것이 약함(Review H2). yesterday(time-10)와 같은 모양으로 맞춤. 사용자 결정(덧붙임) |
 
 - 2026-11-26 **사용자 결정**(덧붙임): time-09 tomorrow 설명을 Plan 추천안 "Today is Monday, so Tuesday will be this."로 바꾼다(사용자 답 원문: "바꾸기"). → 고친 문항은 모두 17개.
+- 2026-11-26 **Plan 수정 v2**(Review 재검토 9.5 N2, 지침 `docs/briefs/plan-fix-brief-v2.md`):
+  - **사용자 결정**: 남은 권장 2건을 고친다(사용자 답 원문: "고치기").
+  - **코디네이터 선택**(Review의 첫 번째 안): transport-06 taxi는 설명을 그대로 두고 avoid에 `subway, train`을 더한다 → avoid `bus` → `bus,subway,train`. 이유: 지하철·기차도 기사가 있고 돈을 내고 타서, 설명의 "car"를 놓치는 아이는 헷갈릴 수 있다.
+  - Plan 확인: 고친 뒤 V1~V9 위반 0, 판 구성 흉내(학년군별 씨앗 5,000개)에서 taxi 문제에 subway·train·bus가 나오는 비율 0%, 오답 후보 부족 0건. 같은 주제 남은 오답(truck, airplane, boat, bike)은 "돈을 내고 타는 기사 있는 차"의 답이 되지 않는다. (N1 한국어 줄바꿈은 코드 쪽 일이라 spec 변경 없음.)
 
 ---
 
@@ -760,7 +765,7 @@ iPad Safari 1대 + 안드로이드 Chrome 1대(가능하면), 배포 주소 또�
 | transport-03 | airplane | 3~4 | transport | 비행기 | We ride in it to fly far away. | pilot |  |
 | transport-04 | boat | 3~4 | transport | 배 | It goes on the water. | duck,fish |  |
 | transport-05 | bike | 3~4 | transport | 자전거 | It has two wheels. You ride it. |  |  |
-| transport-06 | taxi | 5~6 | transport | 택시 | A car with a driver. You pay to ride it. | bus |  |
+| transport-06 | taxi | 5~6 | transport | 택시 | A car with a driver. You pay to ride it. | bus,subway,train |  |
 | transport-07 | truck | 5~6 | transport | 트럭 | A big car that carries heavy things. | bus |  |
 | transport-08 | subway | 5~6 | transport | 지하철 | A train that runs under the city. |  |  |
 | music-01 | piano | 3~4 | music | 피아노 | It has many black and white keys. |  |  |

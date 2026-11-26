@@ -25,6 +25,26 @@ export function h<K extends keyof HTMLElementTagNameMap>(
   return el;
 }
 
+/**
+ * 한국어 문구를 어절(띄어쓰기로 나뉜 덩어리)마다 줄바꿈 없는 span으로 감싼다 — 줄은 띄어쓰기에서만 바뀐다(review N1).
+ * CSS `word-break: keep-all`만으로는 닫는 괄호 뒤(예: "카메라)에서")에서 끊기는 브라우저가 있어 이렇게 한다.
+ * textContent는 원래 문구와 글자 하나 다르지 않다.
+ */
+export function keepWords(text: string): Node[] {
+  const out: Node[] = [];
+  for (const part of text.split(/(\s+)/)) {
+    if (part === '') continue;
+    if (/^\s+$/.test(part)) out.push(document.createTextNode(part));
+    else {
+      const span = document.createElement('span');
+      span.className = 'kw';
+      span.textContent = part;
+      out.push(span);
+    }
+  }
+  return out;
+}
+
 /** 인라인 SVG(이모지 대신, spec 2.2) */
 export function svg(markup: string, className = 'icon'): HTMLElement {
   const span = document.createElement('span');

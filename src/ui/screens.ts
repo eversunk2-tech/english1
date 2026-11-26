@@ -1,7 +1,7 @@
 // 시작·준비·손 확인·카운트다운·일시정지·결과·오류 DOM 화면(spec 6.2).
 import type { BandChoice } from '../game/types.ts';
 import type { QuestionResult } from '../game/session.ts';
-import { h, ICONS, svg } from './dom.ts';
+import { h, ICONS, keepWords, svg } from './dom.ts';
 import { errorMessage, type AppError } from '../camera/errors.ts';
 import { MARKS, S } from './strings.ts';
 
@@ -62,7 +62,7 @@ export class Screens {
     this.set(
       'start',
       h('h1', { class: 'title', lang: 'en' }, S.title),
-      h('p', { class: 'subtitle' }, S.subtitle),
+      h('p', { class: 'subtitle' }, keepWords(S.subtitle)),
       h(
         'div',
         { class: 'options' },
@@ -82,8 +82,8 @@ export class Screens {
         h('button', { type: 'button', class: 'btn btn-primary btn-big', id: 'btn-camera', onclick: () => o.onCamera() }, svg(ICONS.camera), S.startCamera),
         h('button', { type: 'button', class: 'btn btn-ghost', id: 'btn-touch', onclick: () => o.onTouch() }, svg(ICONS.hand), S.startTouch),
       ),
-      h('p', { class: 'stand-hint' }, svg(ICONS.stand, 'icon stand'), S.standHint),
-      h('p', { class: 'privacy', id: 'privacy' }, svg(ICONS.camera), S.privacy),
+      h('p', { class: 'stand-hint' }, svg(ICONS.stand, 'icon stand'), h('span', {}, keepWords(S.standHint))),
+      h('p', { class: 'privacy', id: 'privacy' }, svg(ICONS.camera), h('span', {}, keepWords(S.privacy))),
     );
   }
 
@@ -131,8 +131,8 @@ export class Screens {
     this.set(
       'paused',
       h('div', { class: 'card-panel' },
-        h('h2', {}, noHand ? S.pausedNoHand : S.pausedTitle),
-        noHand ? h('p', { class: 'muted' }, S.pausedNoHandResume) : h('span', {}),
+        h('h2', {}, keepWords(noHand ? S.pausedNoHand : S.pausedTitle)),
+        noHand ? h('p', { class: 'muted' }, keepWords(S.pausedNoHandResume)) : h('span', {}),
         h('div', { class: 'row' },
           h('button', { type: 'button', class: 'btn btn-primary', id: 'btn-resume', onclick: () => onResume() }, S.resume),
           h('button', { type: 'button', class: 'btn btn-ghost', id: 'btn-home', onclick: () => onHome() }, S.home),
@@ -190,8 +190,8 @@ export class Screens {
     this.set(
       'error',
       h('div', { class: 'card-panel' },
-        h('h2', { id: 'error-title' }, S.errorTitle),
-        h('p', { class: 'error-msg', id: 'error-msg' }, errorMessage(err.kind)),
+        h('h2', { id: 'error-title' }, keepWords(S.errorTitle)),
+        h('p', { class: 'error-msg', id: 'error-msg' }, keepWords(errorMessage(err.kind))),
         h('div', { class: 'row' },
           h('button', { type: 'button', class: 'btn btn-primary', id: 'btn-retry', onclick: () => onRetry() }, S.retry),
           h('button', { type: 'button', class: 'btn btn-ghost', id: 'btn-touch', onclick: () => onTouch() }, S.startTouch),
