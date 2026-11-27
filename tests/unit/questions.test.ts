@@ -3,7 +3,7 @@ import questionsJson from '../../src/data/questions.json';
 import veryhardJson from '../../src/data/veryhard.json';
 import extraJson from '../../src/data/vocab/clue-extra.json';
 import { clueMentions } from '../../src/data/words.ts';
-import { avoidIndex, buildGamePlans, buildPlans, stageFor } from '../../src/game/questions.ts';
+import { avoidIndex, buildGamePlans, buildPlans, pickDistractors, stageFor } from '../../src/game/questions.ts';
 import { bagPool, drawGame, drawSpecFor, emptyBag } from '../../src/game/bag.ts';
 import { mulberry32 } from '../../src/game/rng.ts';
 import type { BandChoice, Question, QuestionsFile } from '../../src/game/types.ts';
@@ -208,5 +208,20 @@ describe('questions (spec 5.6)', () => {
     const levels = pick.map((_, i): 'base' | 'up' => (i >= 6 ? 'up' : 'base'));
     const gp = buildGamePlans(POOLS, '5-6', 'normal', mulberry32(3), pick, levels);
     expect(gp.map((p) => p.level)).toEqual(levels);
+  });
+
+  it('Very Hard: chin과 beard는 서로의 오답 카드로 나오지 않는다(avoid 양방향, v10 S1)', () => {
+    const byWord = (w: string) => vh.find((q) => q.word === w)!;
+    const chin = byWord('chin');
+    const beard = byWord('beard');
+    expect(chin.avoid).toContain('beard');
+    expect(beard.avoid).toContain('chin');
+    for (let seed = 1; seed <= 200; seed++) {
+      for (const [ans, other] of [[chin, 'beard'], [beard, 'chin']] as const) {
+        const d = pickDistractors(ans, vh, 3, 3, mulberry32(seed), vhAvoid);
+        expect(d).not.toBeNull();
+        expect(d!.map((q) => q.word)).not.toContain(other);
+      }
+    }
   });
 });

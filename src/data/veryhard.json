@@ -251,7 +251,7 @@
       "topic": "body",
       "ko": "턱",
       "clue": "The bottom part of your face, below your mouth.",
-      "avoid": [],
+      "avoid": ["beard"],
       "base": null
     },
     {
@@ -271,7 +271,7 @@
       "topic": "body",
       "ko": "턱수염",
       "clue": "Some men grow this hair on their face.",
-      "avoid": [],
+      "avoid": ["chin"],
       "base": null
     },
     {
